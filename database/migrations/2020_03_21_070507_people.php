@@ -21,10 +21,10 @@ class People extends Migration
             $table->string('nm_people');
             $table->string('ds_cpf');
             $table->text('dt_nascimento');
-            $tatble->int('nr_cep');
-            $tatble->int('nm_uf');
-            $tatble->int('nm_cidade');
-            $tatble->int('nm_bairro');
+            $table->integer('nr_cep');
+            $table->string('nm_uf');
+            $table->string('nm_cidade');
+            $table->string('nm_bairro');
  
             $table->timestamps();
         });

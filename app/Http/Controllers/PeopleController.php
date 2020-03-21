@@ -46,13 +46,17 @@ class PeopleController extends Controller
             'bairro' => 'required'
         ]);
 
-
         $people = new People();
         $people->nm_people = $request->get('nome');
         $people->nm_superior = $request->get('superior');
         $people->nm_setor = $request->get('setor');
         $people->ds_cpf = $request->get('cpf');
         $people->dt_nascimento = $request->get('data_nascimento');
+        $people->nr_cep = $request->get('cep');
+        $people->nm_uf = $request->get('uf');
+        $people->nm_cidade = $request->get('cidade');
+        $people->nm_bairro = $request->get('bairro');
+        
         $people->save();
 
         
