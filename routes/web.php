@@ -21,16 +21,15 @@ Auth::routes();
 
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/hello', 'HelloController@index')->name('hello');
+	
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('user', 'UserController', ['except' => ['show']]);
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'ProfileController@edit']);
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'ProfileController@update']);
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);
-	Route::view('companies/people/add', 'companies.add_people')->name('companies.add_people');
-	Route::view('companies/monitoring', 'companies.monitoring')->name('companies.monitoring');
+
+	Route::resource('/people', 'PeopleController');
+	// Route::view('companies/people/add', 'companies.add_people')->name('companies.add_people');
+	// Route::view('companies/monitoring', 'companies.monitoring')->name('companies.monitoring');
 });
-
-

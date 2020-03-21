@@ -85,7 +85,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('companies.add_people') }}">
+                    <a class="nav-link" href="{{ route('people.create') }}">
                         <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
                     </a>
                 </li>

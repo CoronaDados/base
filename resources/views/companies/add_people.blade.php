@@ -1,21 +1,23 @@
 @extends('layouts.app',['class' => 'bg-gradient-success'])
 
 @section('content')
-    {{--    @include('layouts.headers.cards')--}}
+{{-- @include('layouts.headers.cards') --}}
+
     <div class="container-fluid pt-5">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Cadastro de colaboradores</h5>
-                <form>
+                <h3 class="card-title">Cadastro de colaboradores</h3>
+                <form method="post" action="{{ route('people.store') }}">
+                    @csrf
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control" id="cpf" placeholder="CPF">
+                                <input type="text" class="form-control" id="superior" name="superior" placeholder="Superior">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <select class="custom-select">
+                                <select class="custom-select" name="setor">
                                     <option disabled selected>Setor</option>
                                     <option value="1">Operacional</option>
                                     <option value="2">Escritório</option>
@@ -23,29 +25,66 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="cep" placeholder="CEP">
-                            </div>
-                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <div class="input-group input-group-alternative">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                     </div>
-                                    <input class="form-control datepicker" placeholder="Data de Nascimento" type="text">
+                                    <input class="form-control datepicker" name="data_nascimento" placeholder="Data de Nascimento" type="text">
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <select class="custom-select" name="uf">
+                                    <option disabled selected>Selecione Estado (UF)</option>
+                                    <option value="1">Paraná</option>
+                                    <option value="2">Rio Grande do Sul</option>
+                                    <option value="3">Santa Catarina</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!--                         
                         <div class="col-md-6">
                             <div class="form-group">
                                 <input type="number" class="form-control" id="people_in_residence"
                                        onchange="ShowForm1()" placeholder="Mora com quantas pessoas">
                             </div>
                         </div>
+                        -->
                     </div>
                     <div id="show1">
                         <div class="card">
@@ -55,6 +94,7 @@
 
                         </div>
                     </div>
+                    <!--                     
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -71,7 +111,10 @@
                             <div class="card">
                             </div>
                         </div>
-                    </div>
+                    </div> 
+                    -->
+                
+                    <button type="submit" class="btn btn-primary">{{ __('Enviar') }}</button>
                 </form>
             </div>
         </div>
@@ -98,7 +141,7 @@
                                 <th scope="col">Setor</th>
                                 <th scope="col">CEP</th>
                                 <th scope="col">Deslocamento</th>
-                                <th scope="col">Pessoas na mesma residencia</th>
+                                <th scope="col">Pessoas na mesma residência</th>
                             </tr>
                             </thead>
                             <tbody>
