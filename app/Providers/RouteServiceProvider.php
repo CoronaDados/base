@@ -46,6 +46,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
+        $this->mapCompanyRoutes();
+
         //
     }
 
@@ -58,10 +60,22 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::middleware('web')
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/web.php'));
     }
+
+
+    protected function mapCompanyRoutes()
+    {
+        Route::domain(env('COMPANY_URL'))
+            ->middleware('web')
+            ->name('company.')
+            ->namespace($this->namespace.'\Company')
+            ->group(base_path('routes/company.php'));
+    }
+
 
     /**
      * Define the "api" routes for the application.

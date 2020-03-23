@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Company\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -35,26 +35,19 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
         $this->middleware('guest:company')->except('logout');
     }
 
-    public function showCompanyLoginForm()
+
+    protected function guard()
     {
-        return view('auth.login', ['url' => 'admin']);
+        return auth('company');
     }
 
-    public function companyLogin(Request $request)
+
+    public function showLoginForm()
     {
-        $this->validate($request, [
-            'email'   => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
-        if (Auth::guard('company')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
-
-            return redirect()->intended('/company');
-        }
-        return back()->withInput($request->only('email', 'remember'));
+        return view('company.auth.login', ['url' => 'company']);
     }
+
 }

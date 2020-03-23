@@ -85,7 +85,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('companies.add_people') }}">
+                    <a class="nav-link" href="{{ route('company.add_people') }}">
                         <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
                     </a>
                 </li>
@@ -97,6 +97,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="ni ni-spaceship text-info"></i> {{ __('Ações') }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
+                    document.getElementById('logout-form').submit();">
+                        <i class="ni ni-user-run"></i>
+                        <span>{{ __('Logout') }}</span>
                     </a>
                 </li>
             </ul>

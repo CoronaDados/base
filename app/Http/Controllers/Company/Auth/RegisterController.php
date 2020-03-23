@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Company\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Model\Company\Company;
+use App\Model\Company\CompanyUser;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,7 +32,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -38,7 +41,6 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
         $this->middleware('guest:company');
     }
 
@@ -52,8 +54,10 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:company_users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'razao' => ['required', 'string', 'min:8'],
+            'cnpj' => ['required', 'string', 'min:8',  'unique:companies'],
         ]);
     }
 
@@ -65,26 +69,28 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $company = Company::create([
+            'razao' => $data['razao'],
+            'cnpj' => $data['cnpj'],
+        ]);
+        return CompanyUser::create([
+            'company_id' => $company->id,
             'name' => $data['name'],
             'email' => $data['email'],
+            'is_admin' => true,
             'password' => Hash::make($data['password']),
         ]);
     }
 
-    public function showCompanyRegisterForm()
+    protected function guard()
     {
-        return view('auth.register', ['url' => 'admin']);
+        return auth('company');
     }
 
-    protected function createCompany(Request $request)
+    public function showRegistrationForm()
     {
-        $this->validator($request->all())->validate();
-        $admin = Admin::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-        ]);
-        return redirect()->intended('login/admin');
+        return view('company.auth.register', ['url' => 'company']);
     }
+
+
 }

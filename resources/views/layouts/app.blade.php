@@ -20,14 +20,14 @@
     </head>
     <body class="{{ $class ?? '' }}">
         @auth()
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            <form id="logout-form" action="{{ route('company.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
             @include('layouts.navbars.sidebar')
         @endauth
 
         <div class="main-content">
-            @include('layouts.navbars.navbar')
+            @include('layouts.navbars.navbar',['domain' => $domain ?? ''])
             @yield('content')
         </div>
 
