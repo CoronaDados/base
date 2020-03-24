@@ -1,4 +1,4 @@
-@extends('layouts.app',['class' => 'bg-gradient-success'])
+@extends('_layouts.app',['class' => 'bg-gradient-success'])
 
 @section('content')
     {{--    @include('layouts.headers.cards')--}}

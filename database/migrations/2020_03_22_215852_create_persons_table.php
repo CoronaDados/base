@@ -19,6 +19,7 @@ class CreatePersonsTable extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('cpf')->nullable();
+            $table->string('sector')->nullable();
             $table->string('bithday')->nullable();
             $table->string('gender')->nullable();
             $table->boolean('risk_group')->nullable();

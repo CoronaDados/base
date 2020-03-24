@@ -1,7 +1,7 @@
-@extends('_layouts.app',['class' => 'bg-gradient-success'])
+@extends('company.layouts.app',['class' => 'bg-gradient-success'])
 
 @section('content')
-    @include('_layouts.headers.cards')
+    @include('company.layouts.headers.cards')
 
     <div class="container-fluid mt--7">
         <div class="row mt-5">
@@ -25,28 +25,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        Fulano de Tal
-                                    </th>
-                                    <td>
-                                        Manhã
-                                    </td>
-                                    <td>
-                                        19/03/2020
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        Beltrano de Tal
-                                    </th>
-                                    <td>
-                                        Noite
-                                    </td>
-                                    <td>
-                                        19/03/2020
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -72,28 +51,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        Fulano de Tal
-                                    </th>
-                                    <td>
-                                        Manhã
-                                    </td>
-                                    <td>
-                                        19/03/2020
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        Beltrano de Tal
-                                    </th>
-                                    <td>
-                                        Noite
-                                    </td>
-                                    <td>
-                                        19/03/2020
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>

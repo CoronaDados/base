@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class CasePeople extends Model
 {
     protected $table = 'cases_person';
+
+    protected $fillable = [
+        'status',
+    ];
 }

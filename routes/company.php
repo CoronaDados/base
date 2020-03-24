@@ -12,9 +12,24 @@ Auth::routes();
 //Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth:company'], function () {
-    Route::view('', 'dashboard')->name('add_people');
-    Route::view('people/add', 'companies.add_people')->name('add_people');
-    Route::view('companies/monitoring', 'companies.monitoring')->name('companies.monitoring');
+    Route::get('', 'CompaniesController@dashboard')->name('home');
+    Route::get('people/add', 'CompaniesController@addPeople')->name('add_people');
+    Route::post('people/add', 'CompaniesController@storePeople')->name('add_people');
+    Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
+    Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
+
+
+    Route::get('test', function (){
+
+        $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
+        foreach ($datas as $data){
+            if($data->casePeopleDay()->exists()){
+                $person[] = $data;
+            }
+        }
+        dd($person);
+    });
+
 });
 
 

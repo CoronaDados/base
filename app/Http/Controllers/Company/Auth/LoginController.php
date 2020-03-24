@@ -47,7 +47,7 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('company.auth.login', ['url' => 'company']);
+        return view('company.auth.login');
     }
 
 }

@@ -62,7 +62,9 @@ class Handler extends ExceptionHandler
         }
 
         $guard = Arr::get($exception->guards(), 0);
+
         switch ($guard) {
+
             case 'company':
                 $login = '/login';
                 break;

@@ -23,11 +23,11 @@
             <form id="logout-form" action="{{ route('company.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            @include('layouts.navbars.sidebar')
+            @include('_layouts.navbars.sidebar')
         @endauth
 
         <div class="main-content">
-            @include('layouts.navbars.navbar',['domain' => $domain ?? ''])
+            @include('_layouts.navbars.navbar',['domain' => $domain ?? ''])
             @yield('content')
         </div>
 

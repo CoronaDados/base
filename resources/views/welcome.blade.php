@@ -1,4 +1,4 @@
-@extends('layouts.app', ['class' => 'bg-success'])
+@extends('_layouts.app', ['class' => 'bg-success'])
 
 @section('content')
     <div class="header bg-gradient-info py-7 py-lg-8">

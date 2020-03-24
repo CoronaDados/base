@@ -1,7 +1,7 @@
-@extends('layouts.app', ['class' => 'bg-info'])
+@extends('company.layouts.app', ['class' => 'bg-info'])
 
 @section('content')
-    @include('layouts.headers.guest', ['title' => 'CoronaDados para empresas'])
+    @include('company.layouts.headers.guest')
 
     <div class="container mt--8 pb-5">
         <div class="row justify-content-center">
@@ -72,7 +72,7 @@
                         @endif
                     </div>
                     <div class="col-6 text-right">
-                        <a href="{{ route('register') }}" class="text-light">
+                        <a href="{{ route('company.register') }}" class="text-light">
                             <small>{{ __('Não tem conta?') }}</small>
                         </a>
                     </div>

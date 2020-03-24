@@ -1,7 +1,7 @@
-@extends('layouts.app', ['class' => 'bg-default'])
+@extends('company.layouts.app', ['class' => 'bg-info'])
 
 @section('content')
-    @include('layouts.headers.guest')
+    @include('company.layouts.headers.guest')
 
     <div class="container mt--8 pb-5">
         <!-- Table -->
@@ -72,7 +72,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
+                                    <input class="form-control cnpj{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
                                 </div>
                                 @if ($errors->has('cnpj'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -104,7 +104,7 @@
                             <div class="row my-4">
                                 <div class="col-12">
                                     <div class="custom-control custom-control-alternative custom-checkbox">
-                                        <input class="custom-control-input" id="customCheckRegister" type="checkbox">
+                                        <input class="custom-control-input" required id="customCheckRegister" type="checkbox">
                                         <label class="custom-control-label" for="customCheckRegister">
                                             <span class="text-muted">{{ __('Eu concordo com o') }} <a href="#!">{{ __('Termo de privacidade') }}</a></span>
                                         </label>

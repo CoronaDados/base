@@ -1,7 +1,7 @@
-@extends('layouts.app', ['class' => 'bg-info'])
+@extends('_layouts.app', ['class' => 'bg-info'])
 
 @section('content')
-    @include('layouts.headers.guest')
+    @include('_layouts.headers.guest')
 
     <div class="container mt--8 pb-5">
         <div class="row justify-content-center">
