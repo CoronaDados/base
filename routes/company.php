@@ -20,8 +20,8 @@ Route::group(['middleware' => 'auth:company'], function () {
 
     Route::get('import', 'CompaniesController@importView');
     Route::post('import', 'CompaniesController@import')->name('import');
-    Route::get('import2', 'CompaniesController@importView');
-    Route::post('import2', 'CompaniesController@import')->name('import2');
+    Route::get('import2', 'CompaniesController@importView2');
+    Route::post('import2', 'CompaniesController@import2')->name('import2');
 
 /*
     Route::get('test', function (){
