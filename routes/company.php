@@ -18,7 +18,10 @@ Route::group(['middleware' => 'auth:company'], function () {
     Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 
+    Route::get('import', 'CompaniesController@importView');
+    Route::post('import', 'CompaniesController@import')->name('import');
 
+/*
     Route::get('test', function (){
 
         $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
@@ -28,7 +31,7 @@ Route::group(['middleware' => 'auth:company'], function () {
             }
         }
         dd($person);
-    });
+    });*/
 
 });
 

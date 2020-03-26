@@ -45,4 +45,9 @@ class People extends Model
         return $this->hasMany(CasePeople::class,'person_id');
     }
 
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class,'person_id');
+    }
+
 }

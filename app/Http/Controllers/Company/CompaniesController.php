@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
+use App\Imports\CompanyUsersImport;
+use App\Imports\PersonsImport;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
 use App\Model\People\CasePeople;
 use App\Model\People\People;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
@@ -172,5 +175,17 @@ class CompaniesController extends Controller
     public function destroy(Company $companies)
     {
         //
+    }
+
+    public function importView()
+    {
+        return view('company.import');
+    }
+
+    public function import()
+    {
+        Excel::queueImport(new PersonsImport(),request()->file('file'));
+
+        return back();
     }
 }
