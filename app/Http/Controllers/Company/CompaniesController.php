@@ -188,4 +188,16 @@ class CompaniesController extends Controller
 
         return back();
     }
+
+    public function importView2()
+    {
+        return view('company.import2');
+    }
+
+    public function import2()
+    {
+        Excel::queueImport(new CompanyUsersImport(),request()->file('file'));
+
+        return back();
+    }
 }

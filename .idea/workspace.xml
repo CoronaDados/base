@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c577bab7-700c-4ad6-9313-a95702d305b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Imports/CompanyUsersImport.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Imports/PersonsImport.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Imports/UsersImport.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Model/People/Contact.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2020_03_26_173549_create_person_contacts_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/company/import.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/coronadados.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/coronadados.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Company/CompaniesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Company/CompaniesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Model/People/People.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/People/People.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/factories/CompaniesFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/factories/CompaniesFactory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/company/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/layouts/app.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/company.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/company.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +177,7 @@
       <workItem from="1584906709347" duration="54435000" />
       <workItem from="1585069224936" duration="5497000" />
       <workItem from="1585246138962" duration="6000" />
-      <workItem from="1585246764727" duration="6053000" />
+      <workItem from="1585246764727" duration="7276000" />
     </task>
     <servers />
   </component>
