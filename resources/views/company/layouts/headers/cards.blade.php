@@ -8,8 +8,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">cadastrados</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{$cadastrado ?? ''}}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Colaboradores Total</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{$peoplesCompany ?? ''}}</span>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-success text-white rounded-circle shadow">
@@ -25,8 +25,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Suspeitos</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{$suspeito ?? ''}}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Seus Colaboradores</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{$peoplesUser ?? ''}}</span>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-warning text-white rounded-circle shadow">

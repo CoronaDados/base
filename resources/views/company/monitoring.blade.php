@@ -2,7 +2,7 @@
 
 @section('content')
     {{--    @include('layouts.headers.cards')--}}
-    <div class="container-fluid pt-5">
+    <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Monitoramento diario</h5>

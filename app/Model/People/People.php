@@ -3,7 +3,7 @@
 namespace App\Model\People;
 
 use App\Model\Company\CompanyUser;
-use DemeterChain\C;
+use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -31,9 +31,14 @@ class People extends Model
         'more',
     ];
 
+    public function getCodeAttribute()
+    {
+        return Hashids::encode($this->id) ;
+    }
+
     public function companyUsers()
     {
-        return $this->morphedByMany(CompanyUser::class, 'personable');
+        return $this->morphTo('personable','personable_type','personable_id');
     }
     public function casePeopleDay()
     {

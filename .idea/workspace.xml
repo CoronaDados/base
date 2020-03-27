@@ -2,10 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c577bab7-700c-4ad6-9313-a95702d305b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/views/company/import2.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/hashids.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/coronadados.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/coronadados.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Company/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Company/Auth/LoginController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Company/CompaniesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Company/CompaniesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/company.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/company.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/Company/Company.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/Company/Company.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/Company/CompanyUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/Company/CompanyUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Model/People/People.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/People/People.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/company/add_people.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/add_people.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/company/dashboard.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/dashboard.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/company/layouts/headers/cards.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/layouts/headers/cards.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/company/layouts/navbars/navs/auth.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/layouts/navbars/navs/auth.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/company/monitoring.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/monitoring.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,6 +141,9 @@
       <path value="$PROJECT_DIR$/vendor/markbaker/matrix" />
       <path value="$PROJECT_DIR$/vendor/maatwebsite/excel" />
       <path value="$PROJECT_DIR$/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/vendor/vinkla/hashids" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/manager" />
+      <path value="$PROJECT_DIR$/vendor/hashids/hashids" />
     </include_path>
   </component>
   <component name="ProjectId" id="1ZJnYcVZNV7mGEShPNkmJPXHiwN" />
@@ -180,7 +196,7 @@
       <workItem from="1584906709347" duration="54435000" />
       <workItem from="1585069224936" duration="5497000" />
       <workItem from="1585246138962" duration="6000" />
-      <workItem from="1585246764727" duration="7632000" />
+      <workItem from="1585246764727" duration="25234000" />
     </task>
     <servers />
   </component>
@@ -195,10 +211,10 @@
       <screen x="35" y="27" width="1405" height="873" />
     </state>
     <state x="489" y="66" width="476" height="792" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/35.27.1405.873@35.27.1405.873" timestamp="1584948005964" />
-    <state x="470" y="220" width="524" height="484" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1585253571854">
+    <state x="470" y="220" width="524" height="484" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1585276805496">
       <screen x="35" y="27" width="1405" height="873" />
     </state>
-    <state x="470" y="220" width="524" height="484" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/35.27.1405.873@35.27.1405.873" timestamp="1585253571854" />
+    <state x="470" y="220" width="524" height="484" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/35.27.1405.873@35.27.1405.873" timestamp="1585276805496" />
     <state x="520" y="220" width="424" height="484" key="FileChooserDialogImpl" timestamp="1584999866842">
       <screen x="35" y="27" width="1405" height="873" />
     </state>
@@ -219,5 +235,9 @@
       <screen x="35" y="27" width="1405" height="873" />
     </state>
     <state x="400" y="212" width="672" height="678" key="search.everywhere.popup/35.27.1405.873@35.27.1405.873" timestamp="1585244400400" />
+    <state x="462" y="376" width="540" height="172" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1585294641570">
+      <screen x="35" y="27" width="1405" height="873" />
+    </state>
+    <state x="462" y="376" width="540" height="172" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/35.27.1405.873@35.27.1405.873" timestamp="1585294641570" />
   </component>
 </project>

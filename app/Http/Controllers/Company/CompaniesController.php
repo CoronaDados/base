@@ -20,10 +20,18 @@ class CompaniesController extends Controller
 
     public function dashboard()
     {
+                $companyUsers = Company::query()->where('id','like',auth('company')->user()->company_id)
+                    ->with('users.persons')
+                    ->first();
+                $peoplesCompany = 0;
+                foreach ($companyUsers->users()->get() as $user){
+                    if($user->id === auth('company')->user()->id){
+                        $peoplesUser =  $user->persons_count;
+                    }
+                    $peoplesCompany += $user->persons_count;
+                }
 
-            $data =  auth('company')->user()->persons()->get();
-
-        return view('company.dashboard',['cadastrado' => count($data)]);
+        return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
     }
 
 
@@ -59,7 +67,7 @@ class CompaniesController extends Controller
             return DataTables::of($person)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.'" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>'. $row->code.'</strong>" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
                     //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
 
                     return $btn;
@@ -179,11 +187,17 @@ class CompaniesController extends Controller
 
     public function importView()
     {
+        if(!auth()->user()->isAdmin){
+            return back();
+        }
         return view('company.import');
     }
 
     public function import()
     {
+        if(!auth()->user()->isAdmin){
+            return back();
+        }
         Excel::queueImport(new PersonsImport(),request()->file('file'));
 
         return back();
@@ -191,11 +205,17 @@ class CompaniesController extends Controller
 
     public function importView2()
     {
+        if(!auth()->user()->isAdmin){
+            return back();
+        }
         return view('company.import2');
     }
 
     public function import2()
     {
+        if(!auth()->user()->isAdmin){
+            return back();
+        }
         Excel::queueImport(new CompanyUsersImport(),request()->file('file'));
 
         return back();

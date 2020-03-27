@@ -20,19 +20,17 @@ class CompanyUser  extends Authenticatable
 
     protected $hidden = ['password'];
 
+
+
     public function persons()
     {
         return $this->morphToMany(People::class, 'personable','personables','personable_id', 'person_id')->orderByDesc('created_at');
     }
-/*
-    public function personable()
+
+
+    public function company()
     {
-        return $this->morphedTo();
+        return $this->belongsTo(Company::class);
     }
 
-    public function persons()
-    {
-        return $this->morphedByMany(CompanyUser::class, 'personable', 'personables', 'personable_id', 'person_id');
-    }
-*/
 }

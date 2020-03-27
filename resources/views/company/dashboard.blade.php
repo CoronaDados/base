@@ -2,7 +2,6 @@
 
 @section('content')
     @include('company.layouts.headers.cards')
-
     <div class="container-fluid mt--7">
         <div class="row mt-5">
             <div class="col-xl-6 mb-5 mb-xl-0">
