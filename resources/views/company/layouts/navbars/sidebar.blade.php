@@ -59,32 +59,55 @@
             </div>
             <!-- Navigation -->
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <li class="nav-item {{request()->is('/') ? 'active' : ''}}">
                     <a class="nav-link" href="{{ route('company.home') }}">
                         <i class="ni ni-tv-2 text-primary"></i> {{ __('Dashboard') }}
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('company.add_people') }}">
+                <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
+                    <a class="nav-link" href="{{ route('company.addPerson') }}">
                         <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
                     <a class="nav-link" href="{{ route('company.monitoring') }}">
                         <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{request()->is('actions') ? 'active' : ''}}">
                     <a class="nav-link" href="#">
                         <i class="ni ni-spaceship text-info"></i> {{ __('Ações') }}
                     </a>
                 </li>
+                <li class="nav-item {{request()->segment(1) === 'users' ? 'active' : ''}}">
+                    <a class="nav-link" href="#navbar-users" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-users">
+                        <i class="fa fa-users" ></i>
+                        <span class="nav-link-text">{{ __('Usuários') }}</span>
+                    </a>
+
+                    <div class="collapse " id="navbar-users">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item {{request()->is('users') ? 'active' : ''}}">
+                                <a class="nav-link" href="{{ route('company.users.index') }}">
+                                    {{ __('Ver') }}
+                                </a>
+                            </li>
+                            <li class="nav-item {{request()->is('users/create') ? 'active' : ''}}">
+                                <a class="nav-link" href="{{ route('company.users.create') }}">
+                                    {{ __('Novo') }}
+                                </a>
+                            </li>
+                        </ul>
+                        <hr class="my-3">
+                    </div>
+                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('company.logout') }}" class="nav-link" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
                         <i class="ni ni-user-run"></i>
-                        <span>{{ __('Logout') }}</span>
+                        <span>{{ __('Sair') }}</span>
                     </a>
                 </li>
             </ul>

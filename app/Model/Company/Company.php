@@ -4,6 +4,7 @@ namespace App\Model\Company;
 
 use App\Model\People\People;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Company extends Model
 {
@@ -14,9 +15,7 @@ class Company extends Model
 
     public function users()
     {
-        return $this->hasMany('App\Model\Company\CompanyUser','company_id','id')->withCount('persons');
+        return $this->hasMany('App\Model\Company\CompanyUser');
     }
-
-
 
 }

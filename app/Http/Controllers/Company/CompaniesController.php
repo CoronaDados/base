@@ -11,6 +11,7 @@ use App\Model\Company\CompanyUser;
 use App\Model\People\CasePeople;
 use App\Model\People\People;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -20,16 +21,8 @@ class CompaniesController extends Controller
 
     public function dashboard()
     {
-                $companyUsers = Company::query()->where('id','like',auth('company')->user()->company_id)
-                    ->with('users.persons')
-                    ->first();
-                $peoplesCompany = 0;
-                foreach ($companyUsers->users()->get() as $user){
-                    if($user->id === auth('company')->user()->id){
-                        $peoplesUser =  $user->persons_count;
-                    }
-                    $peoplesCompany += $user->persons_count;
-                }
+        $peoplesCompany = auth()->user()->countPersons();
+        $peoplesUser =   auth()->user()->persons()->count();
 
         return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
     }
@@ -42,7 +35,7 @@ class CompaniesController extends Controller
      * @throws \Exception
      */
 
-    public function addPeople(Request $request)
+    public function addPerson(Request $request)
     {
         //$peoples = auth('company')->user()->persons()->get();
         if ($request->ajax()) {
@@ -51,7 +44,7 @@ class CompaniesController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('company.add_people');
+        return view('company.addPerson');
     }
 
     public function monitoring(Request $request)

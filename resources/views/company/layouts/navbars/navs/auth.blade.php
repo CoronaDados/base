@@ -21,9 +21,9 @@
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
                     </div>
-                    <a href="#" class="dropdown-item">
+                    <a href="{{route('company.users.index')}}" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
-                        <span>{{ __('Configurações') }}</span>
+                        <span>{{ __('Usuários') }}</span>
                     </a>
                     <a href="#" class="dropdown-item">
                         <i class="ni ni-support-16"></i>
