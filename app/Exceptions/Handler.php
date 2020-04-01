@@ -52,6 +52,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+            if($request->ajax()) {
+                return response()->json(['Você não tem permissão suficiente.']);
+            }
+            flash()->overlay('Você não tem permissão suficiente para acessar este recurso.');
+            return back();
+        }
+
         return parent::render($request, $exception);
     }
 

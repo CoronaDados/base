@@ -108,7 +108,7 @@ return [
         ],
         'companies' => [
             'provider' => 'companies',
-            'table' => 'password_resets',
+            'table' => 'company_user_resets',
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -4,9 +4,9 @@
     {{--    @include('layouts.headers.cards')--}}
     <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card">
-            <div class="card-body">
+            <div class="card-header">
                 <h5 class="card-title">Monitoramento diario</h5>
-                <p class="card-body">Clique em <strong>monitorar</strong> para coletar as infromações</p>
+                <img src="{{asset('img').'/informativo-01.jpeg'}}" />
             </div>
         </div>
         <div>
@@ -15,6 +15,8 @@
 
         <div class="row mt-5">
             <div class="col-xl-12 mb-5 mb-xl-0">
+                <form id="multi-monitoring" action="{{route('company.person.multi.monitoring')}}" method="POST">
+                    @csrf
                 <div class="card shadow">
                     <div class="card-header border-0">
                         <div class="row align-items-center">
@@ -23,25 +25,38 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive p-2">
-                        <!-- Projects table -->
-                        <table class="table table-bordered data-table">
-                            <thead>
-                            <tr>
-                                <th width="20px">No</th>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Setor</th>
-                                <th width="100px">
-                                    <Ações></Ações>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <div class="card-header multiMoni">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3>Ações em massa</h3>
+                                <button type="submit" class="btn btn-primary" id="multiMoni">Monitorar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive p-2">
+                            <!-- Projects table -->
+
+                            <table class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th width="20px">No</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Setor</th>
+                                    <th width="100px">
+                                        <Ações></Ações>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -55,52 +70,68 @@
                     <form id="CustomerForm" name="CustomerForm" class="form-horizontal">
                         <input type="hidden" name="person_id" id="person_id">
                         <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select name="febre" required class="custom-select">
-                                    <option disabled selected>Febre?</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Febre?</label>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="febre-sim" name="febre" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="febre-sim">Sim</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="febre-nao" name="febre" checked  value="nao" class="custom-control-input">
+                                        <label class="custom-control-label" for="febre-nao">Não</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select name="dor_corpo" required class="custom-select">
-                                    <option disabled selected>Dor no corpo?</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Dor no corpo?</label>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="dor-sim" name="dor" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dor-sim">Sim</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="dor-nao" name="dor" checked value="nao" class="custom-control-input">
+                                        <label class="custom-control-label" for="dor-nao">Não</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select name="coriza" required class="custom-select">
-                                    <option disabled selected>Coriza?</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Coriza?</label>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="coriza-sim" name="coriza" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="coriza-sim">Sim</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="coriza-nao" checked name="coriza"  value="nao" class="custom-control-input">
+                                        <label class="custom-control-label" for="coriza-nao">Não</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select name="febre" required class="custom-select">
-                                    <option disabled selected>Febre?</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Tose?</label>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="tose-sim" name="tose" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="tose-sim">Sim</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="tose-nao" checked name="tose"  value="nao" class="custom-control-input">
+                                        <label class="custom-control-label"  for="tose-nao">Não</label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Alguma observação?</label>
-                                <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Alguma observação?</label>
+                                    <div class="col-sm-12">
                                 <textarea id="status" rows="4" name="obs" required="" placeholder="Alguma observação?"
                                           class="form-control"></textarea>
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                         <div class="col-sm-offset-2 col-sm-10">
@@ -186,7 +217,18 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('company.monitoring') }}",
+                columnDefs: [{
+                    targets: 0,
+                    checkboxes: {
+                        selectRow: true
+                    }
+                }],
+                select: {
+                    style: 'multi',
+                },
+                order: [[1, 'asc']],
                 columns: [
+                    {data: 'id', name: 'id'},
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
@@ -219,13 +261,29 @@
 
                         $('#CustomerForm').trigger("reset");
                         $('#ajaxModel').modal('hide');
-                        table.row( $(this) ).invalidate().draw();
+                        table.row($(this)).invalidate().draw();
 
                     },
                     error: function (data) {
                         console.log('Error:', data);
                         $('#saveBtn').html('Gravar');
                     }
+                });
+            });
+            $('#multi-monitoring').on('submit', function(e){
+                var form = this;
+
+                var rows_selected = table.column(0).checkboxes.selected();
+
+                // Iterate over all selected checkboxes
+                $.each(rows_selected, function(index, rowId){
+                    // Create a hidden element
+                    $(form).append(
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'id[]')
+                            .val(rowId)
+                    );
                 });
             });
         });

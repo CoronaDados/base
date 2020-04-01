@@ -3,15 +3,19 @@
 namespace App\Model\Company;
 
 use App\Model\People\People;
+use App\Notifications\Company\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Traits\HasRoles;
 
 
 class CompanyUser  extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable,
+        HasRoles;
 
     protected $guard = 'company';
 
@@ -20,7 +24,6 @@ class CompanyUser  extends Authenticatable
     ];
 
     protected $hidden = ['password'];
-
 
 
     public function persons()
@@ -39,4 +42,8 @@ class CompanyUser  extends Authenticatable
         return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = ".$this->company()->first()->id." ) )"));
     }
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 }

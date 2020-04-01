@@ -12,10 +12,12 @@ Auth::routes();
 //Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth:company'], function () {
+    Route::resource('roles','RoleController');
     Route::resource('users', 'UserController');
     Route::get('', 'CompaniesController@dashboard')->name('home');
-    Route::get('person/add', 'CompaniesController@addPerson')->name('addPerson');
-    Route::post('people/add', 'CompaniesController@storePeople')->name('add_people');
+    Route::get('person/add', 'CompaniesController@addPerson')->name('person.create');
+    Route::post('person/add', 'CompaniesController@storePeople')->name('person.store');
+    Route::post('person/multi/monitoring', 'CompaniesController@multiMonitoring')->name('person.multi.monitoring');
     Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 

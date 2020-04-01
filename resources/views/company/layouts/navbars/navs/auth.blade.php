@@ -21,10 +21,12 @@
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
                     </div>
+                    @can('Ver Usuários')
                     <a href="{{route('company.users.index')}}" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>{{ __('Usuários') }}</span>
                     </a>
+                    @endcan
                     <a href="#" class="dropdown-item">
                         <i class="ni ni-support-16"></i>
                         <span>{{ __('Ajuda') }}</span>

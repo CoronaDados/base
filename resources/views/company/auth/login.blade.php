@@ -65,8 +65,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-6">
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="text-light">
+                        @if (Route::has('company.password.request'))
+                            <a href="{{ route('company.password.request') }}" class="text-light">
                                 <small>{{ __('Esqueceu a senha?') }}</small>
                             </a>
                         @endif

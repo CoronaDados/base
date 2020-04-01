@@ -1,7 +1,7 @@
-@extends('_layouts.app', ['class' => 'bg-default'])
+@extends('company.layouts.app', ['class' => 'bg-info'])
 
 @section('content')
-    @include('_layouts.headers.guest')
+    @include('company.layouts.headers.guest')
 
     <div class="container mt--8 pb-5">
         <div class="row justify-content-center">
@@ -9,7 +9,7 @@
                 <div class="card bg-secondary shadow border-0">
                     <div class="card-body px-lg-5 py-lg-5">
                         <div class="text-center text-muted mb-4">
-                            <small>{{ __('Reset password') }}</small>
+                            <small>{{ __('Recuperar senha') }}</small>
                         </div>
 
                         @if (session('status'))
@@ -18,7 +18,7 @@
                             </div>
                         @endif
 
-                        <form role="form" method="POST" action="{{ route('password.email') }}">
+                        <form role="form" method="POST" action="{{ route('company.password.email') }}">
                             @csrf
 
                             <div class="form-group{{ $errors->has('email') ? ' has-danger' : '' }} mb-3">
@@ -35,7 +35,7 @@
                                 @endif
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary my-4">{{ __('Send Password Reset Link') }}</button>
+                                <button type="submit" class="btn btn-primary my-4">{{ __('Redefinir senha') }}</button>
                             </div>
                         </form>
                     </div>

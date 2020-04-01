@@ -44,7 +44,7 @@ class CompaniesController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        return view('company.addPerson');
+        return view('company.person.create');
     }
 
     public function monitoring(Request $request)
@@ -108,7 +108,8 @@ class CompaniesController extends Controller
         //$people->save();
         auth('company')->user()->persons()->save($people);
         //$peoples = auth('company')->user()->persons()->get();
-        return view('company.add_people');
+        flash('Colaborador cadastrado com sucesso', 'info');
+        return view('company.person.create');
     }
 
 
@@ -128,9 +129,21 @@ class CompaniesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function multiMonitoring(Request $request)
     {
-        //
+
+        if(!$persons = auth('company')->user()->persons()->whereIn('id',$request->id)->get()){
+            return response()->json('error',401);
+        };
+
+
+
+        foreach ($persons as $person) {
+            $monitoring = new CasePeople(['status' => 'ok']);
+            $person->createCasePeopleDay()->save($monitoring);
+        }
+       flash('Atualizado com sucesso','info');
+       return redirect(route('company.monitoring'));
     }
 
     /**

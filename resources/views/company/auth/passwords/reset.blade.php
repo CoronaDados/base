@@ -1,7 +1,7 @@
-@extends('_layouts.app', ['class' => 'bg-default'])
+@extends('company.layouts.app', ['class' => 'bg-info'])
 
 @section('content')
-    @include('_layouts.headers.guest')
+    @include('company.layouts.headers.guest')
 
     <div class="container mt--8 pb-5">
         <div class="row justify-content-center">
@@ -11,7 +11,7 @@
                         <div class="text-center text-muted mb-4">
                             <small>{{ __('Reset Password') }}</small>
                         </div>
-                        <form role="form" method="POST" action="{{ route('password.update') }}">
+                        <form role="form" method="POST" action="{{ route('company.password.update') }}">
                             @csrf
 
                             <input type="hidden" name="token" value="{{ $token }}">

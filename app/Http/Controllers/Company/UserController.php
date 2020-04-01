@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
+use App\Model\People\People;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -55,7 +57,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $user = CompanyUser::create([
+            'company_id' => auth()->user()->company_id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'is_admin' => false,
+            'password' => Hash::make('secret@'),
+        ]);
+
+        $people = new People();
+        $people->name = $request->name;
+        $people->email = $request->email;
+        $people->cpf = $request->cpf;
+        $people->phone = $request->phone;
+        $people->sector = $request->sector;
+        $people->bithday = $request->bithday;
+        $people->gender = $request->gender;
+        $people->risk_group = $request->risk_group;
+        $people->status = $request->status;
+        $people->cep = $request->cep;
+        $people->ibge = $request->ibge;
+        $people->state = $request->state;
+        $people->city = $request->city;
+        $people->neighborhood = $request->neighborhood;
+        $people->street = $request->street;
+        $people->complement = $request->complement;
+        $people->more = $request->more;
+        //$people->save();
+        $user->persons()->save($people);
+
+        flash('Usuário cadastrado com sucesso', 'info');
+        return redirect()->back();
     }
 
     /**

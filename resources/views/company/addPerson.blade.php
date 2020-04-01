@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Cadastro de colaboradores</h5>
-                <form role="form" method="POST" action="{{ route('company.add_people') }}">
+                <form role="form" method="POST" action="{{ route('company.person.store') }}">
                     @csrf
                     <div class="row">
                         <div class="col-md-6">

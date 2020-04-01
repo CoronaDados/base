@@ -42,7 +42,7 @@ class People extends Model
     }
     public function casePeopleDay()
     {
-        return $this->hasOne(CasePeople::class,'person_id')->whereDay('created_at','>',Carbon::yesterday())    ->latest();
+        return $this->hasOne(CasePeople::class,'person_id')->whereDay('created_at','=',Carbon::today())->latest();
     }
 
     public function createCasePeopleDay()

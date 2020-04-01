@@ -17,6 +17,7 @@
         <link href="{{ asset('argon') }}/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
         <!-- Argon CSS -->
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+        <link href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet">
         <link type="text/css" href="{{ asset('argon') }}/css/argon.css?v=1.0.0" rel="stylesheet">
 
     </head>
@@ -30,6 +31,7 @@
 
         <div class="main-content">
             @include('company.layouts.navbars.navbar')
+            @include('flash::message')
             @yield('content')
         </div>
 
@@ -46,12 +48,17 @@
         <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 {{--        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>--}}
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
         <script src="/js/jquery.mask.min.js"></script>
 
         @stack('js')
 
         <!-- Argon JS -->
         <script src="{{ asset('argon') }}/js/argon.js?v=1.0.0"></script>
+        <script>
+            $('#flash-overlay-modal').modal();
+            $('div.alert').not('.alert-important').delay(5000).fadeOut(350);
+        </script>
     <script>
         $(document).ready(function(){
             $.fn.dataTable.ext.errMode = 'none';
