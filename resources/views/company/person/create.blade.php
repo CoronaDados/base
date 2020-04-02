@@ -332,7 +332,7 @@
                     }
                 },
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: "{{ route('company.person.create') }}",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
