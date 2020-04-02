@@ -5,8 +5,8 @@
     <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">Monitoramento diario</h5>
-                <img src="{{asset('img').'/informativo-01.jpeg'}}" />
+                <h5 class="card-title">Monitoramento diário</h5>
+                <img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" />
             </div>
         </div>
         <div>
@@ -28,8 +28,8 @@
                     <div class="card-header multiMoni">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3>Ações em massa</h3>
-                                <button type="submit" class="btn btn-primary" id="multiMoni">Monitorar</button>
+                                <h3>Marque todos os colaboradores sem simtomas e clique no botão abaixo</h3>
+                                <button type="submit" class="btn btn-primary" id="multiMoni">Sem sintomas</button>
                             </div>
                         </div>
                     </div>
@@ -72,53 +72,65 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Febre?</label>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="febre-sim" name="febre" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="febre-sim">Sim</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="febre-nao" name="febre" checked  value="nao" class="custom-control-input">
-                                        <label class="custom-control-label" for="febre-nao">Não</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="febre-sim" name="febre" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="febre-sim">Febre</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Dor no corpo?</label>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="dor-sim" name="dor" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="dor-sim">Sim</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="dor-nao" name="dor" checked value="nao" class="custom-control-input">
-                                        <label class="custom-control-label" for="dor-nao">Não</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="tosse-seca" name="tosse-seca" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="tosse-seca">Tosse seca</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Coriza?</label>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="coriza-sim" name="coriza" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="coriza-sim">Sim</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="coriza-nao" checked name="coriza"  value="nao" class="custom-control-input">
-                                        <label class="custom-control-label" for="coriza-nao">Não</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="cancaso" name="cancaso" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="cancaso">Cansaço</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Tose?</label>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="tose-sim" name="tose" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="tose-sim">Sim</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="dor-corpo" name="dor-corpo" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dor-corpo">Dor no corpo</label>
                                     </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="tose-nao" checked name="tose"  value="nao" class="custom-control-input">
-                                        <label class="custom-control-label"  for="tose-nao">Não</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="dar-garganta" name="dar-garganta" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dar-garganta">Dor de garganta corpo</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="congestao-nasal" name="congestao-nasal" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="congestao-nasal">Congestão nasal</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="corrimento-nasal" name="corrimento-nasal" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="corrimento-nasal">Corrimento nasal</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="diarreia">Diarréia</label>
                                     </div>
                                 </div>
                             </div>

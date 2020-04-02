@@ -82,11 +82,6 @@
                     </a>
                 </li>
                 @endcan
-                <li class="nav-item {{request()->is('actions') ? 'active' : ''}}">
-                    <a class="nav-link" href="#">
-                        <i class="ni ni-spaceship text-info"></i> {{ __('Ações') }}
-                    </a>
-                </li>
                 @canany('Ver Usuários','Ver Funções')
                     <li class="nav-item {{request()->segment(1) === 'users' ? 'active' : ''}}">
                         <a class="nav-link" href="#navbar-users" data-toggle="collapse" role="button"

@@ -21,8 +21,8 @@ class CompaniesController extends Controller
 
     public function dashboard()
     {
-        $peoplesCompany = auth()->user()->countPersons();
-        $peoplesUser =   auth()->user()->persons()->count();
+        $peoplesCompany = auth('company')->user()->countPersons();
+        $peoplesUser =   auth('company')->user()->persons()->count();
 
         return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
     }
@@ -37,12 +37,21 @@ class CompaniesController extends Controller
 
     public function addPerson(Request $request)
     {
-        //$peoples = auth('company')->user()->persons()->get();
         if ($request->ajax()) {
-            $data =  auth('company')->user()->persons()->get();
+            if(auth('company')->user()->can('Ver Usuários')){
+                $data =  auth('company')->user()->personsInCompany();
+            }else{
+                $data =  auth('company')->user()->persons()->get();
+            }
+
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->make(true);
+                ->addColumn('action', function($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"data-original-title="Ver" class="edit btn btn-primary btn-sm editMonitoring">Ver / Editar</a>';
+                        return $btn;
+                            })
+                    ->rawColumns(['action'])
+                    ->make(true);
         }
         return view('company.person.create');
     }

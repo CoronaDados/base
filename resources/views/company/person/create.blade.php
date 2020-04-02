@@ -14,32 +14,32 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">Nome Completo</label>
+                                <label for="name">Nome Completo*</label>
                                 <input type="text" class="form-control" required id="name" name="name"
-                                       placeholder="Nome Completo">
+                                       placeholder="Nome Completo (obrigatório)">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="email">Email</label>
+                                <label for="email">Email*</label>
                                 <input type="email" class="form-control" required id="email" name="email"
-                                       placeholder="Email">
+                                       placeholder="Email (obrigatório)">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="phone">Telefone (WhatsApp)</label>
+                                <label for="phone">Telefone (WhatsApp)*</label>
                                 <input type="tel" class="form-control phone" required name="phone" id="phone"
-                                       placeholder="Telefone (WhatsApp)">
+                                       placeholder="Telefone (WhatsApp) (obrigatório)">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="cpf">CPF</label>
+                                <label for="cpf">CPF*</label>
                                 <input type="text" class="form-control cpf" required id="cpf" name="cpf"
-                                       placeholder="CPF">
+                                       placeholder="CPF (obrigatório)">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -47,24 +47,27 @@
                                 <label for="department">Departamento</label>
                                 <select name="department" id="department" required class="custom-select">
                                     <option disabled selected>Setor</option>
+                                    <option value="Administrativo">Administrativo</option>
+                                    <option value="Financeiro">Financeiro</option>
                                     <option value="Operacional">Operacional</option>
-                                    <option value="Escritório">Escritório</option>
-                                    <option value="Almoxerifado">Almoxerifado</option>
+                                    <option value="Comercial">Comercial</option>
+                                    <option value="Médico">Médico</option>
+                                    <option value="Diretoria">Diretoria</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="cep">CEP</label>
+                                <label for="cep">CEP*</label>
                                 <input type="text" class="form-control cep" required name="cep" id="cep"
-                                       placeholder="CEP">
+                                       placeholder="CEP (obrigatório)">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="birthday">Data de Nascimento</label>
+                                <label for="birthday">Data de Nascimento*</label>
                                 <div class="input-group input-group-alternative">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
@@ -156,8 +159,8 @@
                             <th width="20px">No</th>
                             <th>Nome</th>
                             <th>Email</th>
-                            <th>Setor</th>
-                            {{--                                <th width="100px"><Ações></Ações></th>--}}
+                            <th>Lider</th>
+                            <th width="100px"><Ações></Ações></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -335,8 +338,8 @@
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
-                    {data: 'sector', name: 'sector'},
-                    // {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'lider', name: 'lider'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
 

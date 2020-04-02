@@ -42,6 +42,19 @@ class CompanyUser  extends Authenticatable
         return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = ".$this->company()->first()->id." ) )"));
     }
 
+    public function personsInCompany()
+    {
+        return DB::select(DB::raw("select
+		p.id, p.name, p.email,
+        c.id,
+        c.name as lider from persons p
+INNER JOIN personables pp
+ON p.id = pp.person_id 
+INNER JOIN company_users c
+ON pp.personable_id = c.id
+where p.id IN ( select pp.person_id from personables pp where personable_id in ( select c.id  company_users where company_id = ".$this->company()->first()->id." ) )"));
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
