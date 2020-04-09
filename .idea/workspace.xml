@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c577bab7-700c-4ad6-9313-a95702d305b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/views/company/users/import.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Imports/CompanyUsersImport.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Imports/CompanyUsersImport.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Model/Company/CompanyUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Model/Company/CompanyUser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/company/layouts/app.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/layouts/app.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/company/layouts/navbars/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/layouts/navbars/sidebar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/company/monitoring.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/monitoring.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/company/users/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/company/users/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/vendor/flash/modal.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/flash/modal.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/company.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/company.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Company/Auth/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Company/Auth/RegisterController.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/vendor/asm89/stack-cors/" />
     <ignored path="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar/" />
@@ -153,16 +143,16 @@
           <entry key="gitignore" value="1" />
           <entry key="json" value="2" />
           <entry key="log" value="17" />
-          <entry key="php" value="235" />
+          <entry key="php" value="238" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key=".env file" value="9" />
-          <entry key="Blade" value="81" />
+          <entry key="Blade" value="82" />
           <entry key="JSON" value="2" />
           <entry key="Log" value="17" />
-          <entry key="PHP" value="154" />
+          <entry key="PHP" value="156" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="SmartyConfig" value="4" />
         </counts>
@@ -173,7 +163,7 @@
           <entry key="dummy" value="7" />
           <entry key="env" value="87" />
           <entry key="log" value="2" />
-          <entry key="php" value="7721" />
+          <entry key="php" value="7757" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
@@ -182,7 +172,7 @@
           <entry key="Blade" value="4230" />
           <entry key="HTML" value="1" />
           <entry key="Log" value="2" />
-          <entry key="PHP" value="3488" />
+          <entry key="PHP" value="3524" />
           <entry key="PLAIN_TEXT" value="7" />
           <entry key="SQL" value="2" />
           <entry key="SmartyConfig" value="43" />
@@ -191,7 +181,29 @@
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Company/Auth/RegisterController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="349">
+              <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="247">
+              <caret line="141" column="90" selection-start-line="141" selection-start-column="83" selection-end-line="141" selection-end-column="90" />
+              <folding>
+                <element signature="e#48#64#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -246,12 +258,13 @@
         <option value="$PROJECT_DIR$/app/Model/Company/CompanyUser.php" />
         <option value="$PROJECT_DIR$/resources/views/company/layouts/navbars/sidebar.blade.php" />
         <option value="$PROJECT_DIR$/routes/company.php" />
-        <option value="$PROJECT_DIR$/resources/views/company/users/import.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/vendor/flash/modal.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/company/monitoring.blade.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php" />
         <option value="$PROJECT_DIR$/resources/views/company/layouts/app.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/company/users/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/company/users/import.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Company/Auth/RegisterController.php" />
       </list>
     </option>
   </component>
@@ -409,13 +422,37 @@
             <path>
               <item name="coronadados" type="b2602c69:ProjectViewProjectNode" />
               <item name="coronadados" type="462c0819:PsiDirectoryNode" />
-              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="coronadados" type="b2602c69:ProjectViewProjectNode" />
               <item name="coronadados" type="462c0819:PsiDirectoryNode" />
-              <item name="storage" type="462c0819:PsiDirectoryNode" />
-              <item name="files" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="coronadados" type="b2602c69:ProjectViewProjectNode" />
+              <item name="coronadados" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="coronadados" type="b2602c69:ProjectViewProjectNode" />
+              <item name="coronadados" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="Company" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="coronadados" type="b2602c69:ProjectViewProjectNode" />
+              <item name="coronadados" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="Company" type="462c0819:PsiDirectoryNode" />
+              <item name="Auth" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -493,15 +530,16 @@
       <workItem from="1585783332895" duration="13692000" />
       <workItem from="1585954320504" duration="693000" />
       <workItem from="1586279194237" duration="17716000" />
-      <workItem from="1586369429782" duration="14010000" />
+      <workItem from="1586369429782" duration="14853000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="84180000" />
+    <option name="totallyTimeSpent" value="85023000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18154034" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -588,7 +626,6 @@
     <state x="462" y="376" width="540" height="172" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/35.27.1405.873@35.27.1405.873" timestamp="1585372275450" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/HomeController.php" />
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/ProfileController.php" />
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/UserController.php" />
     <entry file="file://$PROJECT_DIR$/resources/views/welcome.blade.php">
@@ -784,13 +821,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/company/users/import.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="111" selection-start-line="9" selection-start-column="111" selection-end-line="9" selection-end-column="111" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/vendor/flash/message.blade.php">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -851,22 +881,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="141" column="90" selection-start-line="141" selection-start-column="83" selection-end-line="141" selection-end-column="90" />
-          <folding>
-            <element signature="e#48#64#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/company/users/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1033">
           <caret line="77" column="57" selection-start-line="77" selection-start-column="57" selection-end-line="77" selection-end-column="57" />
           <folding>
             <element signature="e#7216#8732#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/company/users/import.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="95" selection-start-line="9" selection-start-column="95" selection-end-line="9" selection-end-column="95" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Company/Auth/RegisterController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Company/UserController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="141" column="90" selection-start-line="141" selection-start-column="83" selection-end-line="141" selection-end-column="90" />
+          <folding>
+            <element signature="e#48#64#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>

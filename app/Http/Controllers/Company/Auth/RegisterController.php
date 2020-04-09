@@ -73,13 +73,15 @@ class RegisterController extends Controller
             'razao' => $data['razao'],
             'cnpj' => $data['cnpj'],
         ]);
-        return CompanyUser::create([
+        $user = CompanyUser::create([
             'company_id' => $company->id,
             'name' => $data['name'],
             'email' => $data['email'],
             'is_admin' => true,
             'password' => Hash::make($data['password']),
         ]);
+        $user->assignRole('Admin');
+        return $user;
     }
 
     protected function guard()
