@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\CsvData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Company\CsvImportRequest;
+use App\Imports\CompanyUsersImport;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
 use App\Model\People\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -24,11 +30,11 @@ class UserController extends Controller
 
         if ($request->ajax()) {
             $users = auth()->user()->company()->first()->users()->get();
+
             return DataTables::of($users)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>'. $row->code.'</strong>" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Ver</a>';
-                    //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-status="' . $row->status . '"  data-id="' . $row->id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editUser">Ver / Editar</a>';
 
                     return $btn;
                 })
@@ -36,7 +42,9 @@ class UserController extends Controller
                 ->make(true);
         }
 
-        return view('company.users.index');
+        $roles = Role::query()->where('guard_name', '=', 'company')->pluck('name');
+
+        return view('company.users.index', compact('roles'));
     }
 
     /**
@@ -52,12 +60,12 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-       $user = CompanyUser::create([
+        $user = CompanyUser::create([
             'company_id' => auth()->user()->company_id,
             'name' => $request->name,
             'email' => $request->email,
@@ -93,18 +101,22 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        if ($request->ajax()) {
+            $roles = Role::query()->where('guard_name', '=', 'company')->pluck('name');
+            $user = CompanyUser::query()->where('id', '=', $id)->with('roles')->first();
+            return response()->json(['user' => $user, 'roles' => $roles]);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -115,23 +127,55 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+        if ($request->ajax()) {
+            $user = CompanyUser::query()->where('id', '=', $id)->first();
+            if ($request['password'])
+                if ($request['password'] === $request['confirm_password']) {
+                    $user->password = Hash::make($request['password']);
+                }else{
+                    return response()->json(['success' => false, 'error' => true, "message" => 'Senha não confirmada'], 400);
+                }
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->cpf = $request['cpf'];
+            $user->phone = $request['phone'];
+            $user->syncRoles($request['role']);
+            $user->save();
+
+            return response()->json(['success' => true, "message" => 'Usuário atualizado com sucesso']);
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         //
+    }
+
+
+    public function viewImport()
+    {
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        return view('company.users.import', compact('roles'));
+    }
+
+    public function import(Request $request)
+    {
+        $role_name = $request->role;
+        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($request->file('file'));
+        flash()->overlay('Importação realizada com sucesso, aguarde algums minutos para ver os usuários<br> Lembre-se que a senha dos usuários é o cpf sem pontos ou traços', 'Importação de usuários');
+        return back();
     }
 }

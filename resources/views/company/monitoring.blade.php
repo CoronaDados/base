@@ -28,7 +28,7 @@
                     <div class="card-header multiMoni">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3>Marque todos os colaboradores sem simtomas e clique no botão abaixo</h3>
+                                <h3>Marque todos os colaboradores sem sintomas e clique no botão abaixo</h3>
                                 <button type="submit" class="btn btn-primary" id="multiMoni">Sem sintomas</button>
                             </div>
                         </div>
@@ -255,9 +255,6 @@
                 $('#saveBtn').val("edit-user");
                 $('#ajaxModel').modal('show');
                 $('#person_id').val($(this).data('id'));
-                //  $('#name').val(data.name);
-                //  $('#detail').val(data.detail);
-                //  })
             });
 
             $('#saveBtn').click(function (e) {

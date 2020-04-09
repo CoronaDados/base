@@ -69,18 +69,18 @@
                     </a>
                 </li>
                 @can('Cadastrar Colaborador')
-                <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
-                    <a class="nav-link" href="{{ route('company.person.create') }}">
-                        <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
-                    </a>
-                </li>
+                    <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{ route('company.person.create') }}">
+                            <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
+                        </a>
+                    </li>
                 @endcan
                 @can('Monitorar Colaborador')
-                <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
-                    <a class="nav-link" href="{{ route('company.monitoring') }}">
-                        <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
-                    </a>
-                </li>
+                    <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
+                        <a class="nav-link" href="{{ route('company.monitoring') }}">
+                            <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
+                        </a>
+                    </li>
                 @endcan
                 @canany('Ver Usuários','Ver Funções')
                     <li class="nav-item {{request()->segment(1) === 'users' ? 'active' : ''}}">
@@ -111,6 +111,13 @@
                                     <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
                                         <a class="nav-link" href="{{ route('company.roles.index') }}">
                                             {{ __('Funções') }}
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('Cadastrar Usuários')
+                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('company.users.import') }}">
+                                            {{ __('Importar Usuários') }}
                                         </a>
                                     </li>
                                 @endcan
