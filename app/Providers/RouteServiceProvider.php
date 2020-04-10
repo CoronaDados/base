@@ -44,7 +44,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapApiRoutes();
 
-        $this->mapWebRoutes();
+        // $this->mapWebRoutes();
 
         $this->mapCompanyRoutes();
 
@@ -72,7 +72,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::domain(env('COMPANY_URL'))
             ->middleware('web')
             ->name('company.')
-            ->namespace($this->namespace.'\Company')
+            ->namespace($this->namespace . '\Company')
             ->group(base_path('routes/company.php'));
     }
 
