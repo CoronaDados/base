@@ -117,6 +117,13 @@
                         </form>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <a href="{{ route('company.login') }}" class="text-secondary">
+                            <small>Voltar</small>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
