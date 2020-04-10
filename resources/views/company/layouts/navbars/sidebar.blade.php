@@ -70,9 +70,37 @@
                 </li>
                 @can('Cadastrar Colaborador')
                     <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
-                        <a class="nav-link" href="{{ route('company.person.create') }}">
-                            <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
+                        <a class="nav-link" href="#navbar-colaboradores" data-toggle="collapse" role="button"
+                           aria-expanded="false"
+                           aria-controls="navbar-colaboradores">
+                            <i class="ni ni-single-02 text-blue"></i>
+                            <span class="nav-link-text">{{ __('Colaboradores') }}</span>
                         </a>
+
+                        <div class="collapse " id="navbar-colaboradores">
+                            <ul class="nav nav-sm flex-column">
+
+                                <li class="nav-item {{request()->is('person/list') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.person.list') }}">
+                                        {{ __('Listar') }}
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.person.create') }}">
+                                        {{ __('Cadastrar') }}
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.person.import') }}">
+                                        {{ __('Importar') }}
+                                    </a>
+                                </li>
+
+                            </ul>
+                            <hr class="my-3">
+                        </div>
                     </li>
                 @endcan
                 @can('Monitorar Colaborador')
@@ -96,28 +124,28 @@
                                 @can('Ver Usuários')
                                     <li class="nav-item {{request()->is('users') ? 'active' : ''}}">
                                         <a class="nav-link" href="{{ route('company.users.index') }}">
-                                            {{ __('Ver') }}
+                                            {{ __('Listar') }}
                                         </a>
                                     </li>
                                 @endcan
                                 @can('Cadastrar Usuários')
                                     <li class="nav-item {{request()->is('users/create') ? 'active' : ''}}">
                                         <a class="nav-link" href="{{ route('company.users.create') }}">
-                                            {{ __('Novo') }}
+                                            {{ __('Cadastrar') }}
                                         </a>
                                     </li>
                                 @endcan
                                 @can('Ver Funções')
                                     <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
                                         <a class="nav-link" href="{{ route('company.roles.index') }}">
-                                            {{ __('Funções') }}
+                                            {{ __('Gerenciar Perfis') }}
                                         </a>
                                     </li>
                                 @endcan
                                 @can('Cadastrar Usuários')
                                     <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
                                         <a class="nav-link" href="{{ route('company.users.import') }}">
-                                            {{ __('Importar Usuários') }}
+                                            {{ __('Importar') }}
                                         </a>
                                     </li>
                                 @endcan

@@ -13,6 +13,7 @@ use App\Model\People\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
@@ -37,6 +38,17 @@ class CompaniesController extends Controller
 
     public function addPerson(Request $request)
     {
+        return view('company.person.create');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Exception
+     */
+    public function listPerson(Request $request)
+    {
         if ($request->ajax()) {
             if (auth('company')->user()->can('Ver Usuários')) {
                 $data =  auth('company')->user()->personsInCompany();
@@ -53,7 +65,10 @@ class CompaniesController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('company.person.create');
+
+        $roles = Role::query()->where('guard_name', '=', 'company')->pluck('name');
+
+        return view('company.person.list', compact('roles'));
     }
 
     public function monitoring(Request $request)
@@ -201,37 +216,17 @@ class CompaniesController extends Controller
 
     public function importView()
     {
-        if (!auth()->user()->isAdmin) {
-            return back();
-        }
-        return view('company.import');
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        return view('company.import', compact('roles'));
     }
 
-    public function import()
+    public function import(Request $request)
     {
-        if (!auth()->user()->isAdmin) {
-            return back();
-        }
-        Excel::queueImport(new PersonsImport(), request()->file('file'));
+        $companyID = auth('company')->user()->company_id;
+        $file = $request->file('file');
 
+        (new PersonsImport($companyID))->queue($file);
+        flash()->overlay('Importação realizada com sucesso, aguarde algums minutos para ver os colaboradores<br> Lembre-se que a senha dos usuários é o cpf sem pontos ou traços', 'Importação de colaboradores');
         return back();
     }
-
-    // public function importView2()
-    // {
-    //     if (!auth()->user()->isAdmin) {
-    //         return back();
-    //     }
-    //     return view('company.import2');
-    // }
-
-    // public function import2()
-    // {
-    //     if (!auth()->user()->isAdmin) {
-    //         return back();
-    //     }
-    //     Excel::queueImport(new CompanyUsersImport(), request()->file('file'));
-
-    //     return back();
-    // }
 }

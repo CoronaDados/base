@@ -160,7 +160,7 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
-                        console.log(data.user.roles.length)
+
                         $('#modelHeading').html("Usuário " + data.user.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
