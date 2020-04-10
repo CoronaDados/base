@@ -17,7 +17,7 @@ Route::group(['middleware' => 'auth:company'], function () {
     Route::post('users/import', 'UserController@import')->name('users.import');
     Route::resource('users', 'UserController');
 
-    Route::resource('roles','RoleController');
+    Route::resource('roles', 'RoleController');
 
 
 
@@ -30,14 +30,14 @@ Route::group(['middleware' => 'auth:company'], function () {
 
     Route::get('import', 'CompaniesController@importView');
     Route::post('import', 'CompaniesController@import')->name('import');
-    Route::get('import2', 'CompaniesController@importView2');
-    Route::post('import2', 'CompaniesController@import2')->name('import2');
+    // Route::get('import2', 'CompaniesController@importView2');
+    // Route::post('import2', 'CompaniesController@import2')->name('import2');
 
-    Route::get('files/{file}', function ($file){
-        return response()->download(storage_path('files/'.$file));
+    Route::get('files/{file}', function ($file) {
+        return response()->download(storage_path('files/' . $file));
     })->name('files');
 
-/*
+    /*
     Route::get('test', function (){
 
         $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
@@ -48,7 +48,4 @@ Route::group(['middleware' => 'auth:company'], function () {
         }
         dd($person);
     });*/
-
 });
-
-

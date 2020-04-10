@@ -24,7 +24,7 @@ class CompaniesController extends Controller
         $peoplesCompany = auth('company')->user()->countPersons();
         $peoplesUser =   auth('company')->user()->persons()->count();
 
-        return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
+        return view('company.dashboard', compact(['peoplesCompany', 'peoplesUser']));
     }
 
 
@@ -38,20 +38,20 @@ class CompaniesController extends Controller
     public function addPerson(Request $request)
     {
         if ($request->ajax()) {
-            if(auth('company')->user()->can('Ver Usuários')){
+            if (auth('company')->user()->can('Ver Usuários')) {
                 $data =  auth('company')->user()->personsInCompany();
-            }else{
+            } else {
                 $data =  auth('company')->user()->persons()->get();
             }
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function($row) {
+                ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip"data-original-title="Ver" class="edit btn btn-primary btn-sm editMonitoring">Ver / Editar</a>';
-                        return $btn;
-                            })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
         return view('company.person.create');
     }
@@ -60,16 +60,16 @@ class CompaniesController extends Controller
     {
         if ($request->ajax()) {
             $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
-            foreach ($datas as $data){
-                if(!$data->casePeopleDay()->exists()){
+            foreach ($datas as $data) {
+                if (!$data->casePeopleDay()->exists()) {
                     $person[] = $data;
                 }
             }
 
             return DataTables::of($person)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>'. $row->code.'</strong>" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>' . $row->code . '</strong>" data-status="' . $row->status . '"  data-id="' . $row->id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
                     //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
 
                     return $btn;
@@ -82,15 +82,14 @@ class CompaniesController extends Controller
 
     public function storeMonitoring($id, Request $request)
     {
-        if(!$person = auth('company')->user()->persons()->where('id','=',$id)->first()){
-            return response()->json('error',401);
+        if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
+            return response()->json('error', 401);
         };
         $monitoring = new CasePeople(['status' => json_encode($request->all())]);
 
         $person->createCasePeopleDay()->save($monitoring);
 
         return true;
-
     }
 
     public function storePeople(Request $request)
@@ -141,8 +140,8 @@ class CompaniesController extends Controller
     public function multiMonitoring(Request $request)
     {
 
-        if(!$persons = auth('company')->user()->persons()->whereIn('id',$request->id)->get()){
-            return response()->json('error',401);
+        if (!$persons = auth('company')->user()->persons()->whereIn('id', $request->id)->get()) {
+            return response()->json('error', 401);
         };
 
 
@@ -151,8 +150,8 @@ class CompaniesController extends Controller
             $monitoring = new CasePeople(['status' => 'ok']);
             $person->createCasePeopleDay()->save($monitoring);
         }
-       flash('Atualizado com sucesso','info');
-       return redirect(route('company.monitoring'));
+        flash('Atualizado com sucesso', 'info');
+        return redirect(route('company.monitoring'));
     }
 
     /**
@@ -202,7 +201,7 @@ class CompaniesController extends Controller
 
     public function importView()
     {
-        if(!auth()->user()->isAdmin){
+        if (!auth()->user()->isAdmin) {
             return back();
         }
         return view('company.import');
@@ -210,29 +209,29 @@ class CompaniesController extends Controller
 
     public function import()
     {
-        if(!auth()->user()->isAdmin){
+        if (!auth()->user()->isAdmin) {
             return back();
         }
-        Excel::queueImport(new PersonsImport(),request()->file('file'));
+        Excel::queueImport(new PersonsImport(), request()->file('file'));
 
         return back();
     }
 
-    public function importView2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        return view('company.import2');
-    }
+    // public function importView2()
+    // {
+    //     if (!auth()->user()->isAdmin) {
+    //         return back();
+    //     }
+    //     return view('company.import2');
+    // }
 
-    public function import2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        Excel::queueImport(new CompanyUsersImport(),request()->file('file'));
+    // public function import2()
+    // {
+    //     if (!auth()->user()->isAdmin) {
+    //         return back();
+    //     }
+    //     Excel::queueImport(new CompanyUsersImport(), request()->file('file'));
 
-        return back();
-    }
+    //     return back();
+    // }
 }
