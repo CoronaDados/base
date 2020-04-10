@@ -58,8 +58,7 @@ Agora que o .env já está configurado, vamos executar as migrations para criar 
 docker-compose exec app php artisan key:generate
 docker-compose exec app php artisan migrate:install
 docker-compose exec app php artisan migrate
-docker-compose exec app php artisan db:seed --class=PermissionTableSeeder
-docker-compose exec app php artisan db:seed --class=UsersTableSeeder
+docker-compose exec app php artisan db:seed --class=DatabaseSeeder
 ```
 
 ### Adicionar permissão no storage
