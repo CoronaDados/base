@@ -1,0 +1,38 @@
+version: "3"
+
+volumes:
+  dbdata:
+
+services:
+  mysql:
+    container_name: coronadados-mysql
+    image: mysql:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=coronadados
+      - MYSQL_USER=corona_user
+      - MYSQL_PASSWORD=corona_pass
+      - MYSQL_ROOT_PASSWORD=c0r0ng@
+    ports:
+      - 8002:3306
+
+  webserver:
+    image: nginx:alpine
+    container_name: coronadados-webserver
+    working_dir: /application
+    volumes:
+      - .:/application
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8000:80"
+
+  app:
+    build: docker/php-fpm
+    container_name: coronadados-app
+    working_dir: /application
+    volumes:
+      - .:/application
+      - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+    links:
+      - mysql
