@@ -71,6 +71,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google Tag Manager
+    |--------------------------------------------------------------------------
+    |
+    | Google Tag Manager is a free tool from Google, by which it is possible 
+    | to insert just one code on a website, and then install various services 
+    | without having to tamper with that code. By centralizing code management in GTM, 
+    | marketing gains autonomy, improves productivity and reduces IT costs. 
+    |
+    */
+
+    'gtm_id' => env('GOOGLE_TAG_MANAGER_ID'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
