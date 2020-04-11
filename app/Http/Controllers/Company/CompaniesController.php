@@ -18,57 +18,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
 {
-
-
     public function dashboard()
     {
         $peoplesCompany = auth('company')->user()->countPersons();
         $peoplesUser =   auth('company')->user()->persons()->count();
 
         return view('company.dashboard', compact(['peoplesCompany', 'peoplesUser']));
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
-     */
-
-    public function addPerson(Request $request)
-    {
-        return view('company.person.create');
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
-     */
-    public function listPerson(Request $request)
-    {
-        if ($request->ajax()) {
-            if (auth('company')->user()->can('Ver Usuários')) {
-                $data =  auth('company')->user()->personsInCompany();
-            } else {
-                $data =  auth('company')->user()->persons()->get();
-            }
-
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"data-original-title="Ver" class="edit btn btn-primary btn-sm editMonitoring">Ver / Editar</a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-
-        $roles = Role::query()->where('guard_name', '=', 'company')->pluck('name');
-
-        return view('company.person.list', compact('roles'));
     }
 
     public function monitoring(Request $request)
@@ -107,35 +62,6 @@ class CompaniesController extends Controller
         return true;
     }
 
-    public function storePeople(Request $request)
-    {
-
-        $people = new People();
-        $people->name = $request->name;
-        $people->email = $request->email;
-        $people->cpf = $request->cpf;
-        $people->phone = $request->phone;
-        $people->sector = $request->sector;
-        $people->bithday = $request->bithday;
-        $people->gender = $request->gender;
-        $people->risk_group = $request->risk_group;
-        $people->status = $request->status;
-        $people->cep = $request->cep;
-        $people->ibge = $request->ibge;
-        $people->state = $request->state;
-        $people->city = $request->city;
-        $people->neighborhood = $request->neighborhood;
-        $people->street = $request->street;
-        $people->complement = $request->complement;
-        $people->more = $request->more;
-        //$people->save();
-        auth('company')->user()->persons()->save($people);
-        //$peoples = auth('company')->user()->persons()->get();
-        flash('Colaborador cadastrado com sucesso', 'info');
-        return view('company.person.create');
-    }
-
-
     /**
      * Show the form for creating a new resource.
      *
@@ -160,7 +86,6 @@ class CompaniesController extends Controller
         };
 
 
-
         foreach ($persons as $person) {
             $monitoring = new CasePeople(['status' => 'ok']);
             $person->createCasePeopleDay()->save($monitoring);
@@ -172,10 +97,10 @@ class CompaniesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Model\Company\Company  $companies
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Company $companies)
+    public function show(Request $request, $id)
     {
         //
     }
@@ -212,21 +137,5 @@ class CompaniesController extends Controller
     public function destroy(Company $companies)
     {
         //
-    }
-
-    public function importView()
-    {
-        $roles = Role::query()->where('guard_name', '=', 'company')->get();
-        return view('company.import', compact('roles'));
-    }
-
-    public function import(Request $request)
-    {
-        $companyID = auth('company')->user()->company_id;
-        $file = $request->file('file');
-
-        (new PersonsImport($companyID))->queue($file);
-        flash()->overlay('Importação realizada com sucesso, aguarde algums minutos para ver os colaboradores<br> Lembre-se que a senha dos usuários é o cpf sem pontos ou traços', 'Importação de colaboradores');
-        return back();
     }
 }

@@ -69,7 +69,7 @@
                     </a>
                 </li>
                 @can('Cadastrar Colaborador')
-                    <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
+                    <li class="nav-item {{request()->is('people') ? 'active' : ''}}">
                         <a class="nav-link" href="#navbar-colaboradores" data-toggle="collapse" role="button"
                            aria-expanded="false"
                            aria-controls="navbar-colaboradores">
@@ -80,20 +80,20 @@
                         <div class="collapse " id="navbar-colaboradores">
                             <ul class="nav nav-sm flex-column">
 
-                                <li class="nav-item {{request()->is('person/list') ? 'active' : ''}}">
-                                    <a class="nav-link" href="{{ route('company.person.list') }}">
+                                <li class="nav-item {{request()->is('people') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('people.index') }}">
                                         {{ __('Listar') }}
                                     </a>
                                 </li>
 
-                                <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
-                                    <a class="nav-link" href="{{ route('company.person.create') }}">
+                                <li class="nav-item {{request()->is('people/create') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('people.create') }}">
                                         {{ __('Cadastrar') }}
                                     </a>
                                 </li>
 
                                 <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                    <a class="nav-link" href="{{ route('company.person.import') }}">
+                                    <a class="nav-link" href="{{ route('people.import') }}">
                                         {{ __('Importar') }}
                                     </a>
                                 </li>
