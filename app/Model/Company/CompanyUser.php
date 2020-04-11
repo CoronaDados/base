@@ -2,7 +2,7 @@
 
 namespace App\Model\Company;
 
-use App\Model\People\People;
+use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +29,7 @@ class CompanyUser  extends Authenticatable
 
     public function persons()
     {
-        return $this->morphToMany(People::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
+        return $this->morphToMany(Person::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
     }
 
 

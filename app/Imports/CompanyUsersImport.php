@@ -4,7 +4,7 @@ namespace App\Imports;
 
 use App\Mail\Imports\importUsersErrorMail;
 use App\Model\Company\CompanyUser;
-use App\Model\People\People;
+use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Hash;
@@ -73,7 +73,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         );
         $user->syncRoles($this->role);
 
-        $people = People::updateOrCreate(
+        $person = Person::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],
@@ -109,8 +109,8 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             $lider = $this->importedBy;
         }
 
-        if (!$lider->persons()->where('person_id', $people->id)->exists()) {
-            $lider->persons()->save($people);
+        if (!$lider->persons()->where('person_id', $person->id)->exists()) {
+            $lider->persons()->save($person);
         }
     }
 

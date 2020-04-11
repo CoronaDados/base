@@ -26,9 +26,9 @@ Route::group(['middleware' => 'auth:company'], function () {
     /*
     Route::get('test', function (){
 
-        $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
+        $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
         foreach ($datas as $data){
-            if($data->casePeopleDay()->exists()){
+            if($data->casePersonDay()->exists()){
                 $person[] = $data;
             }
         }

@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Mail\Imports\importUsersErrorMail;
-use App\Model\People\People;
+use App\Model\Person\Person;
 use App\Model\Company\CompanyUser;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -57,7 +57,7 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $people = People::updateOrCreate(
+        $person = Person::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],
@@ -93,8 +93,8 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
             $lider = $this->importedBy;
         }
 
-        if (!$lider->persons()->where('person_id', $people->id)->exists()) {
-            $lider->persons()->save($people);
+        if (!$lider->persons()->where('person_id', $person->id)->exists()) {
+            $lider->persons()->save($person);
         }
     }
 
