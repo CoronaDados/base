@@ -44,68 +44,72 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     public function onRow(Row $row)
     {
         $rowIndex = $row->getIndex();
-        $row      = $row->toArray();
 
-        if (Str::length($row['name']) > 1 && Str::length($row['email']) > 1 && Str::length($row['cpf']) > 1) {
+        $row = array_filter(
+            $row->toArray(),
+            function ($k) {
+                return $k != "";
+            },
+            ARRAY_FILTER_USE_KEY
+        );
 
-            $password = preg_replace('/[^0-9]/', '', $row['cpf']);
-            $cpf = $this->removePunctuation($row['cpf']);
-            $cpf_lider = $this->removePunctuation($row['cpf_lider']);
-            $cep = $this->removePunctuation($row['cep']);
-            $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
+        $password = preg_replace('/[^0-9]/', '', $row['cpf']);
+        $cpf = $this->removePunctuation($row['cpf']);
+        $cpf_lider = $this->removePunctuation($row['cpf_lider']);
+        $cep = $this->removePunctuation($row['cep']);
+        $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-            $user = CompanyUser::firstOrCreate(
-                ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
-                [
-                    'name' => $row['name'],
-                    'email' => $row['email'],
-                    'cpf' => $row['cpf'],
-                    'phone' => $row['phone'],
-                    'is_admin' => false,
-                    'password' => Hash::make($password),
-                ]
-            );
-            $user->assignRole($this->role);
+        $user = CompanyUser::firstOrCreate(
+            ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
+            [
+                'name' => $row['name'],
+                'email' => $row['email'],
+                'cpf' => $row['cpf'],
+                'phone' => $row['phone'],
+                'is_admin' => false,
+                'password' => Hash::make($password),
+            ]
+        );
+        $user->assignRole($this->role);
 
-            $people = People::firstOrCreate(
-                ['cpf' => $cpf],
-                [
-                    'name' => $row['name'],
-                    'cpf' => $cpf,
-                    'email' => $row['email'],
-                    'street' => $row['street'],
-                    'neighborhood' => $row['neighborhood'],
-                    'complement' => $row['complement'],
-                    'cep' => $cep,
-                    'phone' => $row['phone'],
-                    'city' => $row['city'],
-                    'sector' => $row['sector'],
-                    'ibge' => $row['ibge'],
-                    'bithday' => $birthday,
-                    'gender' => $row['gender'],
-                    'risk_group' => $row['risk_group'],
-                    'status' => $row['status'],
-                    'state' => $row['state'],
-                    'number' => $row['number'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+        $people = People::firstOrCreate(
+            ['cpf' => $cpf],
+            [
+                'name' => $row['name'],
+                'cpf' => $cpf,
+                'email' => $row['email'],
+                'street' => $row['street'],
+                'neighborhood' => $row['neighborhood'],
+                'complement' => $row['complement'],
+                'cep' => $cep,
+                'phone' => $row['phone'],
+                'city' => $row['city'],
+                'sector' => $row['sector'],
+                'ibge' => $row['ibge'],
+                'bithday' => $birthday,
+                'gender' => $row['gender'],
+                'risk_group' => $row['risk_group'],
+                'status' => $row['status'],
+                'state' => $row['state'],
+                'number' => $row['number'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
 
-            $lider = CompanyUser::query()->where([
-                ['cpf', $cpf_lider],
-                [
-                    'company_id', $this->importedBy->company_id,
-                ]
-            ])->first();
+        $lider = CompanyUser::query()->where([
+            ['cpf', $cpf_lider],
+            [
+                'company_id', $this->importedBy->company_id,
+            ]
+        ])->first();
 
-            if (!$lider) {
-                $lider = $this->importedBy;
-            }
+        if (!$lider) {
+            $lider = $this->importedBy;
+        }
 
-            if (!$lider->persons()->where('person_id', $people->id)->exists()) {
-                $lider->persons()->save($people);
-            }
+        if (!$lider->persons()->where('person_id', $people->id)->exists()) {
+            $lider->persons()->save($people);
         }
     }
 
