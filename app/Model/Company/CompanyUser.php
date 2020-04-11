@@ -21,7 +21,7 @@ class CompanyUser  extends Authenticatable
     protected $guard = 'company';
 
     protected $fillable = [
-        'name', 'email', 'is_admin', 'password','email_verfied_at', 'phone', 'cpf', 'department', 'company_id'
+        'name', 'email', 'is_admin', 'password', 'email_verfied_at', 'phone', 'cpf', 'department', 'company_id'
     ];
 
     protected $hidden = ['password'];
@@ -29,7 +29,7 @@ class CompanyUser  extends Authenticatable
 
     public function persons()
     {
-        return $this->morphToMany(People::class, 'personable','personables','personable_id', 'person_id')->orderByDesc('created_at');
+        return $this->morphToMany(People::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('created_at');
     }
 
 
@@ -40,16 +40,17 @@ class CompanyUser  extends Authenticatable
 
     public function countPersons()
     {
-        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = ".$this->company()->first()->id." ) )"));
+        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"));
     }
 
     public function personsInCompany()
     {
-        $query = "SELECT p.id, p.name, p.email, c.name AS lider FROM persons p
+        $query = "SELECT p.id, p.name, p.email, c.name AS lider 
+            FROM persons p
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
             WHERE p.id IN ( SELECT pp.person_id FROM personables pp WHERE personable_id
-                IN ( SELECT c.id  company_users WHERE company_id = ".$this->company()->first()->id." ) )";
+                IN ( SELECT c.id  company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
         return DB::select(DB::raw($query));
     }

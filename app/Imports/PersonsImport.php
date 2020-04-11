@@ -4,8 +4,9 @@ namespace App\Imports;
 
 use App\Model\People\People;
 use App\Model\Company\CompanyUser;
+use App\Notifications\Imports\ImportHasFailedNotification;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -16,25 +17,23 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Row;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Illuminate\Support\Str;
 
 class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
 
-    use Importable ,SkipsFailures;
+    use Importable, SkipsFailures;
 
-    private $companyID;
-
-    public function __construct($companyID)
+    public function __construct(CompanyUser $importedBy)
     {
-        $this->companyID = $companyID;
+        $this->importedBy = $importedBy;
     }
 
     public function registerEvents(): array
     {
         return [
-            ImportFailed::class => function(ImportFailed $event) {
-                Log::error($event->getException()->getMessage());
+            ImportFailed::class => function (ImportFailed $event) {
+                $this->importedBy->notify(new ImportHasFailedNotification($event));
             },
         ];
     }
@@ -42,50 +41,54 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
     public function onRow(Row $row)
     {
         $rowIndex = $row->getIndex();
-        // removes all keys with ""
-        $row = array_filter($row->toArray(),
-            function ($k) {
-                return $k != "";
-            },
-            ARRAY_FILTER_USE_KEY);
+        $row      = $row->toArray();
 
-        $cpf = $this->removePunctuation($row['cpf']);
-        $cpf_lider = $this->removePunctuation($row['cpf_lider']);
-        $cep = $this->removePunctuation($row['cep']);
-        $nascimento = ($row['nascimento'] !== null) ? Date::excelToDateTimeObject($row['nascimento'])->format('Y-m-d') : null;
+        if (Str::length($row['name']) > 1 && Str::length($row['email']) > 1 && Str::length($row['cpf']) > 1) {
 
-        $people = People::firstOrCreate(
-            ['cpf' => $cpf],
-            [
-                'name' => $row['nome'],
-                'cpf' => $cpf,
-                'email' => $row['email'],
-                'street' => $row['logradouro'],
-                'neighborhood' => $row['bairro'],
-                'complement' => $row['complemento'],
-                'cep' => $cep,
-                'phone' => $row['telefone'],
-                'city' => $row['municipio'],
-//                'sector' => $row['sector'],
-                'ibge' => $row['ibge'],
-                'bithday' => $nascimento,
-                'gender' => $row['genero'],
-                'risk_group' => $row['grupo_risco'],
-//                    'status' => $row['status'],
-//                    'state' => $row['state'],
-//                    'more' => $row['more'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+            $cpf = $this->removePunctuation($row['cpf']);
+            $cpf_lider = $this->removePunctuation($row['cpf_lider']);
+            $cep = $this->removePunctuation($row['cep']);
+            $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $user = CompanyUser::query()->where([
-            ['cpf', $cpf_lider],
-            ['company_id', $this->companyID]
-        ])->first();
+            $people = People::firstOrCreate(
+                ['cpf' => $cpf],
+                [
+                    'name' => $row['name'],
+                    'cpf' => $cpf,
+                    'email' => $row['email'],
+                    'street' => $row['street'],
+                    'neighborhood' => $row['neighborhood'],
+                    'complement' => $row['complement'],
+                    'cep' => $cep,
+                    'phone' => $row['phone'],
+                    'city' => $row['city'],
+                    'sector' => $row['sector'],
+                    'ibge' => $row['ibge'],
+                    'bithday' => $birthday,
+                    'gender' => $row['gender'],
+                    'risk_group' => $row['risk_group'],
+                    'status' => $row['status'],
+                    'state' => $row['state'],
+                    'number' => $row['number'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
 
-        if($user) {
-            $user->persons()->save($people);
+            $lider = CompanyUser::query()->where([
+                ['cpf', $cpf_lider],
+                [
+                    'company_id', $this->importedBy->company_id,
+                ]
+            ])->first();
+
+            if (!$lider) {
+                $lider = $this->importedBy;
+            }
+
+            if (!$lider->persons()->where('person_id', $people->id)->exists()) {
+                $lider->persons()->save($people);
+            }
         }
     }
 
@@ -99,7 +102,8 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
         return 10000;
     }
 
-    private function removePunctuation($string) {
+    private function removePunctuation($string)
+    {
         return preg_replace('/[^0-9]/', '', $string);
     }
 }

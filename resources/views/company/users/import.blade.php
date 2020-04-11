@@ -7,7 +7,7 @@
                 Importação de usuários
 
                 <div class="card-header">
-                    <a class="btn btn-primary" href="{{route('company.files', 'modelo_usr1.xlsx')}}">Download do modelo</a>
+                    <a class="btn btn-primary" href="{{route('company.files', 'modelo_person.xlsx')}}">Download do modelo</a>
                 </div>
             </div>
             <div class="card-body">

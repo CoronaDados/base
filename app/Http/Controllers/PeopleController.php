@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\PersonsImport;
+use App\Jobs\Imports\NotifyUserOfCompletedImport;
 use App\Model\People\People;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -82,7 +83,8 @@ class PeopleController extends Controller
         return view('people.create');
     }
 
-    private function removePunctuation($string) {
+    private function removePunctuation($string)
+    {
         return preg_replace('/[^0-9]/', '', $string);
     }
 
@@ -123,8 +125,7 @@ class PeopleController extends Controller
         if ($request->ajax()) {
             $person = People::find($id);
 
-            if ($person)
-            {
+            if ($person) {
                 $person->fill($request->all());
                 $person->cpf = $this->removePunctuation($person->cpf);
                 $person->phone = $this->removePunctuation($person->phone);
@@ -159,11 +160,12 @@ class PeopleController extends Controller
 
     public function import(Request $request)
     {
-        $companyID = auth('company')->user()->company_id;
         $file = $request->file('file');
 
-        (new PersonsImport($companyID))->queue($file);
-        flash()->overlay('Importação realizada com sucesso, aguarde algums minutos para ver os colaboradores<br> Lembre-se que a senha dos usuários é o cpf sem pontos ou traços', 'Importação de colaboradores');
+        (new PersonsImport(auth('company')->user()))->queue($file)->chain([
+            new NotifyUserOfCompletedImport(request()->user())
+        ]);
+        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
         return back();
     }
 }
