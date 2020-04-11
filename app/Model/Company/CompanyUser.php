@@ -29,7 +29,7 @@ class CompanyUser  extends Authenticatable
 
     public function persons()
     {
-        return $this->morphToMany(People::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('created_at');
+        return $this->morphToMany(People::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
     }
 
 

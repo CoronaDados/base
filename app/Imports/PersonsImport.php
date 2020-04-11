@@ -2,11 +2,12 @@
 
 namespace App\Imports;
 
+use App\Mail\Imports\importUsersErrorMail;
 use App\Model\People\People;
 use App\Model\Company\CompanyUser;
-use App\Notifications\Imports\ImportHasFailedNotification;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -17,7 +18,6 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Row;
-use Illuminate\Support\Str;
 
 class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
@@ -33,7 +33,9 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
     {
         return [
             ImportFailed::class => function (ImportFailed $event) {
-                $this->importedBy->notify(new ImportHasFailedNotification($event));
+                Mail::to('willian.maria@sc.senai.br')
+                    ->cc('douglas.baptista@sc.senai.br')
+                    ->send(new importUsersErrorMail($this->importedBy, $event));
             },
         ];
     }
@@ -55,7 +57,7 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $people = People::firstOrCreate(
+        $people = People::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],

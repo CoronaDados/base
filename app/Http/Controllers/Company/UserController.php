@@ -176,11 +176,10 @@ class UserController extends Controller
         $file = $request->file('file');
         $role_name = $request->role;
 
-        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file)->chain([
-            new NotifyUserOfCompletedImport(request()->user())
-        ]);
+        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
 
         flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os usuários.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de usuários');
+
         return back();
     }
 }

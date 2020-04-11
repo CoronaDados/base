@@ -2,14 +2,13 @@
 
 namespace App\Imports;
 
+use App\Mail\Imports\importUsersErrorMail;
 use App\Model\Company\CompanyUser;
 use App\Model\People\People;
-use App\Notifications\Imports\ImportHasFailedNotification;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -36,7 +35,9 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     {
         return [
             ImportFailed::class => function (ImportFailed $event) {
-                $this->importedBy->notify(new ImportHasFailedNotification($event));
+                Mail::to('willian.maria@sc.senai.br')
+                    ->cc('douglas.baptista@sc.senai.br')
+                    ->send(new importUsersErrorMail($this->importedBy, $event));
             },
         ];
     }
@@ -59,7 +60,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $user = CompanyUser::firstOrCreate(
+        $user = CompanyUser::updateOrCreate(
             ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
             [
                 'name' => $row['name'],
@@ -70,9 +71,9 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'password' => Hash::make($password),
             ]
         );
-        $user->assignRole($this->role);
+        $user->syncRoles($this->role);
 
-        $people = People::firstOrCreate(
+        $people = People::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],

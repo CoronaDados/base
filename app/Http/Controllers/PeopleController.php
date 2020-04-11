@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Imports\PersonsImport;
-use App\Jobs\Imports\NotifyUserOfCompletedImport;
 use App\Model\People\People;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -162,10 +161,10 @@ class PeopleController extends Controller
     {
         $file = $request->file('file');
 
-        (new PersonsImport(auth('company')->user()))->queue($file)->chain([
-            new NotifyUserOfCompletedImport(request()->user())
-        ]);
+        (new PersonsImport(auth('company')->user()))->queue($file);
+
         flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
+
         return back();
     }
 }
