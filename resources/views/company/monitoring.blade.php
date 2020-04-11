@@ -3,14 +3,18 @@
 @section('content')
     {{--    @include('layouts.headers.cards')--}}
     <div class="container-fluid pb-8 pt-3 pt-md-7">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Monitoramento diário</h5>
-                <img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" />
-            </div>
-        </div>
-        <div>
 
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseMonitoring" aria-expanded="false" aria-controls="collapseMonitoring">
+                    <h5 class="mb-0">Monitoramento diário</h5>
+                </div>
+                <div id="collapseMonitoring" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p><img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" /></p>
+                    </div>
+                </div>
+            </div>          
         </div>
 
         <div class="row mt-5">
@@ -209,8 +213,8 @@
                     "sZeroRecords": "Nenhum registro encontrado",
                     "sSearch": "Pesquisar",
                     "oPaginate": {
-                        "sNext": "Próximo",
-                        "sPrevious": "Anterior",
+                        "sNext": "&raquo;",
+                        "sPrevious": "&laquo;",
                         "sFirst": "Primeiro",
                         "sLast": "Último"
                     },
@@ -295,7 +299,10 @@
                     );
                 });
             });
+            
         });
 
     </script>
 @endpush
+
+

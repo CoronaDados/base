@@ -26,10 +26,10 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" type="email" name="email" value="{{ old('email') }}" required autofocus>
+                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('E-mail') }}" type="email" name="email" value="{{ old('email') }}" required autofocus>
                                 </div>
                                 @if ($errors->has('email'))
-                                    <span class="invalid-feedback" role="alert">
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
                                         <strong>{{ $errors->first('email') }}</strong>
                                     </span>
                                 @endif
@@ -38,6 +38,13 @@
                                 <button type="submit" class="btn btn-primary my-4">{{ __('Redefinir senha') }}</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <a href="{{ route('company.login') }}" class="text-secondary">
+                            <small>Voltar</small>
+                        </a>
                     </div>
                 </div>
             </div>
