@@ -36,7 +36,7 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body">
-                    @include('people.partials.form', ['isRequired' => false, 'route' => false, 'ajaxRoute' => route('people.index')])
+                    @include('people.partials.form', ['isRequired' => false, 'route' => false, 'dataTableRoute' => route('people.index')])
                 </div>
             </div>
         </div>
@@ -56,15 +56,7 @@
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
 
-                let person_id = $(this).data('id'),
-                    SPMaskBehavior = function (val) {
-                        return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
-                    },
-                    spOptions = {
-                        onKeyPress: function(val, e, field, options) {
-                            field.mask(SPMaskBehavior.apply({}, arguments), options);
-                        }
-                    };
+                let person_id = $(this).data('id');
 
                 $.ajax({
                     url: 'people/' + person_id,
@@ -74,16 +66,58 @@
                         $('#modelHeading').html("Colaborador " + data.person.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
-                        $('#user_id').val(person_id);
+
+                        $('#person_id').val(person_id);
                         $('#name').val(data.person.name);
                         $('#email').val(data.person.email);
                         $('#phone').val(data.person.phone);
                         $('#cpf').val(data.person.cpf);
+                        $('#sector').val(data.person.sector);
+
+                        if(data.person.bithday) {
+                            $('#birthday').val(formattedDateFromDB(data.person.bithday));
+                        }
+
+                        const $radios = $('input:radio[name=gender]');
+                        if($radios.is(':checked') === false) {
+                            $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
+                        }
+
+                        $('#cep').val(data.person.cep);
 
                         handleMasks();
                     },
                     error: function (data) {
                         alert('Erro ao carregar os dados, atualize a pagina.')
+                    }
+                });
+            });
+
+            $('.save').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).html('Atualizando..');
+
+                var person_id = $('#person_id').val();
+
+                $.ajax({
+                    data: $('#person_form').serialize(),
+                    url: "people/" + person_id,
+                    type: "PUT",
+                    dataType: 'json',
+                    success: function (data) {
+                        $('.data-table').DataTable().ajax.reload();
+                        $('.save').html('Salvar');
+                        $('#ajaxModel').modal('hide');
+
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'Fechar'
+                        });
+
+                        handleMasks();
                     }
                 });
             });

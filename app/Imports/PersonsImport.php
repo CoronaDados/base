@@ -6,7 +6,6 @@ use App\Model\People\People;
 use App\Model\Company\CompanyUser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -17,6 +16,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Row;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
@@ -42,56 +42,64 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
     public function onRow(Row $row)
     {
         $rowIndex = $row->getIndex();
-        $row      = $row->toArray();
+        // removes all keys with ""
+        $row = array_filter($row->toArray(),
+            function ($k) {
+                return $k != "";
+            },
+            ARRAY_FILTER_USE_KEY);
 
-        if(Str::length($row['name']) > 1 && Str::length($row['email']) > 1 && Str::length($row['cpf']) > 1) {
+        $cpf = $this->removePunctuation($row['cpf']);
+        $cpf_lider = $this->removePunctuation($row['cpf_lider']);
+        $cep = $this->removePunctuation($row['cep']);
+        $nascimento = ($row['nascimento'] !== null) ? Date::excelToDateTimeObject($row['nascimento'])->format('Y-m-d') : null;
 
-            $cpf = preg_replace('/[^0-9]/', '', $row['cpf']);
-            $cpf_lider = preg_replace('/[^0-9]/', '', $row['cpf_lider']);
+        $people = People::firstOrCreate(
+            ['cpf' => $cpf],
+            [
+                'name' => $row['nome'],
+                'cpf' => $cpf,
+                'email' => $row['email'],
+                'street' => $row['logradouro'],
+                'neighborhood' => $row['bairro'],
+                'complement' => $row['complemento'],
+                'cep' => $cep,
+                'phone' => $row['telefone'],
+                'city' => $row['municipio'],
+//                'sector' => $row['sector'],
+                'ibge' => $row['ibge'],
+                'bithday' => $nascimento,
+                'gender' => $row['genero'],
+                'risk_group' => $row['grupo_risco'],
+//                    'status' => $row['status'],
+//                    'state' => $row['state'],
+//                    'more' => $row['more'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
 
-            $people = People::firstOrCreate(
-                ['cpf' => $cpf],
-                [
-                    'name' => $row['name'],
-                    'email' => $row['email'],
-                    'phone' => $row['phone'],
-                    'cpf' => $cpf,
-                    'sector' => $row['sector'],
-                    'bithday' => $row['bithday'],
-                    'gender' => $row['gender'],
-                    'risk_group' => $row['risk_group'],
-                    'status' => $row['status'],
-                    'cep' => $row['cep'],
-                    'ibge' => $row['ibge'],
-                    'state' => $row['state'],
-                    'city' => $row['city'],
-                    'neighborhood' => $row['neighborhood'],
-                    'street' => $row['street'],
-                    'complement' => $row['complement'],
-                    'more' => $row['more'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+        $user = CompanyUser::query()->where([
+            ['cpf', $cpf_lider],
+            ['company_id', $this->companyID]
+        ])->first();
 
-            $user = CompanyUser::query()->where([
-                ['cpf', $cpf_lider],
-                ['company_id', $this->companyID]
-            ])->first();
-
-            if($user) {
-                $user->persons()->save($people);
-            }
+        if($user) {
+            $user->persons()->save($people);
         }
     }
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 10000;
     }
 
     public function batchSize(): int
     {
-        return 1000;
+        return 10000;
+    }
+
+    private function removePunctuation($string) {
+        return preg_replace('/[^0-9]/', '', $string);
     }
 }

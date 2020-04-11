@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\PersonsImport;
 use App\Model\People\People;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
@@ -55,30 +56,34 @@ class PeopleController extends Controller
      */
     public function store(Request $request)
     {
-        $people = new People();
-        $people->name = $request->name;
-        $people->email = $request->email;
-        $people->cpf = $request->cpf;
-        $people->phone = $request->phone;
-        $people->sector = $request->sector;
-        $people->bithday = $request->bithday;
-        $people->gender = $request->gender;
-        $people->risk_group = $request->risk_group;
-        $people->status = $request->status;
-        $people->cep = $request->cep;
-        $people->ibge = $request->ibge;
-        $people->state = $request->state;
-        $people->city = $request->city;
-        $people->neighborhood = $request->neighborhood;
-        $people->street = $request->street;
-        $people->complement = $request->complement;
-        $people->more = $request->more;
-        //$people->save();
-        auth('company')->user()->persons()->save($people);
-        //$peoples = auth('company')->user()->persons()->get();
+        $person = new People();
+        $person->name = $request->name;
+        $person->email = $request->email;
+        $person->cpf = $this->removePunctuation($request->cpf);
+        $person->phone = $this->removePunctuation($request->phone);
+        $person->sector = $request->sector;
+        $person->bithday = $request->birthday;
+        $person->gender = $request->gender;
+        $person->risk_group = $request->risk_group;
+        $person->status = $request->status;
+        $person->cep = $this->removePunctuation($request->cep);
+        $person->ibge = $request->ibge;
+        $person->state = $request->state;
+        $person->city = $request->city;
+        $person->neighborhood = $request->neighborhood;
+        $person->street = $request->street;
+        $person->complement = $request->complement;
+        $person->more = $request->more;
+
+        auth('company')->user()->persons()->save($person);
+
         flash('Colaborador cadastrado com sucesso', 'info');
 
         return view('people.create');
+    }
+
+    private function removePunctuation($string) {
+        return preg_replace('/[^0-9]/', '', $string);
     }
 
     /**
@@ -90,7 +95,7 @@ class PeopleController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = People::query()->where('id',  $id)->first();
+            $person = People::find($id);
             return response()->json(['person' => $person]);
         }
     }
@@ -101,7 +106,7 @@ class PeopleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         //
     }
@@ -111,11 +116,28 @@ class PeopleController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        if ($request->ajax()) {
+            $person = People::find($id);
+
+            if ($person)
+            {
+                $person->fill($request->all());
+                $person->cpf = $this->removePunctuation($person->cpf);
+                $person->phone = $this->removePunctuation($person->phone);
+                $person->cep = $this->removePunctuation($person->cep);
+                $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+            }
+
+            $person->save();
+
+            flash('Colaborador atualizado com sucesso', 'info');
+
+            return response()->json(['person' => $person]);
+        }
     }
 
     /**

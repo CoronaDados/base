@@ -8,7 +8,7 @@
                 <h3>Cadastrar Colaborador</h3>
             </div>
             <div class="card-body">
-                @include('people.partials.form', ['isRequired' => true, 'route' => route('people.store'), 'ajaxRoute' => route('people.create')])
+                @include('people.partials.form', ['isRequired' => true, 'route' => route('people.store'), 'dataTableRoute' => null])
             </div>
         </div>
     </div>
