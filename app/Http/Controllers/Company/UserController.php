@@ -6,6 +6,7 @@ use App\CsvData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\CsvImportRequest;
 use App\Imports\CompanyUsersImport;
+use App\Jobs\Imports\NotifyUserOfCompletedImport;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
 use App\Model\People\People;
@@ -138,7 +139,7 @@ class UserController extends Controller
             if ($request['password'])
                 if ($request['password'] === $request['confirm_password']) {
                     $user->password = Hash::make($request['password']);
-                }else{
+                } else {
                     return response()->json(['success' => false, 'error' => true, "message" => 'Senha não confirmada'], 400);
                 }
             $user->name = $request['name'];
@@ -150,7 +151,6 @@ class UserController extends Controller
 
             return response()->json(['success' => true, "message" => 'Usuário atualizado com sucesso']);
         }
-
     }
 
     /**
@@ -173,9 +173,13 @@ class UserController extends Controller
 
     public function import(Request $request)
     {
+        $file = $request->file('file');
         $role_name = $request->role;
-        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($request->file('file'));
-        flash()->overlay('Importação realizada com sucesso, aguarde algums minutos para ver os usuários<br> Lembre-se que a senha dos usuários é o cpf sem pontos ou traços', 'Importação de usuários');
+
+        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
+
+        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os usuários.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de usuários');
+
         return back();
     }
 }

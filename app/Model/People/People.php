@@ -28,31 +28,31 @@ class People extends Model
         'neighborhood',
         'street',
         'complement',
+        'number',
         'more',
     ];
 
     public function getCodeAttribute()
     {
-        return Hashids::encode($this->id) ;
+        return Hashids::encode($this->id);
     }
 
     public function companyUsers()
     {
-        return $this->morphTo('personable','personable_type','personable_id');
+        return $this->morphTo('personable', 'personable_type', 'personable_id');
     }
     public function casePeopleDay()
     {
-        return $this->hasOne(CasePeople::class,'person_id')->whereDay('created_at','=',Carbon::today())->latest();
+        return $this->hasOne(CasePeople::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
     }
 
     public function createCasePeopleDay()
     {
-        return $this->hasMany(CasePeople::class,'person_id');
+        return $this->hasMany(CasePeople::class, 'person_id');
     }
 
     public function contacts()
     {
-        return $this->hasMany(Contact::class,'person_id');
+        return $this->hasMany(Contact::class, 'person_id');
     }
-
 }
