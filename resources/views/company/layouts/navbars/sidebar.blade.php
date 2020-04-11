@@ -28,9 +28,9 @@
                         <i class="ni ni-settings-gear-65"></i>
                         <span>{{ __('Configurações') }}</span>
                     </a>
-                    <a href="#" class="dropdown-item">
+                    <a href="{{ route('company.tips') }}" class="dropdown-item">
                         <i class="ni ni-support-16"></i>
-                        <span>{{ __('Ajuda') }}</span>
+                        <span>{{ __('Dicas') }}</span>
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();

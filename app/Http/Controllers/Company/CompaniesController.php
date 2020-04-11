@@ -26,6 +26,11 @@ class CompaniesController extends Controller
         return view('company.dashboard', compact(['peoplesCompany', 'peoplesUser']));
     }
 
+    public function tips()
+    {
+        return view('company.tips');
+    }
+
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
