@@ -90,7 +90,6 @@ class CompaniesController extends Controller
             return response()->json('error', 401);
         };
         $monitoring = new CasePeople(['status' => json_encode($request->all())]);
-
         $person->createCasePeopleDay()->save($monitoring);
 
         return true;
