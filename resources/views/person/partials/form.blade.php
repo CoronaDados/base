@@ -112,9 +112,9 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label for="leaders">Líder responsável {{ $isRequired ? '*' : '' }}</label>
-                <select name="leaders" id="leaders" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative leaders">
-                    <option></option>
+                <label for="leader">Líder responsável</label>
+                <select name="leader" id="leader" class="custom-select form-control-alternative leader">
+                    <option value="">Líder responsável</option>
                     @foreach($leaders as $leader)
                         <option value="{{ $leader->id }}">{{ $leader->name }}</option>
                     @endforeach
@@ -288,10 +288,7 @@
         });
 
         $(function () {
-            $("#leaders").select2({
-                placeholder: 'Selecione um Líder',
-                adaptContainerCssClass:'form-control-alternative'
-            });
+            // $("#leaders").select2();
         });
     </script>
 @endpush

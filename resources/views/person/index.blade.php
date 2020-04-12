@@ -18,7 +18,7 @@
                     <tr>
                         <th width="20px">No</th>
                         <th>Nome</th>
-                        <th>Email</th>
+                        <th>E-mail</th>
                         <th>Líder</th>
                         <th width="100px">Ações</th>
                     </tr>
