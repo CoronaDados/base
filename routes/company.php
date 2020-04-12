@@ -12,10 +12,6 @@ Route::group(['middleware' => 'auth:company'], function () {
     Route::get('/', 'CompaniesController@dashboard')->name('home');
     Route::get('/tips', 'CompaniesController@tips')->name('tips');
 
-    Route::get('users/import', 'UserController@viewImport')->name('users.import');
-    Route::post('users/import', 'UserController@import')->name('users.import');
-    Route::resource('users', 'UserController');
-
     Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 
