@@ -23,6 +23,11 @@ class CompaniesController extends Controller
         return view('company.tips');
     }
 
+    public function help()
+    {
+        return view('company.help');
+    }
+
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
