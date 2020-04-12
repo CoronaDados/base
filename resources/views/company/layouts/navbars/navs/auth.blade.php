@@ -20,13 +20,7 @@
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
-                    </div>
-                    @can('Ver Usuários')
-                    <a href="{{route('company.users.index')}}" class="dropdown-item">
-                        <i class="ni ni-settings-gear-65"></i>
-                        <span>{{ __('Usuários') }}</span>
-                    </a>
-                    @endcan
+                    </div>                   
                     <a href="{{ route('company.tips') }}" class="dropdown-item">
                         <i class="ni ni-support-16"></i>
                         <span>{{ __('Dicas') }}</span>
