@@ -49,13 +49,14 @@ class CompanyUser  extends Authenticatable
 
     public function personsInCompany()
     {
-        $query = "SELECT p.id, p.name, p.email, c.name AS lider 
+        $query = "SELECT p.id, p.name, c.email, l.name AS lider 
             FROM persons p
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
             WHERE p.id IN ( 
                 SELECT pp.person_id FROM personables pp WHERE personable_id IN ( 
-                    SELECT c.id WHERE company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
         return DB::select(DB::raw($query));
     }

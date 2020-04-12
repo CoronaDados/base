@@ -59,6 +59,11 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
+        $email = $row['email'];
+
+        if ($email == '' || $cpf == '') {
+            return;
+        }
 
         $person = Person::updateOrCreate(
             ['cpf' => $cpf],
@@ -87,35 +92,14 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $user = CompanyUser::firstOrCreate(
             ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
             [
-                'email' => $row['email'],
+                'email' => $email,
                 'password' => Hash::make($password),
             ]
         );
-        if ($user->email != $row['email']) {
-            $user->email = $row['email'];
-            $user->save();
-        }
+        $user->email = $email;
+        $user->save();
 
-        $user->syncRoles($this->role);
-
-        // pegar o person com o CPF igual o do lider
-        // pegar o company_user referente ao person acima da mesma empresa
-        $personLider = Person::where('cpf', $cpf_lider)->first();
-
-        if ($personLider) {
-            $userLider = CompanyUser::where([
-                'person_id' => $personLider->id,
-                'company_id' => $this->importedBy->company_id
-            ])->first();
-        }
-
-        if (!isset($userLider) || !$userLider) {
-            $userLider = $this->importedBy;
-        }
-
-        if (!$userLider->persons()->where('person_id', $person->id)->exists()) {
-            $userLider->persons()->save($person);
-        }
+        $user->assignRole($this->role);
     }
 
     public function chunkSize(): int

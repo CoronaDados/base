@@ -3,10 +3,11 @@
 namespace App\Imports;
 
 use App\Mail\Imports\importUsersErrorMail;
-use App\Model\Person\Person;
 use App\Model\Company\CompanyUser;
+use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -19,7 +20,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Row;
 
-class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
+class PersonablesImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
 
     use Importable, SkipsFailures;
@@ -54,58 +55,35 @@ class PersonsImport implements OnEachRow, WithHeadingRow, WithChunkReading, Shou
 
         $cpf = $this->removePunctuation($row['cpf']);
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
-        $cep = $this->removePunctuation($row['cep']);
-        $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $person = Person::updateOrCreate(
-            ['cpf' => $cpf],
-            [
-                'name' => $row['name'],
-                'cpf' => $cpf,
-                'email' => $row['email'],
-                'street' => $row['street'],
-                'neighborhood' => $row['neighborhood'],
-                'complement' => $row['complement'],
-                'cep' => $cep,
-                'phone' => $row['phone'],
-                'city' => $row['city'],
-                'sector' => $row['sector'],
-                'ibge' => $row['ibge'],
-                'bithday' => $birthday,
-                'gender' => $row['gender'],
-                'risk_group' => $row['risk_group'],
-                'status' => $row['status'],
-                'state' => $row['state'],
-                'number' => $row['number'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-
-        $lider = CompanyUser::query()->where([
-            ['cpf', $cpf_lider],
-            [
-                'company_id', $this->importedBy->company_id,
-            ]
-        ])->first();
-
-        if (!$lider) {
-            $lider = $this->importedBy;
+        $person = Person::where('cpf', $cpf)->first();
+        if (!$person) {
+            return;
         }
 
-        if (!$lider->persons()->where('person_id', $person->id)->exists()) {
-            $lider->persons()->save($person);
+        $personLider = Person::where('cpf', $cpf_lider)->first();
+        if ($personLider) {
+            $userLider = CompanyUser::where([
+                'person_id' => $personLider->id,
+                'company_id' => $this->importedBy->company_id
+            ])->first();
         }
+
+        if (!isset($userLider) || !$userLider) {
+            $userLider = $this->importedBy;
+        }
+
+        $person->companyUsers()->sync($userLider);
     }
 
     public function chunkSize(): int
     {
-        return 10000;
+        return 1000;
     }
 
     public function batchSize(): int
     {
-        return 10000;
+        return 1000;
     }
 
     private function removePunctuation($string)
