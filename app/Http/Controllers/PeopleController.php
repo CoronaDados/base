@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RiskGroupType;
 use App\Imports\PersonsImport;
 use App\Jobs\Imports\NotifyUserOfCompletedImport;
 use App\Model\People\People;
@@ -36,7 +37,8 @@ class PeopleController extends Controller
                 ->make(true);
         }
 
-        return view('people.index');
+        $riskGroups = RiskGroupType::getValues();
+        return view('people.index', ['riskGroups' => $riskGroups]);
     }
 
     /**
@@ -46,7 +48,8 @@ class PeopleController extends Controller
      */
     public function create()
     {
-        return view('people.create');
+        $riskGroups = RiskGroupType::getValues();
+        return view('people.create', ['riskGroups' => $riskGroups]);
     }
 
     /**
@@ -63,7 +66,7 @@ class PeopleController extends Controller
         $person->cpf = $this->removePunctuation($request->cpf);
         $person->phone = $this->removePunctuation($request->phone);
         $person->sector = $request->sector;
-        $person->bithday = $request->birthday;
+        $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
         $person->gender = $request->gender;
         $person->risk_group = $request->risk_group;
         $person->status = $request->status;
@@ -80,7 +83,8 @@ class PeopleController extends Controller
 
         flash('Colaborador cadastrado com sucesso', 'info');
 
-        return view('people.create');
+        $riskGroups = RiskGroupType::getValues();
+        return view('people.create', ['riskGroups' => $riskGroups]);
     }
 
     private function removePunctuation($string)

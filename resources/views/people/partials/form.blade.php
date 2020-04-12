@@ -54,7 +54,7 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cep" {{ $isRequired ? 'required' : '' }} name="cep" id="cep"
+                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" id="cep"
                        placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
@@ -86,16 +86,9 @@
                 <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
                 <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
                     <option disabled selected>Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
-                    <option value="0">Não</option>
-                    <option value="1">Gestante</option>
-                    <option value="1">Acima de 60 anos</option>
-                    <option value="1">Diabetes</option>
-                    <option value="1">Problemas Cardiovasculares</option>
-                    <option value="1">Problemas Respiratórios</option>
-                    <option value="1">Imunossuprimido</option>
-{{--                    @foreach($risks as $risk)--}}
-{{--                        <option value="{{$risk->id}}">{{$risk->name}}</option>--}}
-{{--                    @endforeach--}}
+                    @foreach($riskGroups as $k => $v)
+                        <option value="{{ $v  }}">{{ $v }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -225,25 +218,25 @@
                     $option.prop("selected", false);
                 }
             }
+        },
+        SPMaskBehavior = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+        },
+        spOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+            }
         };
 
         let handleMasks = function () {
-            let SPMaskBehavior = function (val) {
-                    return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
-                },
-                spOptions = {
-                    onKeyPress: function(val, e, field, options) {
-                        field.mask(SPMaskBehavior.apply({}, arguments), options);
-                    }
-                };
-
-            $('#phone').mask(SPMaskBehavior, spOptions);
-            $('#cpf').mask('000.000.000-00');
-            $('#birthday').mask('00/00/0000', optionsBirthday);
-            $('#cep').mask('00000-000');
+            $('.phone').mask(SPMaskBehavior, spOptions);
+            $('.cep-person').mask('00000-000');
+            $('.cpf').mask('000.000.000-00');
+            $('.birthday').mask('00/00/0000', optionsBirthday);
         };
 
         $('.birthday').mask('00/00/0000', optionsBirthday);
+        $('.cep-person').mask('00000-000');
 
         let TypeTransport = (function () {
             let type = $('#type_transport').val();
@@ -265,52 +258,47 @@
         });
 
         @if($dataTableRoute)
-            $(function () {
-
-                var table = $('.data-table').DataTable({
-                    language: {
-                        "sEmptyTable": "Nenhum registro encontrado",
-                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                        "sInfoPostFix": "",
-                        "sInfoThousands": ".",
-                        "sLengthMenu": "_MENU_ resultados por página",
-                        "sLoadingRecords": "Carregando...",
-                        "sProcessing": "Processando...",
-                        "sZeroRecords": "Nenhum registro encontrado",
-                        "sSearch": "Pesquisar",
-                        "oPaginate": {
-                            "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
-                            "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
-                            "sFirst": "Primeiro",
-                            "sLast": "Último"
-                        },
-                        "oAria": {
-                            "sSortAscending": ": Ordenar colunas de forma ascendente",
-                            "sSortDescending": ": Ordenar colunas de forma descendente"
-                        },
-                        "select": {
-                            "rows": {
-                                "_": "Selecionado %d linhas",
-                                "0": "Nenhuma linha selecionada",
-                                "1": "Selecionado 1 linha"
-                            }
-                        }
+            let table = $('.data-table').DataTable({
+                language: {
+                    "sEmptyTable": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "_MENU_ resultados por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
                     },
-                    processing: true,
-                    serverSide: false,
-                    ajax: "{{ $dataTableRoute }}",
-                    columns: [
-                        {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                        {data: 'name', name: 'name'},
-                        {data: 'email', name: 'email'},
-                        {data: 'lider', name: 'lider'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
-                });
-
-                handleMasks();
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    }
+                },
+                processing: true,
+                serverSide: false,
+                ajax: "{{ $dataTableRoute }}",
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'lider', name: 'lider'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
             });
         @endif
     </script>

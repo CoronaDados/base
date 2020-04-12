@@ -53,7 +53,6 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             ARRAY_FILTER_USE_KEY
         );
 
-        $password = preg_replace('/[^0-9]/', '', $row['cpf']);
         $cpf = $this->removePunctuation($row['cpf']);
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
         $cep = $this->removePunctuation($row['cep']);
@@ -67,7 +66,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'cpf' => $row['cpf'],
                 'phone' => $row['phone'],
                 'is_admin' => false,
-                'password' => Hash::make($password),
+                'password' => Hash::make($cpf),
             ]
         );
         $user->assignRole($this->role);

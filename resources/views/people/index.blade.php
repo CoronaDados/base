@@ -73,6 +73,7 @@
                         $('#phone').val(data.person.phone);
                         $('#cpf').val(data.person.cpf);
                         $('#sector').val(data.person.sector);
+                        $('#risk_group').val(data.person.risk_group);
 
                         if(data.person.bithday) {
                             $('#birthday').val(formattedDateFromDB(data.person.bithday));
@@ -83,12 +84,17 @@
                             $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
                         }
 
-                        $('#cep').val(data.person.cep);
+                        $('.cep-person').val(data.person.cep).mask('00000.000');
 
                         handleMasks();
                     },
-                    error: function (data) {
-                        alert('Erro ao carregar os dados, atualize a pagina.')
+                    error: function () {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao carregar os dados, atualize a página.',
+                            icon: 'error',
+                            confirmButtonText: 'Fechar'
+                        });
                     }
                 });
             });
@@ -96,9 +102,9 @@
             $('.save').on('click', function (e) {
                 e.preventDefault();
 
-                $(this).html('Atualizando..');
+                $(this).html('Atualizando...').prop('disabled', true);
 
-                var person_id = $('#person_id').val();
+                let person_id = $('#person_id').val();
 
                 $.ajax({
                     data: $('#person_form').serialize(),
@@ -106,8 +112,9 @@
                     type: "PUT",
                     dataType: 'json',
                     success: function (data) {
-                        $('.data-table').DataTable().ajax.reload();
-                        $('.save').html('Salvar');
+                        table.ajax.reload();
+
+                        $('.save').html('Salvar').prop('disabled', false);
                         $('#ajaxModel').modal('hide');
 
                         Swal.fire({
