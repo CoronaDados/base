@@ -100,7 +100,7 @@
                 <div class="form-group">
                     <label for="role">Perfil</label>
                     <select name="role" id="role" class="custom-select form-control-alternative role">
-                        <option value="">Perfil </option>
+                        <option value="" disabled>Perfil </option>
                         @foreach($roles as $role)
                             <option value="{{ $role->name }}">{{ $role->name }}</option>
                         @endforeach
@@ -122,6 +122,7 @@
             </div>
         </div>
     </div>
+
 {{--    <div class="row">--}}
 {{--        <div class="col-md-4">--}}
 {{--            <div class="form-group">--}}

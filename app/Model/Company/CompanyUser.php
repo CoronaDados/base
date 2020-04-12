@@ -77,4 +77,12 @@ class CompanyUser  extends Authenticatable
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    public function leader()
+    {
+        $companyId = $this->company_id;
+        return $this->person->companyUsers()->get()->first(function ($c, $key) use ($companyId) {
+            return $c->company_id === $companyId;
+        });
+    }
 }
