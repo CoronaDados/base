@@ -92,7 +92,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
             [
                 'email' => $email,
-                'password' => Hash::make($password),
+                'password' => Hash::make($cpf),
             ]
         );
         $user->email = $email;
