@@ -30,13 +30,23 @@ class PersonController extends Controller
             } else {
                 $data =  auth('company')->user()->persons()->get();
             }
-            
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
+//                ->editColumn('name', function ($user) {
+//
+//                    $name = $user->name;
+//                    $explodedName = explode(" ", $name);
+//                    $maxLength = count($explodedName);
+//                    $firstName = $explodedName[0];
+//                    $lastName = $explodedName[$maxLength];
+//
+//                    return $firstName . ' ' . $lastName;
+//                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -73,7 +83,7 @@ class PersonController extends Controller
     public function store(Request $request)
     {
 
-        $companyId = auth('company')->user()->company_id;
+        $companyUser = auth('company')->user();
 
         $cpf = $this->removePunctuation($request->cpf);
 
@@ -96,7 +106,7 @@ class PersonController extends Controller
         $user = CompanyUser::create(
             [
                 'person_id' => $person->id,
-                'company_id' => $companyId,
+                'company_id' => $companyUser->company_id,
                 'email' => $request->email,
                 'password' => Hash::make($cpf),
             ]
@@ -106,13 +116,29 @@ class PersonController extends Controller
 
         $user->assignRole($role);
 
+        $leaderId = $request->leader;
+
+        if ($leaderId) {
+            $userLider = CompanyUser::where([
+                'id' => $leaderId,
+                'company_id' => $companyUser->company_id
+            ])->first();
+        }
+
+        if (!isset($userLider) || !$userLider) {
+            $userLider = $companyUser;
+        }
+
+        $person->companyUsers()->sync($userLider);
+
         flash('Colaborador cadastrado com sucesso!', 'info');
 
         $riskGroups = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles'));
+        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     private function removePunctuation($string)
