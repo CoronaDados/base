@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => 'auth:company'], function () {
+Route::group(['middleware' => 'auth:company', 'can_login'], function () {
 
     Route::get('person/import', 'PersonController@importView')->name('person.import');
     Route::post('person/import', 'PersonController@import')->name('person.import');
