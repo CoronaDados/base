@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth:company'], function () {
+Route::group(['middleware' => ['auth:company', 'can_login', 'verified']], function () {
 
     Route::resource('roles', 'RoleController');
 
