@@ -23,7 +23,7 @@
                     </div>
                     @if(Route::current()->getName() != 'company.verification.notice')
                     @can('Ver Usuários')
-                    <a href="{{route('company.users.index')}}" class="dropdown-item">
+                    <a href="{{route('person.index')}}" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
                         <span>{{ __('Usuários') }}</span>
                     </a>
