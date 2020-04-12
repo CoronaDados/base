@@ -149,6 +149,7 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
+                        console.log(data);
                         $('#modelHeading').html("Colaborador " + data.person.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');

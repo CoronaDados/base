@@ -10,6 +10,7 @@ use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -22,13 +23,14 @@ class PersonController extends Controller
      */
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             if (auth('company')->user()->can('Ver Usuários')) {
                 $data =  auth('company')->user()->personsInCompany();
             } else {
                 $data =  auth('company')->user()->persons()->get();
             }
-
+            
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -42,8 +44,9 @@ class PersonController extends Controller
         $riskGroups = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles'));
+        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -56,8 +59,9 @@ class PersonController extends Controller
         $riskGroups = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles'));
+        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -68,31 +72,41 @@ class PersonController extends Controller
      */
     public function store(Request $request)
     {
-        $person = new Person();
-        $person->name = $request->name;
-        $person->cpf = $this->removePunctuation($request->cpf);
-        $person->phone = $this->removePunctuation($request->phone);
-        $person->sector = $request->sector;
-        $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
-        $person->gender = $request->gender;
-        $person->risk_group = $request->risk_group;
-        $person->status = $request->status;
-        $person->cep = $this->removePunctuation($request->cep);
-        $person->ibge = $request->ibge;
-        $person->state = $request->state;
-        $person->city = $request->city;
-        $person->neighborhood = $request->neighborhood;
-        $person->street = $request->street;
-        $person->complement = $request->complement;
-        $person->more = $request->more;
 
-        $companyUser = new CompanyUser();
-        $companyUser->email = $request->email;
-//        $companyUser->per
+        $companyId = auth('company')->user()->company_id;
 
-        auth('company')->user()->persons()->save($person);
+        $cpf = $this->removePunctuation($request->cpf);
 
-        flash('Colaborador cadastrado com sucesso', 'info');
+        $person = Person::create([
+            'name' => $request->name,
+            'cpf' => $cpf,
+            'cep' => $this->removePunctuation($request->cep),
+            'phone' => $this->removePunctuation($request->phone),
+            'city' => $request->city,
+            'sector' => $request->sector,
+            'ibge' => $request->ibge,
+            'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
+            'gender' => $request->gender,
+            'risk_group' => $request->risk_group,
+            'status' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $user = CompanyUser::create(
+            [
+                'person_id' => $person->id,
+                'company_id' => $companyId,
+                'email' => $request->email,
+                'password' => Hash::make($cpf),
+            ]
+        );
+
+        $role = $request->role ?? 'Colaborador';
+
+        $user->assignRole($role);
+
+        flash('Colaborador cadastrado com sucesso!', 'info');
 
         $riskGroups = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
@@ -143,6 +157,8 @@ class PersonController extends Controller
         if ($request->ajax()) {
             $person = Person::find($id);
 
+            $cpf = $this->removePunctuation($request->cpf);
+
             if ($person) {
                 $person->fill($request->all());
                 $person->cpf = $this->removePunctuation($person->cpf);
@@ -157,6 +173,35 @@ class PersonController extends Controller
 
             return response()->json(['person' => $person]);
         }
+
+
+//        $person = Person::create([
+//            'name' => $request->name,
+//            'cpf' => $cpf,
+//            'cep' => $this->removePunctuation($request->cep),
+//            'phone' => $this->removePunctuation($request->phone),
+//            'city' => $request->city,
+//            'sector' => $request->sector,
+//            'ibge' => $request->ibge,
+//            'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
+//            'gender' => $request->gender,
+//            'risk_group' => $request->risk_group,
+//            'status' => true,
+//            'created_at' => now(),
+//            'updated_at' => now(),
+//        ]);
+//
+//        $user = CompanyUser::find(
+//            [
+//                'person_id' => $person->id,
+//                'email' => $request->email,
+//                'password' => Hash::make($cpf),
+//            ]
+//        );
+//
+//        $role = $request->role ?? 'Colaborador';
+//
+//        $user->assignRole($role);
     }
 
     /**

@@ -9,7 +9,7 @@
             </div>
 
             <div class="card-body">
-                @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => true, 'route' => route('person.store')])
+                @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles', 'leaders'), 'isRequired' => true, 'route' => route('person.store')])
             </div>
         </div>
     </div>

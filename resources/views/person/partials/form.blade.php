@@ -40,8 +40,8 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="sector">Setor</label>
-                <select name="sector" id="sector" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative">
-                    <option disabled selected>Setor</option>
+                <select name="sector" id="sector" class="custom-select form-control-alternative">
+                    <option value="">Setor</option>
                     @foreach($sectors as $k => $v)
                         <option value="{{ $v }}">{{ $v }}</option>
                     @endforeach
@@ -68,11 +68,11 @@
             <div class="form-group">
                 <label>Gênero {{ $isRequired ? '*' : '' }}</label>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="masculino" name="gender" value="M" class="custom-control-input">
+                    <input type="radio" id="masculino" {{ $isRequired ? 'required' : '' }} name="gender" value="M" class="custom-control-input">
                     <label class="custom-control-label" for="masculino">Masculino</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="feminino" name="gender" value="F" class="custom-control-input">
+                    <input type="radio" id="feminino" {{ $isRequired ? 'required' : '' }} name="gender" value="F" class="custom-control-input">
                     <label class="custom-control-label" for="feminino">Feminino</label>
                 </div>
             </div>
@@ -87,7 +87,7 @@
             <div class="form-group">
                 <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
                 <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
-                    <option disabled selected>Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
+                    <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
                     @foreach($riskGroups as $k => $v)
                         <option value="{{ $v }}">{{ $v }}</option>
                     @endforeach
@@ -98,9 +98,9 @@
         @if($isAdmin)
             <div class="col-md-2">
                 <div class="form-group">
-                    <label for="risk_group">Perfil</label>
-                    <select name="risk_group" id="risk_group" class="custom-select form-control-alternative risk_group">
-                        <option disabled selected>Perfil </option>
+                    <label for="role">Perfil</label>
+                    <select name="role" id="role" class="custom-select form-control-alternative role">
+                        <option value="">Perfil </option>
                         @foreach($roles as $role)
                             <option value="{{ $role->name }}">{{ $role->name }}</option>
                         @endforeach
@@ -108,6 +108,19 @@
                 </div>
             </div>
         @endif
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="leaders">Líder responsável {{ $isRequired ? '*' : '' }}</label>
+                <select name="leaders" id="leaders" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative leaders">
+                    <option></option>
+                    @foreach($leaders as $leader)
+                        <option value="{{ $leader->id }}">{{ $leader->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
     </div>
 {{--    <div class="row">--}}
 {{--        <div class="col-md-4">--}}
@@ -272,6 +285,13 @@
             } else {
                 $('#show_type_transport').hide()
             }
+        });
+
+        $(function () {
+            $("#leaders").select2({
+                placeholder: 'Selecione um Líder',
+                adaptContainerCssClass:'form-control-alternative'
+            });
         });
     </script>
 @endpush
