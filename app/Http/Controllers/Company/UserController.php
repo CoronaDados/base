@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Imports\CompanyUsersImport;
+use App\Imports\PersonablesImport;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Illuminate\Http\Request;
@@ -62,7 +63,6 @@ class UserController extends Controller
     {
         $user = CompanyUser::create([
             'company_id' => auth()->user()->company_id,
-            'name' => $request->name,
             'email' => $request->email,
             'is_admin' => false,
             'password' => Hash::make('secret@'),
@@ -70,7 +70,6 @@ class UserController extends Controller
 
         $person = new Person();
         $person->name = $request->name;
-        $person->email = $request->email;
         $person->cpf = $request->cpf;
         $person->phone = $request->phone;
         $person->sector = $request->sector;
@@ -87,6 +86,7 @@ class UserController extends Controller
         $person->complement = $request->complement;
         $person->more = $request->more;
         //$person->save();
+
         $user->persons()->save($person);
 
         flash('Usuário cadastrado com sucesso', 'info');
@@ -171,8 +171,9 @@ class UserController extends Controller
         $role_name = $request->role;
 
         (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
+        (new PersonablesImport(auth('company')->user()))->queue($file);
 
-        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os usuários.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de usuários');
+        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde alguns minutos para ver os usuários.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de usuários');
 
         return back();
     }

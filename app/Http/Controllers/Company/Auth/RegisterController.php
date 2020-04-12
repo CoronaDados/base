@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company\Auth;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
+use App\Model\Person\Person;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -73,9 +74,12 @@ class RegisterController extends Controller
             'razao' => $data['razao'],
             'cnpj' => $data['cnpj'],
         ]);
+        $person = Person::create([
+            'name' => $data['name'],
+        ]);
         $user = CompanyUser::create([
             'company_id' => $company->id,
-            'name' => $data['name'],
+            'person_id' => $person->id,
             'email' => $data['email'],
             'is_admin' => true,
             'password' => Hash::make($data['password']),
@@ -93,6 +97,4 @@ class RegisterController extends Controller
     {
         return view('company.auth.register', ['url' => 'company']);
     }
-
-
 }

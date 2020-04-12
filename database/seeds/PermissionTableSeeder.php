@@ -13,6 +13,7 @@ class PermissionTableSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $permissions = [
+            'Efetuar Login',
             'Ver Funções',
             'Cadastrar Funções',
             'Editar Funções',
@@ -31,24 +32,26 @@ class PermissionTableSeeder extends Seeder
 
         $roleAdmin = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Admin']);
         $roleLider = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Lider']);
+        $roleColaborador = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Colaborador']);
 
-        $permissions = \Spatie\Permission\Models\Permission::pluck('id','id')->all();
+        $permissions = \Spatie\Permission\Models\Permission::pluck('id', 'id')->all();
 
         $roleAdmin->syncPermissions($permissions);
         $roleLider->givePermissionTo([
+            'Efetuar Login',
             'Ver Usuários',
             'Cadastrar Usuários',
             'Editar Usuários',
             'Deletar Usuários',
             'Cadastrar Colaborador',
             'Monitorar Colaborador',
-            ]);
+        ]);
 
-        $usersAdmin = \App\Model\Company\CompanyUser::query()->where('is_admin','=',1)->get();
+        $usersAdmin = \App\Model\Company\CompanyUser::query()->where('is_admin', '=', 1)->get();
         foreach ($usersAdmin as $userAdmin) {
             $userAdmin->assignRole([$roleAdmin->id]);
         }
-        $usersLider = \App\Model\Company\CompanyUser::query()->where('is_admin','=',0)->get();
+        $usersLider = \App\Model\Company\CompanyUser::query()->where('is_admin', '=', 0)->get();
         foreach ($usersLider as $userLider) {
             $userLider->assignRole([$roleLider->id]);
         }
