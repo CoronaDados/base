@@ -49,7 +49,7 @@ class CompanyUser  extends Authenticatable
 
     public function personsInCompany()
     {
-        $query = "SELECT p.id, p.name, c_person.email, l.name AS lider
+        $query = "SELECT c_person.id, p.name, c_person.email, l.name AS lider
             FROM persons p
             INNER JOIN company_users c_person ON c_person.person_id = p.id
             INNER JOIN personables pp ON p.id = pp.person_id

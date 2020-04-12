@@ -47,6 +47,7 @@
                                 </li>
                             </ul>
                         </div>
+
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
                                 @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => false, 'route' => ''])
@@ -149,27 +150,26 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
-                        console.log(data);
                         $('#modelHeading').html("Colaborador " + data.person.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
 
                         $('#person_id').val(person_id);
                         $('#name').val(data.person.name);
-                        $('#email').val(data.person.email);
-                        $('#phone').val(data.person.phone);
+                        $('#email').val(data.companyUser.email);
+                        $('#phone').val(data.person.phone).mask(SPMaskBehavior, spOptions);
                         $('#cpf').val(data.person.cpf);
                         $('#sector').val(data.person.sector);
                         $('#risk_group').val(data.person.risk_group);
+                        console.log(data.leader);
+                        $('#leader').val(data.leader);
 
                         if(data.person.bithday) {
                             $('#birthday').val(formattedDateFromDB(data.person.bithday))
                         }
 
                         const $radios = $('input:radio[name=gender]');
-                        if($radios.is(':checked') === false) {
-                            $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
-                        }
+                        $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
 
                         $('.cep-person').val(data.person.cep).mask('000000.000');
 

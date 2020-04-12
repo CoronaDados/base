@@ -37,16 +37,12 @@ class PersonController extends Controller
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
-//                ->editColumn('name', function ($user) {
-//
-//                    $name = $user->name;
-//                    $explodedName = explode(" ", $name);
-//                    $maxLength = count($explodedName);
-//                    $firstName = $explodedName[0];
-//                    $lastName = $explodedName[$maxLength];
-//
-//                    return $firstName . ' ' . $lastName;
-//                })
+                ->editColumn('name', function ($user) {
+                    return $this->getFirstAndLastName($user->name);
+                })
+                ->editColumn('lider', function ($user) {
+                    return $this->getFirstAndLastName($user->lider);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -146,6 +142,16 @@ class PersonController extends Controller
         return preg_replace('/[^0-9]/', '', $string);
     }
 
+    private function getFirstAndLastName($name): string
+    {
+        $explodedName = explode(" ", $name);
+        $maxLength = count($explodedName) - 1;
+        $firstName = $explodedName[0];
+        $lastName = $explodedName[$maxLength];
+
+        return $firstName . ' ' . $lastName;
+    }
+
     /**
      * Display the specified resource.
      *
@@ -154,9 +160,14 @@ class PersonController extends Controller
      */
     public function show(Request $request, $id)
     {
+
         if ($request->ajax()) {
-            $person = Person::find($id);
-            return response()->json(['person' => $person]);
+            $companyUser = CompanyUser::find($id);
+            $person = $companyUser->person;
+
+            dd($person);
+
+            return response()->json(['companyUser' => $companyUser, 'person' => $person, 'leader' => $leader->personable_id]);
         }
     }
 
