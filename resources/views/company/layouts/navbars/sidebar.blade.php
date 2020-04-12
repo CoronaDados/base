@@ -32,6 +32,10 @@
                         <i class="ni ni-support-16"></i>
                         <span>{{ __('Dicas') }}</span>
                     </a>
+                    <a href="{{ route('company.help') }}" class="dropdown-item">
+                        <i class="ni ni-support-16"></i>
+                        <span>{{ __('Ajuda') }}</span>
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
