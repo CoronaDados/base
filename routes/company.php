@@ -2,10 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+Auth::routes(['verify' => true]);
 
-Auth::routes();
-
-Route::group(['middleware' => 'auth:company'], function () {
+Route::group(['middleware' => ['auth:company', 'verified']], function () {
 
     Route::get('users/import', 'UserController@viewImport')->name('users.import');
     Route::post('users/import', 'UserController@import')->name('users.import');

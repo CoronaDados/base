@@ -21,6 +21,7 @@
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
                     </div>
+                    @if(Route::current()->getName() != 'company.verification.notice')
                     @can('Ver Usuários')
                     <a href="{{route('company.users.index')}}" class="dropdown-item">
                         <i class="ni ni-settings-gear-65"></i>
@@ -31,6 +32,7 @@
                         <i class="ni ni-support-16"></i>
                         <span>{{ __('Dicas') }}</span>
                     </a>
+                    @endif
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">

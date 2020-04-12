@@ -9,21 +9,22 @@
                 <div class="card bg-secondary shadow border-0">
                     <div class="card-body px-lg-5 py-lg-5">
                         <div class="text-center text-muted mb-4">
-                            <small>{{ __('Verify Your Email Address') }}</small>
+                            <small>{{ __('Confirme seu e-mail') }}</small>
                         </div>
                         <div>
                             @if (session('resent'))
                                 <div class="alert alert-success" role="alert">
-                                    {{ __('A fresh verification link has been sent to your email address.') }}
+                                    {{ __('Um novo link de verificação foi enviado para o e-mail <strong>' . Auth::user()->email . '</strong>.') }}
                                 </div>
                             @endif
 
-                            {{ __('Before proceeding, please check your email for a verification link.') }}
+                            {{-- {{ __('Before proceeding, please check your email for a verification link.') }} --}}
+                            {!! __('Para usar sua conta no ' . config('app.name') . ', confirme o endereço de e-mail no link que foi enviado para <strong>' . Auth::user()->email . '</strong>.') !!}
                             @if (Route::has('verification.resend'))
-                                {{ __('If you did not receive the email') }},
-                                <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
+                                {{ __('Se você não recebeu o e-mail') }},
+                                <form class="d-inline" method="POST" action="{{ route('company.verification.resend') }}">
                                     @csrf
-                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
+                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Clique aqui para enviar novamente.') }}</button>.
                                 </form>
                             @endif
                         </div>

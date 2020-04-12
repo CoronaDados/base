@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('company.layouts.google.head')
-        
+
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +31,9 @@
             <form id="logout-form" action="{{ route('company.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            @include('company.layouts.navbars.sidebar')
+            @if(Route::current()->getName() != 'company.verification.notice')
+                @include('company.layouts.navbars.sidebar')
+            @endif
         @endauth
 
         <div class="main-content">
