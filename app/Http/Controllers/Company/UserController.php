@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\CsvData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Company\CsvImportRequest;
 use App\Imports\CompanyUsersImport;
-use App\Jobs\Imports\NotifyUserOfCompletedImport;
-use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
-use App\Model\People\People;
+use App\Model\Person\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -74,26 +68,26 @@ class UserController extends Controller
             'password' => Hash::make('secret@'),
         ]);
 
-        $people = new People();
-        $people->name = $request->name;
-        $people->email = $request->email;
-        $people->cpf = $request->cpf;
-        $people->phone = $request->phone;
-        $people->sector = $request->sector;
-        $people->bithday = $request->bithday;
-        $people->gender = $request->gender;
-        $people->risk_group = $request->risk_group;
-        $people->status = $request->status;
-        $people->cep = $request->cep;
-        $people->ibge = $request->ibge;
-        $people->state = $request->state;
-        $people->city = $request->city;
-        $people->neighborhood = $request->neighborhood;
-        $people->street = $request->street;
-        $people->complement = $request->complement;
-        $people->more = $request->more;
-        //$people->save();
-        $user->persons()->save($people);
+        $person = new Person();
+        $person->name = $request->name;
+        $person->email = $request->email;
+        $person->cpf = $request->cpf;
+        $person->phone = $request->phone;
+        $person->sector = $request->sector;
+        $person->bithday = $request->bithday;
+        $person->gender = $request->gender;
+        $person->risk_group = $request->risk_group;
+        $person->status = $request->status;
+        $person->cep = $request->cep;
+        $person->ibge = $request->ibge;
+        $person->state = $request->state;
+        $person->city = $request->city;
+        $person->neighborhood = $request->neighborhood;
+        $person->street = $request->street;
+        $person->complement = $request->complement;
+        $person->more = $request->more;
+        //$person->save();
+        $user->persons()->save($person);
 
         flash('Usuário cadastrado com sucesso', 'info');
         return redirect()->back();
@@ -176,11 +170,10 @@ class UserController extends Controller
         $file = $request->file('file');
         $role_name = $request->role;
 
-        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file)->chain([
-            new NotifyUserOfCompletedImport(request()->user())
-        ]);
+        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
 
         flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os usuários.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de usuários');
+
         return back();
     }
 }

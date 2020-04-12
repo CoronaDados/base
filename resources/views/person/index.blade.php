@@ -36,7 +36,7 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body">
-                    @include('people.partials.form', ['isRequired' => false, 'route' => false, 'dataTableRoute' => route('people.index')])
+                    @include('person.partials.form', ['isRequired' => false, 'route' => false, 'dataTableRoute' => route('person.index')])
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 let person_id = $(this).data('id');
 
                 $.ajax({
-                    url: 'people/' + person_id,
+                    url: 'person/' + person_id,
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
@@ -108,7 +108,7 @@
 
                 $.ajax({
                     data: $('#person_form').serialize(),
-                    url: "people/" + person_id,
+                    url: "person/" + person_id,
                     type: "PUT",
                     dataType: 'json',
                     success: function (data) {

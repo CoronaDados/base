@@ -2,7 +2,7 @@
 
 namespace App\Model\Company;
 
-use App\Model\People\People;
+use App\Model\Person\Person;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -17,5 +17,4 @@ class Company extends Model
     {
         return $this->hasMany('App\Model\Company\CompanyUser');
     }
-
 }

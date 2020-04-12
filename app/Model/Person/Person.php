@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Model\People;
+namespace App\Model\Person;
 
-use App\Model\Company\CompanyUser;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class People extends Model
+class Person extends Model
 {
     protected $table = 'persons';
 
@@ -41,14 +40,14 @@ class People extends Model
     {
         return $this->morphTo('personable', 'personable_type', 'personable_id');
     }
-    public function casePeopleDay()
+    public function casePersonDay()
     {
-        return $this->hasOne(CasePeople::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
+        return $this->hasOne(CasePerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
     }
 
-    public function createCasePeopleDay()
+    public function createCasePersonDay()
     {
-        return $this->hasMany(CasePeople::class, 'person_id');
+        return $this->hasMany(CasePerson::class, 'person_id');
     }
 
     public function contacts()

@@ -3,35 +3,32 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UserController;
-use App\Imports\CompanyUsersImport;
-use App\Imports\PersonsImport;
 use App\Model\Company\Company;
-use App\Model\Company\CompanyUser;
-use App\Model\People\CasePeople;
-use App\Model\People\People;
+use App\Model\Person\CasePerson;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
 {
     public function dashboard()
     {
-        $peoplesCompany = auth('company')->user()->countPersons();
-        $peoplesUser =   auth('company')->user()->persons()->count();
+        $personsCompany = auth('company')->user()->countPersons();
+        $personsUser =   auth('company')->user()->persons()->count();
 
-        return view('company.dashboard', compact(['peoplesCompany', 'peoplesUser']));
+        return view('company.dashboard', compact(['personsCompany', 'personsUser']));
+    }
+
+    public function tips()
+    {
+        return view('company.tips');
     }
 
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
+            $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
             foreach ($datas as $data) {
-                if (!$data->casePeopleDay()->exists()) {
+                if (!$data->casePersonDay()->exists()) {
                     $person[] = $data;
                 }
             }
@@ -55,9 +52,8 @@ class CompaniesController extends Controller
         if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
             return response()->json('error', 401);
         };
-        $monitoring = new CasePeople(['status' => json_encode($request->all())]);
-
-        $person->createCasePeopleDay()->save($monitoring);
+        $monitoring = new CasePerson(['status' => json_encode($request->all())]);
+        $person->createCasePersonDay()->save($monitoring);
 
         return true;
     }
@@ -87,8 +83,8 @@ class CompaniesController extends Controller
 
 
         foreach ($persons as $person) {
-            $monitoring = new CasePeople(['status' => 'ok']);
-            $person->createCasePeopleDay()->save($monitoring);
+            $monitoring = new CasePerson(['status' => 'ok']);
+            $person->createCasePersonDay()->save($monitoring);
         }
         flash('Atualizado com sucesso', 'info');
         return redirect(route('company.monitoring'));
