@@ -31,9 +31,9 @@
                             <div class="form-group{{ $errors->has('razao') ? ' has-danger' : '' }}">
                                 <div class="input-group input-group-alternative mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        <span class="input-group-text"><i class="fa fa-industry" aria-hidden="true"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Razão') }}" type="text" name="razao" value="{{ old('razao') }}" required autofocus>
+                                    <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Razão social') }}" type="text" name="razao" value="{{ old('razao') }}" required autofocus>
                                 </div>
                                 @if ($errors->has('razao'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -41,16 +41,42 @@
                                     </span>
                                 @endif
                             </div>
+                            <div class="form-group{{ $errors->has('cnpj') ? ' has-danger' : '' }}">
+                                <div class="input-group input-group-alternative mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-building" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input class="form-control cnpj{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
+                                </div>
+                                @if ($errors->has('cnpj'))
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('cnpj') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
                             <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
                                 <div class="input-group input-group-alternative mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        <span class="input-group-text"><i class="fa fa-user-circle" aria-hidden="true"></i></span>
                                     </div>
                                     <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Nome do responsável') }}" type="text" name="name" value="{{ old('name') }}" required autofocus>
                                 </div>
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
                                         <strong>{{ $errors->first('name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
+                                <div class="input-group input-group-alternative mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-address-card" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input class="form-control cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" placeholder="{{ __('CPF') }}" type="text" name="cpf" value="{{ old('cpf') }}" required>
+                                </div>
+                                @if ($errors->has('cpf'))
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('cpf') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -64,19 +90,6 @@
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
                                         <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                            <div class="form-group{{ $errors->has('cnpj') ? ' has-danger' : '' }}">
-                                <div class="input-group input-group-alternative mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                    </div>
-                                    <input class="form-control cnpj{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
-                                </div>
-                                @if ($errors->has('cnpj'))
-                                    <span class="invalid-feedback" style="display: block;" role="alert">
-                                        <strong>{{ $errors->first('cnpj') }}</strong>
                                     </span>
                                 @endif
                             </div>

@@ -59,6 +59,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'razao' => ['required', 'string', 'min:8'],
             'cnpj' => ['required', 'string', 'min:8',  'unique:companies'],
+            'cpf' => ['required', 'string', 'min:11',  'unique:persons'],
         ]);
     }
 
@@ -76,6 +77,7 @@ class RegisterController extends Controller
         ]);
         $person = Person::create([
             'name' => $data['name'],
+            'cpf' => $data['cpf'],
         ]);
         $user = CompanyUser::create([
             'company_id' => $company->id,
