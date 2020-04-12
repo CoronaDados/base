@@ -36,27 +36,46 @@
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
                 <div class="modal-body pt-0">
-                    <div class="col-lg-12 pl-0 pt-0">
+                    <div class="col-lg-12 pl-0 pt-0 pr-0">
                         <div class="nav-wrapper">
                             <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-text" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Edição / Visualização</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Visualização / Edição</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico de Sintomas</a>
                                 </li>
                             </ul>
                         </div>
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
-                                        <p class="description">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth.</p>
-                                        <p class="description">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse.</p>
-                                    </div>
-                                    <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                        <p class="description">Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
-                                    </div>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
+                                @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => false, 'route' => ''])
+                            </div>
+
+                            <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
+                                <div class="table-responsive">
+                                    <!-- Projects table -->
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Sintoma(s)</th>
+                                                <th>Data e Hora do Monitoramento</th>
+                                                <th>Monitorado por</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Tosse Seca</td>
+                                                <td>12/04/2020 13:28</td>
+                                                <td>Douglas</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfooter>
+                                            <tr>
+                                                <td colspan="3">Observações: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, officiis.</td>
+                                            </tr>
+                                        </tfooter>
+                                    </table>
                                 </div>
                             </div>
                         </div>

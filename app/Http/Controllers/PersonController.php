@@ -6,6 +6,7 @@ use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
 use App\Enums\RiskGroupType;
 use App\Enums\SectorType;
+use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -69,7 +70,6 @@ class PersonController extends Controller
     {
         $person = new Person();
         $person->name = $request->name;
-        $person->email = $request->email;
         $person->cpf = $this->removePunctuation($request->cpf);
         $person->phone = $this->removePunctuation($request->phone);
         $person->sector = $request->sector;
@@ -85,6 +85,10 @@ class PersonController extends Controller
         $person->street = $request->street;
         $person->complement = $request->complement;
         $person->more = $request->more;
+
+        $companyUser = new CompanyUser();
+        $companyUser->email = $request->email;
+//        $companyUser->per
 
         auth('company')->user()->persons()->save($person);
 
