@@ -19,7 +19,7 @@
 
         <div class="row mt-5">
             <div class="col-xl-12 mb-5 mb-xl-0">
-                <form id="multi-monitoring" action="{{route('company.person.multi.monitoring')}}" method="POST">
+                <form id="multi-monitoring" action="{{route('company.monitoring')}}" method="POST">
                     @csrf
                 <div class="card shadow">
                     <div class="card-header border-0">
@@ -163,8 +163,8 @@
 @push('js')
     <script>
         var ShowForm1 = (function () {
-            let numpeoples = $('#people_in_residence').val()
-            if (numpeoples > 0) {
+            let numpersons = $('#person_in_residence').val()
+            if (numpersons > 0) {
                 let template =
                     '<div class="row m-2">\n' +
                     '                            <div class="col-md-6">\n' +
@@ -178,7 +178,7 @@
                     '                                </div>\n' +
                     '                            </div>\n' +
                     '                        </div>'
-                for (var i = 0; i < numpeoples; i++) {
+                for (var i = 0; i < numpersons; i++) {
                     $('#show1').append(template)
                 }
 

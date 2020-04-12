@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Imports\PersonsImport;
-use App\Model\People\People;
+use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
-class PeopleController extends Controller
+class PersonController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +35,7 @@ class PeopleController extends Controller
                 ->make(true);
         }
 
-        return view('people.index');
+        return view('person.index');
     }
 
     /**
@@ -45,7 +45,7 @@ class PeopleController extends Controller
      */
     public function create()
     {
-        return view('people.create');
+        return view('person.create');
     }
 
     /**
@@ -56,7 +56,7 @@ class PeopleController extends Controller
      */
     public function store(Request $request)
     {
-        $person = new People();
+        $person = new Person();
         $person->name = $request->name;
         $person->email = $request->email;
         $person->cpf = $this->removePunctuation($request->cpf);
@@ -79,7 +79,7 @@ class PeopleController extends Controller
 
         flash('Colaborador cadastrado com sucesso', 'info');
 
-        return view('people.create');
+        return view('person.create');
     }
 
     private function removePunctuation($string)
@@ -96,7 +96,7 @@ class PeopleController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = People::find($id);
+            $person = Person::find($id);
             return response()->json(['person' => $person]);
         }
     }
@@ -122,7 +122,7 @@ class PeopleController extends Controller
     public function update(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = People::find($id);
+            $person = Person::find($id);
 
             if ($person) {
                 $person->fill($request->all());
@@ -154,7 +154,7 @@ class PeopleController extends Controller
     public function importView()
     {
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
-        return view('people.import', compact('roles'));
+        return view('person.import', compact('roles'));
     }
 
     public function import(Request $request)

@@ -60,7 +60,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="number" class="form-control"  id="people_in_residence"
+                                <input type="number" class="form-control"  id="person_in_residence"
                                        onchange="ShowForm1()" placeholder="Mora com quantas pessoas">
                             </div>
                         </div>
@@ -141,7 +141,7 @@
 {{--                    </div>--}}
 {{--                    <div class="table-responsive">--}}
 {{--                        <!-- Projects table -->--}}
-{{--                        @if(isset($peoples))--}}
+{{--                        @if(isset($persons))--}}
 {{--                        <table class="table align-items-center table-flush">--}}
 {{--                            <thead class="thead-light">--}}
 {{--                            <tr>--}}
@@ -154,12 +154,12 @@
 {{--                            </tr>--}}
 {{--                            </thead>--}}
 {{--                            <tbody>--}}
-{{--                            @foreach($peoples as $people)--}}
+{{--                            @foreach($persons as $person)--}}
 {{--                            <tr>--}}
-{{--                                <th scope="row">{{$people->name}}</th>--}}
-{{--                                <td>{{$people->birthday}}</td>--}}
+{{--                                <th scope="row">{{$person->name}}</th>--}}
+{{--                                <td>{{$person->birthday}}</td>--}}
 {{--                                <td></td>--}}
-{{--                                <td>{{$people->cep}}</td>--}}
+{{--                                <td>{{$person->cep}}</td>--}}
 {{--                                <td></td>--}}
 {{--                                <td></td>--}}
 {{--                            </tr>--}}
@@ -187,8 +187,8 @@
 @push('js')
     <script>
         var ShowForm1 = (function () {
-            let numpeoples = $('#people_in_residence').val()
-            if (numpeoples > 0) {
+            let numpersons = $('#person_in_residence').val()
+            if (numpersons > 0) {
                 let template =
                     '<div class="row m-2">\n' +
                     '                            <div class="col-md-6">\n' +
@@ -202,7 +202,7 @@
                     '                                </div>\n' +
                     '                            </div>\n' +
                     '                        </div>'
-                for (var i = 0; i < numpeoples; i++) {
+                for (var i = 0; i < numpersons; i++) {
                     $('#show1').append(template)
                 }
 
@@ -251,7 +251,7 @@
                 },
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('company.add_people') }}",
+                ajax: "{{ route('company.add_person') }}",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},

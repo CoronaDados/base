@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="{{ route('people.import') }}" class="form-group" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('person.import') }}" class="form-group" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
