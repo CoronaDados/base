@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CompanyUsersImport;
+use App\Imports\PersonablesImport;
 use App\Enums\RiskGroupType;
 use App\Enums\SectorType;
-use App\Imports\PersonsImport;
-use App\Model\Company\Company;
-use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -176,10 +175,12 @@ class PersonController extends Controller
     public function import(Request $request)
     {
         $file = $request->file('file');
+        $role_name = 'Colaborador';
 
-        (new PersonsImport(auth('company')->user()))->queue($file);
+        (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
+        (new PersonablesImport(auth('company')->user()))->queue($file);
 
-        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde algums minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
+        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde alguns minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
 
         return back();
     }

@@ -58,26 +58,17 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
+        $email = $row['email'];
 
-        $user = CompanyUser::updateOrCreate(
-            ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
-            [
-                'name' => $row['name'],
-                'email' => $row['email'],
-                'cpf' => $row['cpf'],
-                'phone' => $row['phone'],
-                'is_admin' => false,
-                'password' => Hash::make($cpf),
-            ]
-        );
-        $user->syncRoles($this->role);
+        if ($email == '' || $cpf == '') {
+            return;
+        }
 
         $person = Person::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],
                 'cpf' => $cpf,
-                'email' => $row['email'],
                 'street' => $row['street'],
                 'neighborhood' => $row['neighborhood'],
                 'complement' => $row['complement'],
@@ -97,20 +88,17 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             ]
         );
 
-        $lider = CompanyUser::query()->where([
-            ['cpf', $cpf_lider],
+        $user = CompanyUser::firstOrCreate(
+            ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
             [
-                'company_id', $this->importedBy->company_id,
+                'email' => $email,
+                'password' => Hash::make($password),
             ]
-        ])->first();
+        );
+        $user->email = $email;
+        $user->save();
 
-        if (!$lider) {
-            $lider = $this->importedBy;
-        }
-
-        if (!$lider->persons()->where('person_id', $person->id)->exists()) {
-            $lider->persons()->save($person);
-        }
+        $user->assignRole($this->role);
     }
 
     public function chunkSize(): int

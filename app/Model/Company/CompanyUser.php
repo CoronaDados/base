@@ -21,7 +21,7 @@ class CompanyUser  extends Authenticatable
     protected $guard = 'company';
 
     protected $fillable = [
-        'name', 'email', 'is_admin', 'password', 'email_verfied_at', 'phone', 'cpf', 'department', 'company_id'
+        'email', 'is_admin', 'password', 'email_verfied_at', 'company_id', 'person_id'
     ];
 
     protected $hidden = ['password'];
@@ -32,6 +32,10 @@ class CompanyUser  extends Authenticatable
         return $this->morphToMany(Person::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
     }
 
+    public function person()
+    {
+        return $this->belongsTo(Person::class);
+    }
 
     public function company()
     {
@@ -45,12 +49,14 @@ class CompanyUser  extends Authenticatable
 
     public function personsInCompany()
     {
-        $query = "SELECT p.id, p.name, p.email, c.name AS lider 
+        $query = "SELECT p.id, p.name, c.email, l.name AS lider 
             FROM persons p
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
-            WHERE p.id IN ( SELECT pp.person_id FROM personables pp WHERE personable_id
-                IN ( SELECT c.id  company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN ( 
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN ( 
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
         return DB::select(DB::raw($query));
     }

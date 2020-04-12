@@ -24,7 +24,7 @@ class importUsersErrorMail extends Mailable
     {
         return $this->markdown('mails.imports.error')
             ->with([
-                'name' => $this->user->name,
+                'name' => $this->user->person->name,
                 'email' => $this->user->email,
                 'message' => $this->event->getException()->getMessage(),
             ]);

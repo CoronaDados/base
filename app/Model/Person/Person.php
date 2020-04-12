@@ -2,6 +2,7 @@
 
 namespace App\Model\Person;
 
+use App\Model\Company\CompanyUser;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,6 @@ class Person extends Model
 
     protected $fillable = [
         'name',
-        'email',
         'phone',
         'cpf',
         'sector',
@@ -41,7 +41,7 @@ class Person extends Model
 
     public function companyUsers()
     {
-        return $this->morphTo('personable', 'personable_type', 'personable_id');
+        return $this->morphedByMany(CompanyUser::class, 'personable');
     }
     public function casePersonDay()
     {
