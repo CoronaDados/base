@@ -95,19 +95,19 @@
             </div>
         </div>
 
-{{--        @if($isAdmin)--}}
-{{--            <div class="col-md-2">--}}
-{{--                <div class="form-group">--}}
-{{--                    <label for="risk_group">Perfil</label>--}}
-{{--                    <select name="risk_group" id="risk_group" class="custom-select form-control-alternative risk_group">--}}
-{{--                        <option disabled selected>Perfil </option>--}}
-{{--                        @foreach($roles as $role)--}}
-{{--                            <option value="{{ $role->name }}">{{ $role->name }}</option>--}}
-{{--                        @endforeach--}}
-{{--                    </select>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        @endif--}}
+        @if($isAdmin)
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="risk_group">Perfil</label>
+                    <select name="risk_group" id="risk_group" class="custom-select form-control-alternative risk_group">
+                        <option disabled selected>Perfil </option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        @endif
     </div>
 {{--    <div class="row">--}}
 {{--        <div class="col-md-4">--}}
@@ -273,50 +273,5 @@
                 $('#show_type_transport').hide()
             }
         });
-
-        @if($dataTableRoute)
-            let table = $('.data-table').DataTable({
-                language: {
-                    "sEmptyTable": "Nenhum registro encontrado",
-                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sInfoThousands": ".",
-                    "sLengthMenu": "_MENU_ resultados por página",
-                    "sLoadingRecords": "Carregando...",
-                    "sProcessing": "Processando...",
-                    "sZeroRecords": "Nenhum registro encontrado",
-                    "sSearch": "Pesquisar",
-                    "oPaginate": {
-                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
-                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
-                        "sFirst": "Primeiro",
-                        "sLast": "Último"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Ordenar colunas de forma ascendente",
-                        "sSortDescending": ": Ordenar colunas de forma descendente"
-                    },
-                    "select": {
-                        "rows": {
-                            "_": "Selecionado %d linhas",
-                            "0": "Nenhuma linha selecionada",
-                            "1": "Selecionado 1 linha"
-                        }
-                    }
-                },
-                processing: true,
-                serverSide: false,
-                ajax: "{{ $dataTableRoute }}",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'lider', name: 'lider'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
-                ]
-            });
-        @endif
     </script>
 @endpush

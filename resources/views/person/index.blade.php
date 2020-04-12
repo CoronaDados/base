@@ -35,8 +35,32 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
-                <div class="modal-body">
-                    @include('person.partials.form', ['isRequired' => false, 'route' => false, 'dataTableRoute' => route('person.index')])
+                <div class="modal-body pt-0">
+                    <div class="col-lg-12 pl-0 pt-0">
+                        <div class="nav-wrapper">
+                            <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-text" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Edição / Visualização</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
+                                        <p class="description">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth.</p>
+                                        <p class="description">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse.</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
+                                        <p class="description">Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,6 +76,49 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            let table = $('.data-table').DataTable({
+                    language: {
+                        "sEmptyTable": "Nenhum registro encontrado",
+                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "_MENU_ resultados por página",
+                        "sLoadingRecords": "Carregando...",
+                        "sProcessing": "Processando...",
+                        "sZeroRecords": "Nenhum registro encontrado",
+                        "sSearch": "Pesquisar",
+                        "oPaginate": {
+                            "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                            "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                            "sFirst": "Primeiro",
+                            "sLast": "Último"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Ordenar colunas de forma ascendente",
+                            "sSortDescending": ": Ordenar colunas de forma descendente"
+                        },
+                        "select": {
+                            "rows": {
+                                "_": "Selecionado %d linhas",
+                                "0": "Nenhuma linha selecionada",
+                                "1": "Selecionado 1 linha"
+                            }
+                        }
+                    },
+                    processing: true,
+                    serverSide: false,
+                    ajax: "{{ route('person.index') }}",
+                    columns: [
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                        {data: 'name', name: 'name'},
+                        {data: 'email', name: 'email'},
+                        {data: 'lider', name: 'lider'},
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
+                    ]
+                });
 
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
