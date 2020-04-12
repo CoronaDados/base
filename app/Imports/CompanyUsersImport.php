@@ -60,25 +60,11 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
 
-        $user = CompanyUser::updateOrCreate(
-            ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
-            [
-                'name' => $row['name'],
-                'email' => $row['email'],
-                'cpf' => $row['cpf'],
-                'phone' => $row['phone'],
-                'is_admin' => false,
-                'password' => Hash::make($password),
-            ]
-        );
-        $user->syncRoles($this->role);
-
         $person = Person::updateOrCreate(
             ['cpf' => $cpf],
             [
                 'name' => $row['name'],
                 'cpf' => $cpf,
-                'email' => $row['email'],
                 'street' => $row['street'],
                 'neighborhood' => $row['neighborhood'],
                 'complement' => $row['complement'],
@@ -98,19 +84,37 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             ]
         );
 
-        $lider = CompanyUser::query()->where([
-            ['cpf', $cpf_lider],
+        $user = CompanyUser::firstOrCreate(
+            ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
             [
-                'company_id', $this->importedBy->company_id,
+                'email' => $row['email'],
+                'password' => Hash::make($password),
             ]
-        ])->first();
-
-        if (!$lider) {
-            $lider = $this->importedBy;
+        );
+        if ($user->email != $row['email']) {
+            $user->email = $row['email'];
+            $user->save();
         }
 
-        if (!$lider->persons()->where('person_id', $person->id)->exists()) {
-            $lider->persons()->save($person);
+        $user->syncRoles($this->role);
+
+        // pegar o person com o CPF igual o do lider
+        // pegar o company_user referente ao person acima da mesma empresa
+        $personLider = Person::where('cpf', $cpf_lider)->first();
+
+        if ($personLider) {
+            $userLider = CompanyUser::where([
+                'person_id' => $personLider->id,
+                'company_id' => $this->importedBy->company_id
+            ])->first();
+        }
+
+        if (!isset($userLider) || !$userLider) {
+            $userLider = $this->importedBy;
+        }
+
+        if (!$userLider->persons()->where('person_id', $person->id)->exists()) {
+            $userLider->persons()->save($person);
         }
     }
 

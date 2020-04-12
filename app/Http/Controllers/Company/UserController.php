@@ -62,7 +62,6 @@ class UserController extends Controller
     {
         $user = CompanyUser::create([
             'company_id' => auth()->user()->company_id,
-            'name' => $request->name,
             'email' => $request->email,
             'is_admin' => false,
             'password' => Hash::make('secret@'),
@@ -70,7 +69,6 @@ class UserController extends Controller
 
         $person = new Person();
         $person->name = $request->name;
-        $person->email = $request->email;
         $person->cpf = $request->cpf;
         $person->phone = $request->phone;
         $person->sector = $request->sector;
@@ -87,6 +85,7 @@ class UserController extends Controller
         $person->complement = $request->complement;
         $person->more = $request->more;
         //$person->save();
+
         $user->persons()->save($person);
 
         flash('Usuário cadastrado com sucesso', 'info');

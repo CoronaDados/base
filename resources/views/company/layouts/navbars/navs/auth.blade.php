@@ -13,7 +13,7 @@
                             <i class="ni ni-single-02"></i>
                         </span>
                         <div class="media-body ml-2 d-none d-lg-block">
-                            <span class="mb-0 text-sm  font-weight-bold">{{ auth()->user()->name }}</span>
+                            <span class="mb-0 text-sm  font-weight-bold">{{ auth()->user()->person->name }}</span>
                         </div>
                     </div>
                 </a>
