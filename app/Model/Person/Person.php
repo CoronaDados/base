@@ -5,9 +5,12 @@ namespace App\Model\Person;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Wildside\Userstamps\Userstamps;
 
 class Person extends Model
 {
+    use Userstamps;
+
     protected $table = 'persons';
 
     protected $fillable = [

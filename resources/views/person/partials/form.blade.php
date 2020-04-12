@@ -16,7 +16,7 @@
 
         <div class="col-md-6">
             <div class="form-group">
-                <label for="email">Email {{ $isRequired ? '*' : '' }}</label>
+                <label for="email">E-mail {{ $isRequired ? '*' : '' }}</label>
                 <input type="email" class="form-control form-control-alternative" required id="email" name="email"
                        placeholder="Email {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
@@ -39,15 +39,12 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="sector">Departamento</label>
+                <label for="sector">Setor</label>
                 <select name="sector" id="sector" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative">
                     <option disabled selected>Setor</option>
-                    <option value="Administrativo">Administrativo</option>
-                    <option value="Financeiro">Financeiro</option>
-                    <option value="Operacional">Operacional</option>
-                    <option value="Comercial">Comercial</option>
-                    <option value="Médico">Médico</option>
-                    <option value="Diretoria">Diretoria</option>
+                    @foreach($sectors as $k => $v)
+                        <option value="{{ $v }}">{{ $v }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -81,93 +78,113 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        @php
+            $isAdmin = auth()->user()->hasRole('Admin');
+            $col = ($isAdmin) ? 'col-md-4' : 'col-md-6'
+        @endphp
+
+        <div class={{ $col }}>
             <div class="form-group">
                 <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
                 <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
                     <option disabled selected>Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
                     @foreach($riskGroups as $k => $v)
-                        <option value="{{ $v  }}">{{ $v }}</option>
+                        <option value="{{ $v }}">{{ $v }}</option>
                     @endforeach
                 </select>
             </div>
         </div>
+
+{{--        @if($isAdmin)--}}
+{{--            <div class="col-md-2">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="risk_group">Perfil</label>--}}
+{{--                    <select name="risk_group" id="risk_group" class="custom-select form-control-alternative risk_group">--}}
+{{--                        <option disabled selected>Perfil </option>--}}
+{{--                        @foreach($roles as $role)--}}
+{{--                            <option value="{{ $role->name }}">{{ $role->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        @endif--}}
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="type_transport">Como vai ao trabalho</label>
-                <select name="type_transport" id="type_transport" required class="custom-select form-control-alternative"
-                        onchange="TypeTransport()">
-                    <option disabled selected>Como vai ao trabalho</option>
-                    <option value="1">Ônibus</option>
-                    <option value="2">Carro</option>
-                    <option value="3">A pé</option>
-                    <option value="3">Bicicleta</option>
-                    <option value="4">Outros</option>
-                </select>
-            </div>
-        </div>
-        <div id="show_type_transport" class="col-md-4">
-            <div class="form-group">
-            </div>
-        </div>
-    </div>
+{{--    <div class="row">--}}
+{{--        <div class="col-md-4">--}}
+{{--            <div class="form-group">--}}
+{{--                <label for="type_transport">Como vai ao trabalho</label>--}}
+{{--                <select name="type_transport" id="type_transport" required class="custom-select form-control-alternative"--}}
+{{--                        onchange="TypeTransport()">--}}
+{{--                    <option disabled selected>Como vai ao trabalho</option>--}}
+{{--                    <option value="1">Ônibus</option>--}}
+{{--                    <option value="2">Carro</option>--}}
+{{--                    <option value="3">A pé</option>--}}
+{{--                    <option value="3">Bicicleta</option>--}}
+{{--                    <option value="4">Outros</option>--}}
+{{--                </select>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--        <div id="show_type_transport" class="col-md-4">--}}
+{{--            <div class="form-group">--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+
     @if(!$isRequired)
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label class="control-label" for="password">Senha (deixe em branco para não alterar)</label>
-                <input type="password" id="password" name="password" class="form-control form-control-alternative">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label" for="password">Senha (deixe em branco para não alterar)</label>
+                    <input type="password" id="password" name="password" class="form-control form-control-alternative">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label" for="confirm_password">Confirme a senha (se for alterar)</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-alternative">
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label class="control-label" for="confirm_password">Confirme a senha (se for alterar)</label>
-                <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-alternative">
-            </div>
-        </div>
-    </div>
     @endif
 
-    @if($isRequired)
-    <div class="row">
-        <div class="col-12 p-1">
-            <div class="card p-1">
-                <div class="card-header text-center">
-                    <h3>Relacionamento com pessoas</h3>
-                    <h5>Liste todas as pessoas em sua residência, meio de transporte, meio de convívio etc</h5>
-                </div>
-                <div class="card-body" id="related_persons">
-                    <div class="row">
-                        <div class="col-6 p-1">
-                            <div class="form-group">
-                                <label>Nome</label>
-                                <input type="text" name="related_persons[1][name]" placeholder="Nome"
-                                       onchange="addP(1)" class="form-control form-control-alternative"/>
-                            </div>
-                        </div>
-                        <div class="col-3 p-1">
-                            <div class="form-group">
-                                <label>Telefone</label>
-                                <input type="tel" name="related_persons[1][phone]"
-                                       placeholder="Telefone"
-                                       class="form-control form-control-alternative phone"/>
-                            </div>
-                        </div>
-                        <div class="col-3 p-1">
-                            <div class="form-group">
-                                <label>CPF</label>
-                                <input type="text" name="related_persons[1][cpf]" placeholder="CPF"
-                                       class="form-control form-control-alternative cpf"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
+{{--    @if($isRequired)--}}
+{{--    <div class="row">--}}
+{{--        <div class="col-12 p-1">--}}
+{{--            <div class="card p-1">--}}
+{{--                <div class="card-header text-center">--}}
+{{--                    <h3>Relacionamento com pessoas</h3>--}}
+{{--                    <h5>Liste todas as pessoas em sua residência, meio de transporte, meio de convívio etc</h5>--}}
+{{--                </div>--}}
+{{--                <div class="card-body" id="related_persons">--}}
+{{--                    <div class="row">--}}
+{{--                        <div class="col-6 p-1">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Nome</label>--}}
+{{--                                <input type="text" name="related_persons[1][name]" placeholder="Nome"--}}
+{{--                                       onchange="addP(1)" class="form-control form-control-alternative"/>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-3 p-1">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Telefone</label>--}}
+{{--                                <input type="tel" name="related_persons[1][phone]"--}}
+{{--                                       placeholder="Telefone"--}}
+{{--                                       class="form-control form-control-alternative phone"/>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-3 p-1">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>CPF</label>--}}
+{{--                                <input type="text" name="related_persons[1][cpf]" placeholder="CPF"--}}
+{{--                                       class="form-control form-control-alternative cpf"/>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--    @endif--}}
 
     <div class="col-12 text-center">
         <button type="submit" class="btn btn-primary my-4 save">{{ $isRequired ? __('Cadastrar') : __('Salvar') }}</button>

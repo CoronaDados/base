@@ -76,7 +76,7 @@
                         $('#risk_group').val(data.person.risk_group);
 
                         if(data.person.bithday) {
-                            $('#birthday').val(formattedDateFromDB(data.person.bithday));
+                            $('#birthday').val(formattedDateFromDB(data.person.bithday))
                         }
 
                         const $radios = $('input:radio[name=gender]');
@@ -84,7 +84,7 @@
                             $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
                         }
 
-                        $('.cep-person').val(data.person.cep).mask('00000.000');
+                        $('.cep-person').val(data.person.cep).mask('000000.000');
 
                         handleMasks();
                     },

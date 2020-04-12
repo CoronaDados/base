@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RiskGroupType;
+use App\Enums\SectorType;
 use App\Imports\PersonsImport;
+use App\Model\Company\Company;
+use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -35,7 +39,11 @@ class PersonController extends Controller
                 ->make(true);
         }
 
-        return view('person.index');
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+
+        return view('person.index', compact('riskGroups', 'sectors', 'roles'));
     }
 
     /**
@@ -45,7 +53,11 @@ class PersonController extends Controller
      */
     public function create()
     {
-        return view('person.create');
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+
+        return view('person.create', compact('riskGroups', 'sectors', 'roles'));
     }
 
     /**
@@ -62,7 +74,7 @@ class PersonController extends Controller
         $person->cpf = $this->removePunctuation($request->cpf);
         $person->phone = $this->removePunctuation($request->phone);
         $person->sector = $request->sector;
-        $person->bithday = $request->birthday;
+        $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
         $person->gender = $request->gender;
         $person->risk_group = $request->risk_group;
         $person->status = $request->status;
@@ -79,7 +91,11 @@ class PersonController extends Controller
 
         flash('Colaborador cadastrado com sucesso', 'info');
 
-        return view('person.create');
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+
+        return view('person.index', compact('riskGroups', 'sectors', 'roles'));
     }
 
     private function removePunctuation($string)

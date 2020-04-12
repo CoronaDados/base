@@ -4,11 +4,12 @@
 
     <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card">
-            <div class="card-header text-center">
-                <h3>Cadastrar Colaborador</h3>
+            <div class="card-header">
+                <h3>Cadastrar do Colaborador</h3>
             </div>
+
             <div class="card-body">
-                @include('person.partials.form', ['isRequired' => true, 'route' => route('person.store'), 'dataTableRoute' => null])
+                @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => true, 'route' => route('person.store'), 'dataTableRoute' => null])
             </div>
         </div>
     </div>
@@ -54,8 +55,5 @@
             newInput.appendTo("#related_persons");
             handleMasks();
         });
-
-
-
     </script>
 @endpush
