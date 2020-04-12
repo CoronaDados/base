@@ -4,6 +4,7 @@ namespace App\Model\Company;
 
 use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
+use App\Notifications\Company\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +14,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Spatie\Permission\Traits\HasRoles;
 
 
-class CompanyUser  extends Authenticatable
+class CompanyUser  extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable,
         HasRoles;
@@ -49,16 +50,21 @@ class CompanyUser  extends Authenticatable
 
     public function personsInCompany()
     {
-        $query = "SELECT p.id, p.name, c.email, l.name AS lider 
+        $query = "SELECT p.id, p.name, c.email, l.name AS lider
             FROM persons p
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
             INNER JOIN persons l ON l.id = c.person_id
-            WHERE p.id IN ( 
-                SELECT pp.person_id FROM personables pp WHERE personable_id IN ( 
+            WHERE p.id IN (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN (
                     SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
         return DB::select(DB::raw($query));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 
     public function sendPasswordResetNotification($token)

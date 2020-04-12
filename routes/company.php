@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
-Route::group(['middleware' => 'auth:company'], function () {
+Route::group(['middleware' => ['auth:company', 'verified']], function () {
 
     Route::resource('roles', 'RoleController');
 
