@@ -92,6 +92,14 @@
                                     </a>
                                 </li>
 
+                                @can('Ver Funções')
+                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('company.roles.index') }}">
+                                            {{ __('Gerenciar Perfis') }}
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
                                     <a class="nav-link" href="{{ route('person.import') }}">
                                         {{ __('Importar') }}
@@ -109,51 +117,7 @@
                             <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
                         </a>
                     </li>
-                @endcan
-                @canany('Ver Usuários','Ver Funções')
-                    <li class="nav-item {{request()->segment(1) === 'users' ? 'active' : ''}}">
-                        <a class="nav-link" href="#navbar-users" data-toggle="collapse" role="button"
-                           aria-expanded="false"
-                           aria-controls="navbar-users">
-                            <i class="fa fa-users"></i>
-                            <span class="nav-link-text">{{ __('Usuários') }}</span>
-                        </a>
-
-                        <div class="collapse " id="navbar-users">
-                            <ul class="nav nav-sm flex-column">
-                                @can('Ver Usuários')
-                                    <li class="nav-item {{request()->is('users') ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.index') }}">
-                                            {{ __('Listar') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Cadastrar Usuários')
-                                    <li class="nav-item {{request()->is('users/create') ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.create') }}">
-                                            {{ __('Cadastrar') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Ver Funções')
-                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.roles.index') }}">
-                                            {{ __('Gerenciar Perfis') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Cadastrar Usuários')
-                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.import') }}">
-                                            {{ __('Importar') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                            </ul>
-                            <hr class="my-3">
-                        </div>
-                    </li>
-                @endcanany
+                @endcan                
                 <li class="nav-item">
                     <a href="{{ route('company.logout') }}" class="nav-link" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">

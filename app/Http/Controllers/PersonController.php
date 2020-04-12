@@ -179,7 +179,7 @@ class PersonController extends Controller
     public function import(Request $request)
     {
         $file = $request->file('file');
-        $role_name = 'Colaborador';
+        $role_name = $request->role;
 
         (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
         (new PersonablesImport(auth('company')->user()))->queue($file);
