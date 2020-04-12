@@ -20,15 +20,14 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\ImportFailed;
 use Maatwebsite\Excel\Row;
 
-class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
+class PersonablesImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
 
     use Importable, SkipsFailures;
 
-    public function __construct(CompanyUser $importedBy, $role)
+    public function __construct(CompanyUser $importedBy)
     {
         $this->importedBy = $importedBy;
-        $this->role = $role;
     }
 
     public function registerEvents(): array
@@ -54,52 +53,27 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             ARRAY_FILTER_USE_KEY
         );
 
-        $password = preg_replace('/[^0-9]/', '', $row['cpf']);
         $cpf = $this->removePunctuation($row['cpf']);
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
-        $cep = $this->removePunctuation($row['cep']);
-        $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
-        $email = $row['email'];
 
-        if ($email == '' || $cpf == '') {
+        $person = Person::where('cpf', $cpf)->first();
+        if (!$person) {
             return;
         }
 
-        $person = Person::updateOrCreate(
-            ['cpf' => $cpf],
-            [
-                'name' => $row['name'],
-                'cpf' => $cpf,
-                'street' => $row['street'],
-                'neighborhood' => $row['neighborhood'],
-                'complement' => $row['complement'],
-                'cep' => $cep,
-                'phone' => $row['phone'],
-                'city' => $row['city'],
-                'sector' => $row['sector'],
-                'ibge' => $row['ibge'],
-                'bithday' => $birthday,
-                'gender' => $row['gender'],
-                'risk_group' => $row['risk_group'],
-                'status' => $row['status'],
-                'state' => $row['state'],
-                'number' => $row['number'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        $personLider = Person::where('cpf', $cpf_lider)->first();
+        if ($personLider) {
+            $userLider = CompanyUser::where([
+                'person_id' => $personLider->id,
+                'company_id' => $this->importedBy->company_id
+            ])->first();
+        }
 
-        $user = CompanyUser::firstOrCreate(
-            ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
-            [
-                'email' => $email,
-                'password' => Hash::make($password),
-            ]
-        );
-        $user->email = $email;
-        $user->save();
+        if (!isset($userLider) || !$userLider) {
+            $userLider = $this->importedBy;
+        }
 
-        $user->assignRole($this->role);
+        $person->companyUsers()->sync($userLider);
     }
 
     public function chunkSize(): int
