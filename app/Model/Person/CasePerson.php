@@ -32,16 +32,31 @@ class CasePerson extends Model
 
     public function getStatusFormatAttribute()
     {
-        $valuesJson = json_decode($this->status);
-        $values = array();
+        $allSymptoms = [
+            "febre" => "Febre",
+            "tosse-seca" => "Tosse seca",
+            "cansaco" => "Cansaço",
+            "dor-corpo" => "Dor no corpo",
+            "dor-garganta" => "Dor de Garganta",
+            "congestao-nasal" => "Congestão Nasal",
+            "diarreia" => "Diarréia",
+            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+        ];
 
-        foreach($valuesJson as $key => $value) {
-            if ($key != 'person_id' && $key != 'obs' && $value == 'sim') {
-                $values[] = $key;
-            }
-        }
+        $status = (array) json_decode($this->status);
+        unset($status["person_id"], $status['obs']);
 
-        return implode(', ', $values);
+        $allSymptomsFiltered = array_values(
+            array_filter(
+                $allSymptoms,
+                function ($key) use ($status) {
+                    return array_key_exists($key, $status);
+                },
+                ARRAY_FILTER_USE_KEY
+            )
+        );
+
+        return $allSymptomsFiltered;
     }
 
     public function person()

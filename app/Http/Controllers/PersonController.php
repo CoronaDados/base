@@ -159,11 +159,46 @@ class PersonController extends Controller
     {
         if ($request->ajax()) {
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
-            $leader = $companyUser->leader();
+            $leader = $companyUser->leader()->id;
+            $casesPerson = $companyUser->person->casesPerson()->get();
 
-            //            dd($leader);
+            $allSymptoms = [
+                "febre" => "Febre",
+                "tosse-seca" => "Tosse seca",
+                "cansaco" => "Cansaço",
+                "dor-corpo" => "Dor no corpo",
+                "dor-garganta" => "Dor de Garganta",
+                "congestao-nasal" => "Congestão Nasal",
+                "diarreia" => "Diarréia",
+                "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+            ];
 
-            return response()->json(['companyUser' => $companyUser, 'leader' => $leader->id]);
+            foreach ($casesPerson as $case) {
+                $object = new \stdClass();
+
+                $status = (array) json_decode($case['status']);
+                unset($status["person_id"]);
+
+                $allSymptomsFiltered = array_values(
+                    array_filter(
+                        $allSymptoms,
+                        function ($key) use ($status) {
+                            return array_key_exists($key, $status);
+                        },
+                        ARRAY_FILTER_USE_KEY
+                    )
+                );
+
+                $object->symptoms = $allSymptomsFiltered;
+
+                $object->leader = CompanyUser::with('person')->find($case['user_id'])->person->name;
+                $object->date = Carbon::parse($case['created_at'])->format('d/m/Y H:i:s');
+                $object->obs = $status['obs'];
+
+                $cases[] = $object;
+            }
+
+            return response()->json(compact('companyUser', 'leader', 'cases'));
         }
     }
 

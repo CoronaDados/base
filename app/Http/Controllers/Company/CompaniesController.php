@@ -59,6 +59,18 @@ class CompaniesController extends Controller
 
             return DataTables::of($casesPersons)
                     ->addIndexColumn()
+                    ->editColumn('status_format', function ($status) {
+
+                        $allSymptoms = '<ul class="mb-0">';
+                        foreach ($status->status_format as $symptom) {
+                            $allSymptoms .= '<li>' . $symptom . '</li>';
+                        }
+                        $allSymptoms .= '</ul>';
+
+                        return $allSymptoms;
+
+                    })
+                    ->rawColumns(['status_format'])
                     ->make(true);
         }
 

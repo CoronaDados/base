@@ -129,9 +129,10 @@
                     dataType: 'json',
                     success: function (data) {
                         let person = data.companyUser.person,
-                            role = data.companyUser.roles[0].name;
+                            role = data.companyUser.roles[0].name,
+                            historyTable = $('.history-table tbody');
 
-                        console.log(data.symptoms)
+                        historyTable.empty();
 
                         $('#modelHeading').html("Colaborador " + person.name);
                         $('#saveBtn').val("edit-user");
@@ -140,7 +141,7 @@
                         $('#person_id').val(person_id);
                         $('#name').val(person.name);
                         $('#email').val(data.companyUser.email);
-                        $('#phone').val(person.phone).mask(SPMaskBehavior, spOptions);
+                        $('#phone').val(person.phone);
                         $('#cpf').val(person.cpf);
                         $('#sector').val(person.sector);
                         $('#risk_group').val(person.risk_group);
@@ -155,6 +156,33 @@
                         $radios.filter('[value=' + person.gender + ']').prop('checked', true);
 
                         $('.cep-person').val(person.cep);
+
+                        let tr = $('<tr>');
+                        if(data.cases) {
+                            for (casePerson of data.cases) {
+                                let trSymptom = $('<td>').appendTo(tr),
+                                ul = $('<ul>').addClass('m-0');
+
+                                for(symptom of casePerson.symptoms) {
+                                    $('<li>').text(symptom).appendTo(ul);
+                                }
+
+                                ul.appendTo(trSymptom);
+
+                                let date = $('<td>').appendTo(tr),
+                                    leader = $('<td>').appendTo(tr);
+
+                                $('<p>').addClass('m-0').text(casePerson.date).appendTo(date);
+                                $('<p>').addClass('m-0').text(casePerson.leader).appendTo(leader);
+
+                                historyTable.append(tr);
+                            }
+                        } else {
+                            let td = $('<td>').attr('colspan', 3).text('Este colaborador não foi monitorado.');
+                            td.appendTo(tr);
+                            historyTable.append(tr);
+                        }
+
                     },
                     error: function () {
                         Swal.fire({

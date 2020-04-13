@@ -17,7 +17,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive p-2">
-                            <table class="table table-bordered data-table">
+                            <table class="table table-bordered data-table align-items-center">
                                 <thead>
                                     <tr>
                                         <th>Data</th>
@@ -61,8 +61,8 @@
                 "sZeroRecords": "Nenhum registro encontrado",
                 "sSearch": "Pesquisar",
                 "oPaginate": {
-                    "sNext": "&raquo;",
-                    "sPrevious": "&laquo;",
+                    "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                    "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
                     "sFirst": "Primeiro",
                     "sLast": "Último"
                 },

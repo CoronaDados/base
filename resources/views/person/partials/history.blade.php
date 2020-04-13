@@ -1,6 +1,6 @@
 <div class="table-responsive">
     <!-- Projects table -->
-    <table class="table table-bordered">
+    <table class="table table-bordered history-table align-items-center">
         <thead>
             <tr>
                 <th>Sintoma(s)</th>
@@ -8,11 +8,7 @@
                 <th>Monitorado por</th>
             </tr>
         </thead>
-        <tbody></tbody>
-        <tfooter>
-            <tr>
-                <td colspan="3">Observações: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, officiis.</td>
-            </tr>
-        </tfooter>
+        <tbody>
+        </tbody>
     </table>
 </div>

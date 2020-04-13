@@ -266,8 +266,7 @@
             $('.birthday').mask('00/00/0000', optionsBirthday);
         };
 
-        $('.birthday').mask('00/00/0000', optionsBirthday);
-        $('.cep-person').mask('00000-000');
+        handleMasks();
 
         let TypeTransport = (function () {
             let type = $('#type_transport').val();
