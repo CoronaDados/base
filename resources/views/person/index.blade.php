@@ -54,7 +54,7 @@
                             </div>
 
                             <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                @include('person.partials.historico')
+                                @include('person.partials.history')
                             </div>
                         </div>
                     </div>
@@ -130,6 +130,8 @@
                     success: function (data) {
                         let person = data.companyUser.person,
                             role = data.companyUser.roles[0].name;
+
+                        console.log(data.symptoms)
 
                         $('#modelHeading').html("Colaborador " + person.name);
                         $('#saveBtn').val("edit-user");
