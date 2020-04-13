@@ -80,22 +80,21 @@
 
         @php
             $isAdmin = auth()->user()->hasRole('Admin');
-            $col = ($isAdmin) ? 'col-md-4' : 'col-md-6'
         @endphp
 
-        <div class={{ $col }}>
-            <div class="form-group">
-                <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
-                <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
-                    <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
-                    @foreach($riskGroups as $k => $v)
-                        <option value="{{ $v }}">{{ $v }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
         @if($isAdmin)
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
+                    <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
+                        <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
+                        @foreach($riskGroups as $k => $v)
+                            <option value="{{ $v }}">{{ $v }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="role">Perfil</label>
@@ -109,19 +108,22 @@
             </div>
         @endif
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="leader">Líder responsável</label>
-                <select name="leader" id="leader" class="custom-select form-control-alternative leader">
-                    <option value="" disabled>Líder responsável</option>
-                    @foreach($leaders as $leader)
-                        <option value="{{ $leader->id }}">{{ $leader->name }}</option>
-                    @endforeach
-                </select>
+
+    @if($isAdmin)
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="leader">Líder responsável</label>
+                    <select name="leader" id="leader" class="custom-select form-control-alternative leader">
+                        <option value="" disabled selected>Líder responsável</option>
+                        @foreach($leaders as $leader)
+                            <option value="{{ $leader->id }}">{{ $leader->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
 {{--    <div class="row">--}}
 {{--        <div class="col-md-4">--}}
@@ -200,7 +202,7 @@
 {{--    </div>--}}
 {{--    @endif--}}
 
-    <div class="col-12 text-center">
+    <div class="col-12 text-right p-0">
         <button type="submit" class="btn btn-primary my-4 save">{{ $isRequired ? __('Cadastrar') : __('Salvar') }}</button>
     </div>
 </form>
