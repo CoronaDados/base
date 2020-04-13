@@ -50,34 +50,11 @@
 
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
-                                @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => false, 'route' => ''])
+                                @include('person.partials.form', ['isRequired' => false, 'route' => ''])
                             </div>
 
                             <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                <div class="table-responsive">
-                                    <!-- Projects table -->
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Sintoma(s)</th>
-                                                <th>Data e Hora do Monitoramento</th>
-                                                <th>Monitorado por</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Tosse Seca</td>
-                                                <td>12/04/2020 13:28</td>
-                                                <td>Douglas</td>
-                                            </tr>
-                                        </tbody>
-                                        <tfooter>
-                                            <tr>
-                                                <td colspan="3">Observações: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, officiis.</td>
-                                            </tr>
-                                        </tfooter>
-                                    </table>
-                                </div>
+                                @include('person.partials.historico')
                             </div>
                         </div>
                     </div>
@@ -98,47 +75,47 @@
             });
 
             let table = $('.data-table').DataTable({
-                    language: {
-                        "sEmptyTable": "Nenhum registro encontrado",
-                        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                        "sInfoPostFix": "",
-                        "sInfoThousands": ".",
-                        "sLengthMenu": "_MENU_ resultados por página",
-                        "sLoadingRecords": "Carregando...",
-                        "sProcessing": "Processando...",
-                        "sZeroRecords": "Nenhum registro encontrado",
-                        "sSearch": "Pesquisar",
-                        "oPaginate": {
-                            "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
-                            "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
-                            "sFirst": "Primeiro",
-                            "sLast": "Último"
-                        },
-                        "oAria": {
-                            "sSortAscending": ": Ordenar colunas de forma ascendente",
-                            "sSortDescending": ": Ordenar colunas de forma descendente"
-                        },
-                        "select": {
-                            "rows": {
-                                "_": "Selecionado %d linhas",
-                                "0": "Nenhuma linha selecionada",
-                                "1": "Selecionado 1 linha"
-                            }
-                        }
+                language: {
+                    "sEmptyTable": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "_MENU_ resultados por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
                     },
-                    processing: true,
-                    serverSide: false,
-                    ajax: "{{ route('person.index') }}",
-                    columns: [
-                        {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                        {data: 'name', name: 'name'},
-                        {data: 'email', name: 'email'},
-                        {data: 'lider', name: 'lider'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
-                });
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    }
+                },
+                processing: true,
+                serverSide: false,
+                ajax: "{{ route('person.index') }}",
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'lider', name: 'lider'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
+            });
 
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();

@@ -114,7 +114,7 @@
             <div class="form-group">
                 <label for="leader">Líder responsável</label>
                 <select name="leader" id="leader" class="custom-select form-control-alternative leader">
-                    <option value="">Líder responsável</option>
+                    <option value="" disabled>Líder responsável</option>
                     @foreach($leaders as $leader)
                         <option value="{{ $leader->id }}">{{ $leader->name }}</option>
                     @endforeach
