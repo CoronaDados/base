@@ -13,9 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-
+Route::view('/termos-de-privacidade', 'general.termos-de-privacidade')->name('termos-de-privacidade');;
