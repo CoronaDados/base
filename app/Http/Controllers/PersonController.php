@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
+use App\Enums\RiskGroupType;
+use App\Enums\SectorType;
+use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -32,11 +36,22 @@ class PersonController extends Controller
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
+                ->editColumn('name', function ($user) {
+                    return $this->getFirstAndLastName($user->name);
+                })
+                ->editColumn('lider', function ($user) {
+                    return $this->getFirstAndLastName($user->lider);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('person.index');
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
+
+        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -46,7 +61,12 @@ class PersonController extends Controller
      */
     public function create()
     {
-        return view('person.create');
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
+
+        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -57,35 +77,76 @@ class PersonController extends Controller
      */
     public function store(Request $request)
     {
-        $person = new Person();
-        $person->name = $request->name;
-        $person->email = $request->email;
-        $person->cpf = $this->removePunctuation($request->cpf);
-        $person->phone = $this->removePunctuation($request->phone);
-        $person->sector = $request->sector;
-        $person->bithday = $request->birthday;
-        $person->gender = $request->gender;
-        $person->risk_group = $request->risk_group;
-        $person->status = $request->status;
-        $person->cep = $this->removePunctuation($request->cep);
-        $person->ibge = $request->ibge;
-        $person->state = $request->state;
-        $person->city = $request->city;
-        $person->neighborhood = $request->neighborhood;
-        $person->street = $request->street;
-        $person->complement = $request->complement;
-        $person->more = $request->more;
 
-        auth('company')->user()->persons()->save($person);
+        $companyUser = auth('company')->user();
 
-        flash('Colaborador cadastrado com sucesso', 'info');
+        $cpf = $this->removePunctuation($request->cpf);
 
-        return view('person.create');
+        $person = Person::create(
+            [
+                'name' => $request->name,
+                'cpf' => $cpf,
+                'cep' => $this->removePunctuation($request->cep),
+                'phone' => $this->removePunctuation($request->phone),
+                'sector' => $request->sector,
+                'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
+                'gender' => $request->gender,
+                'risk_group' => $request->risk_group,
+                'status' => true
+            ]
+        );
+
+        $user = CompanyUser::create(
+            [
+                'person_id' => $person->id,
+                'company_id' => $companyUser->company_id,
+                'email' => $request->email,
+                'password' => Hash::make($cpf),
+            ]
+        );
+
+        $role = $request->role ?? 'Colaborador';
+
+        $user->assignRole($role);
+
+        $leaderId = $request->leader;
+
+        if ($leaderId) {
+            $userLider = CompanyUser::where([
+                'id' => $leaderId,
+                'company_id' => $companyUser->company_id
+            ])->first();
+        }
+
+        if (!isset($userLider) || !$userLider) {
+            $userLider = $companyUser;
+        }
+
+        $person->companyUsers()->sync($userLider);
+
+        flash('Colaborador cadastrado com sucesso!', 'info');
+
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = auth('company')->user()->leadersInCompany();
+
+        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
     private function removePunctuation($string)
     {
         return preg_replace('/[^0-9]/', '', $string);
+    }
+
+    private function getFirstAndLastName($name): string
+    {
+        $explodedName = explode(" ", $name);
+        $maxLength = count($explodedName) - 1;
+        $firstName = $explodedName[0];
+        $lastName = $explodedName[$maxLength];
+
+        return $firstName . ' ' . $lastName;
     }
 
     /**
@@ -97,8 +158,47 @@ class PersonController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = Person::find($id);
-            return response()->json(['person' => $person]);
+            $companyUser = CompanyUser::with('person', 'roles')->find($id);
+            $leader = $companyUser->leader()->id;
+            $casesPerson = $companyUser->person->casesPerson()->get();
+
+            $allSymptoms = [
+                "febre" => "Febre",
+                "tosse-seca" => "Tosse seca",
+                "cansaco" => "Cansaço",
+                "dor-corpo" => "Dor no corpo",
+                "dor-garganta" => "Dor de Garganta",
+                "congestao-nasal" => "Congestão Nasal",
+                "diarreia" => "Diarréia",
+                "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+            ];
+
+            foreach ($casesPerson as $case) {
+                $object = new \stdClass();
+
+                $status = (array) json_decode($case['status']);
+                unset($status["person_id"]);
+
+                $allSymptomsFiltered = array_values(
+                    array_filter(
+                        $allSymptoms,
+                        function ($key) use ($status) {
+                            return array_key_exists($key, $status);
+                        },
+                        ARRAY_FILTER_USE_KEY
+                    )
+                );
+
+                $object->symptoms = $allSymptomsFiltered;
+
+                $object->leader = CompanyUser::with('person')->find($case['user_id'])->person->name;
+                $object->date = Carbon::parse($case['created_at'])->format('d/m/Y H:i:s');
+                $object->obs = $status['obs'];
+
+                $cases[] = $object;
+            }
+
+            return response()->json(compact('companyUser', 'leader', 'cases'));
         }
     }
 
@@ -123,17 +223,43 @@ class PersonController extends Controller
     public function update(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = Person::find($id);
+            $companyUser = CompanyUser::find($id);
 
-            if ($person) {
-                $person->fill($request->all());
-                $person->cpf = $this->removePunctuation($person->cpf);
-                $person->phone = $this->removePunctuation($person->phone);
-                $person->cep = $this->removePunctuation($person->cep);
+            if ($companyUser) {
+                $cpf = $this->removePunctuation($request->cpf);
+
+                $person = $companyUser->person;
+                $person->name = $request->name;
+                $person->cpf = $cpf;
+                $person->cep = $this->removePunctuation($request->cep);
+                $person->phone = $this->removePunctuation($request->phone);
                 $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
-            }
+                $person->gender = $request->gender;
+                $person->sector = $request->sector;
+                $person->risk_group = $request->risk_group;
+                $person->save();
 
-            $person->save();
+                $companyUser->email = $request->email;
+
+                if ($request->password) {
+                    $companyUser->password = Hash::make($request->password);
+                }
+
+                $role = $request->role;
+                $companyUser->syncRoles($role);
+
+                $leaderId = $request->leader;
+                if ($leaderId) {
+                    $userLider = CompanyUser::where([
+                        'id' => $leaderId,
+                        'company_id' => $companyUser->company_id
+                    ])->first();
+                    $person->companyUsers()->sync($userLider);
+                }
+
+
+                $companyUser->save();
+            }
 
             flash('Colaborador atualizado com sucesso', 'info');
 

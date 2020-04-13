@@ -11,7 +11,14 @@ class CasePerson extends Model
     protected $fillable = [
         'status',
         'user_id',
-        'type_user'
+        'type_user',
+        'created_at'
+    ];
+
+    protected $appends = ['status_format'];
+
+    protected $casts = [
+        'created_at' => 'datetime:d/m/Y',
     ];
 
     protected static function boot()
@@ -21,5 +28,44 @@ class CasePerson extends Model
             $model->user_id = auth()->id();
             $model->user_type = get_class(auth()->user());
         });
+    }
+
+    public function getStatusFormatAttribute()
+    {
+        $allSymptoms = [
+            "febre" => "Febre",
+            "tosse-seca" => "Tosse seca",
+            "cansaco" => "Cansaço",
+            "dor-corpo" => "Dor no corpo",
+            "dor-garganta" => "Dor de Garganta",
+            "congestao-nasal" => "Congestão Nasal",
+            "diarreia" => "Diarréia",
+            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+        ];
+
+        $status = (array) json_decode($this->status);
+        unset($status["person_id"], $status['obs']);
+
+        $allSymptomsFiltered = array_values(
+            array_filter(
+                $allSymptoms,
+                function ($key) use ($status) {
+                    return array_key_exists($key, $status);
+                },
+                ARRAY_FILTER_USE_KEY
+            )
+        );
+
+        return $allSymptomsFiltered;
+    }
+
+    public function person()
+    {
+        return $this->hasOne(Person::class, 'id', 'person_id');
+    }
+
+    public function leader()
+    {
+        return $this->hasOne(Person::class, 'id', 'user_id');
     }
 }

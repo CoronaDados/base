@@ -14,7 +14,7 @@
                         <p><img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" /></p>
                     </div>
                 </div>
-            </div>          
+            </div>
         </div>
 
         <div class="row mt-5">
@@ -93,8 +93,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="cancaso" name="cancaso" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="cancaso">Cansaço</label>
+                                        <input type="checkbox" id="cansaco" name="cansaco" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="cansaco">Cansaço</label>
                                     </div>
                                 </div>
                             </div>
@@ -109,8 +109,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="dar-garganta" name="dar-garganta" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="dar-garganta">Dor de garganta corpo</label>
+                                        <input type="checkbox" id="dor-garganta" name="dor-garganta" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dor-garganta">Dor de garganta corpo</label>
                                     </div>
                                 </div>
                             </div>
@@ -135,6 +135,14 @@
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="custom-control-input">
                                         <label class="custom-control-label" for="diarreia">Diarréia</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dificuldade-respirar">Falta de ar/Dificuldade para respirar</label>
                                     </div>
                                 </div>
                             </div>
@@ -299,7 +307,7 @@
                     );
                 });
             });
-            
+
         });
 
     </script>

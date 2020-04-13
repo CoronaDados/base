@@ -6,9 +6,12 @@ use App\Model\Company\CompanyUser;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Wildside\Userstamps\Userstamps;
 
 class Person extends Model
 {
+    use Userstamps;
+
     protected $table = 'persons';
 
     protected $fillable = [
@@ -40,12 +43,18 @@ class Person extends Model
     {
         return $this->morphedByMany(CompanyUser::class, 'personable');
     }
+
     public function casePersonDay()
     {
         return $this->hasOne(CasePerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
     }
 
     public function createCasePersonDay()
+    {
+        return $this->hasMany(CasePerson::class, 'person_id');
+    }
+
+    public function casesPerson()
     {
         return $this->hasMany(CasePerson::class, 'person_id');
     }

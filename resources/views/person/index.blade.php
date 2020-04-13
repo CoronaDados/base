@@ -18,7 +18,7 @@
                     <tr>
                         <th width="20px">No</th>
                         <th>Nome</th>
-                        <th>Email</th>
+                        <th>E-mail</th>
                         <th>Líder</th>
                         <th width="100px">Ações</th>
                     </tr>
@@ -35,8 +35,29 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
-                <div class="modal-body">
-                    @include('person.partials.form', ['isRequired' => false, 'route' => false, 'dataTableRoute' => route('person.index')])
+                <div class="modal-body pt-0">
+                    <div class="col-lg-12 pl-0 pt-0 pr-0">
+                        <div class="nav-wrapper">
+                            <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-text" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Visualização / Edição</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico de Sintomas</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
+                                @include('person.partials.form', ['isRequired' => false, 'route' => ''])
+                            </div>
+
+                            <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
+                                @include('person.partials.history')
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,8 +74,52 @@
                 }
             });
 
+            let table = $('.data-table').DataTable({
+                language: {
+                    "sEmptyTable": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "_MENU_ resultados por página",
+                    "sLoadingRecords": "Carregando...",
+                    "sProcessing": "Processando...",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sSearch": "Pesquisar",
+                    "oPaginate": {
+                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                        "sFirst": "Primeiro",
+                        "sLast": "Último"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Ordenar colunas de forma ascendente",
+                        "sSortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    }
+                },
+                processing: true,
+                serverSide: false,
+                ajax: "{{ route('person.index') }}",
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'lider', name: 'lider'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
+            });
+
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
+                handleMasks();
 
                 let person_id = $(this).data('id');
 
@@ -63,32 +128,69 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
-                        $('#modelHeading').html("Colaborador " + data.person.name);
+                        let person = data.companyUser.person,
+                            role = data.companyUser.roles[0].name,
+                            historyTable = $('.history-table tbody');
+
+                        historyTable.empty();
+
+                        $('#modelHeading').html("Colaborador " + person.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
 
                         $('#person_id').val(person_id);
-                        $('#name').val(data.person.name);
-                        $('#email').val(data.person.email);
-                        $('#phone').val(data.person.phone);
-                        $('#cpf').val(data.person.cpf);
-                        $('#sector').val(data.person.sector);
+                        $('#name').val(person.name);
+                        $('#email').val(data.companyUser.email);
+                        $('#phone').val(person.phone);
+                        $('#cpf').val(person.cpf);
+                        $('#sector').val(person.sector);
+                        $('#risk_group').val(person.risk_group);
+                        $('#role').val(role);
+                        $('#leader').val(data.leader);
 
-                        if(data.person.bithday) {
-                            $('#birthday').val(formattedDateFromDB(data.person.bithday));
+                        if(person.bithday) {
+                            $('#birthday').val(formattedDateFromDB(person.bithday))
                         }
 
                         const $radios = $('input:radio[name=gender]');
-                        if($radios.is(':checked') === false) {
-                            $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
+                        $radios.filter('[value=' + person.gender + ']').prop('checked', true);
+
+                        $('.cep-person').val(person.cep);
+
+                        let tr = $('<tr>');
+                        if(data.cases) {
+                            for (casePerson of data.cases) {
+                                let trSymptom = $('<td>').appendTo(tr),
+                                ul = $('<ul>').addClass('m-0');
+
+                                for(symptom of casePerson.symptoms) {
+                                    $('<li>').text(symptom).appendTo(ul);
+                                }
+
+                                ul.appendTo(trSymptom);
+
+                                let date = $('<td>').appendTo(tr),
+                                    leader = $('<td>').appendTo(tr);
+
+                                $('<p>').addClass('m-0').text(casePerson.date).appendTo(date);
+                                $('<p>').addClass('m-0').text(casePerson.leader).appendTo(leader);
+
+                                historyTable.append(tr);
+                            }
+                        } else {
+                            let td = $('<td>').attr('colspan', 3).text('Este colaborador não foi monitorado.');
+                            td.appendTo(tr);
+                            historyTable.append(tr);
                         }
 
-                        $('#cep').val(data.person.cep);
-
-                        handleMasks();
                     },
-                    error: function (data) {
-                        alert('Erro ao carregar os dados, atualize a pagina.')
+                    error: function () {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao carregar os dados, atualize a página.',
+                            icon: 'error',
+                            confirmButtonText: 'Fechar'
+                        });
                     }
                 });
             });
@@ -96,9 +198,9 @@
             $('.save').on('click', function (e) {
                 e.preventDefault();
 
-                $(this).html('Atualizando..');
+                $(this).html('Atualizando...').prop('disabled', true);
 
-                var person_id = $('#person_id').val();
+                let person_id = $('#person_id').val();
 
                 $.ajax({
                     data: $('#person_form').serialize(),
@@ -106,8 +208,9 @@
                     type: "PUT",
                     dataType: 'json',
                     success: function (data) {
-                        $('.data-table').DataTable().ajax.reload();
-                        $('.save').html('Salvar');
+                        table.ajax.reload();
+
+                        $('.save').html('Salvar').prop('disabled', false);
                         $('#ajaxModel').modal('hide');
 
                         Swal.fire({
