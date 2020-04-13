@@ -161,7 +161,7 @@ class PersonController extends Controller
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader();
 
-//            dd($leader);
+            //            dd($leader);
 
             return response()->json(['companyUser' => $companyUser, 'leader' => $leader->id]);
         }
@@ -206,7 +206,7 @@ class PersonController extends Controller
 
                 $companyUser->email = $request->email;
 
-                if($request->password) {
+                if ($request->password) {
                     $companyUser->password = Hash::make($request->password);
                 }
 
@@ -214,14 +214,14 @@ class PersonController extends Controller
                 $companyUser->syncRoles($role);
 
                 $leaderId = $request->leader;
-                if($leaderId) {
+                if ($leaderId) {
                     $userLider = CompanyUser::where([
                         'id' => $leaderId,
                         'company_id' => $companyUser->company_id
                     ])->first();
+                    $person->companyUsers()->sync($userLider);
                 }
 
-                $person->companyUsers()->sync($userLider);
 
                 $companyUser->save();
             }
