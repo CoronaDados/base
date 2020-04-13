@@ -325,7 +325,6 @@ class PersonController extends Controller
         $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
         $person->gender = $request->gender;
         $person->sector = $request->sector;
-        $person->risk_group = $request->risk_group;
         $person->save();
 
         $companyUser->email = $request->email;
@@ -338,18 +337,6 @@ class PersonController extends Controller
         if ($request->password) {
             $companyUser->password = Hash::make($request->password);
             $companyUser->force_new_password = false;
-        }
-
-        $role = $request->role;
-        // $companyUser->syncRoles($role);
-
-        $leaderId = $request->leader;
-        if ($leaderId) {
-            $userLider = CompanyUser::where([
-                'id' => $leaderId,
-                'company_id' => $companyUser->company_id
-            ])->first();
-            $person->companyUsers()->sync($userLider);
         }
 
         $companyUser->save();

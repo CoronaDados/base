@@ -144,7 +144,7 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-    {{-- @if(!$isRequired) --}}
+    @if(!$isRequired)
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -159,7 +159,7 @@
                 </div>
             </div>
         </div>
-    {{-- @endif --}}
+    @endif
 
 {{--    @if($isRequired)--}}
 {{--    <div class="row">--}}
