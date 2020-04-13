@@ -113,11 +113,31 @@
                 @endcan
                 @can('Monitorar Colaborador')
                     <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
-                        <a class="nav-link" href="{{ route('company.monitoring') }}">
-                            <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
+                        <a class="nav-link" href="#navbar-monitoring" data-toggle="collapse" role="button"
+                           aria-expanded="false"
+                           aria-controls="navbar-monitoring">
+                            <i class="ni ni-pin-3 text-orange"></i>
+                            <span class="nav-link-text">{{ __('Monitoramento diário') }}</span>
                         </a>
+                        <div class="collapse" id="navbar-monitoring">
+                            <ul class="nav nav-sm flex-column">
+
+                                <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.monitoring') }}">
+                                        {{ __('Monitorar') }}
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{request()->is('companies/monitoring/history') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.monitoring.history') }}">
+                                        {{ __('Histórico') }}
+                                    </a>
+                                </li>
+                            </ul>
+                            <hr class="my-3">
+                        </div>
                     </li>
-                @endcan                
+                @endcan
                 <li class="nav-item">
                     <a href="{{ route('company.logout') }}" class="nav-link" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
