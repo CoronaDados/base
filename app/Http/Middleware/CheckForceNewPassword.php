@@ -20,7 +20,8 @@ class CheckForceNewPassword
         if (
             $request->user() &&
             $request->user()->needChangePassword() &&
-            !$request->route()->named('person.profile')
+            !$request->route()->named('person.profile') &&
+            !$request->route()->named('company.verification.notice')
         ) {
 
             flash('Você está usando uma senha temporária. Por favor, altere a sua senha para prosseguir.', 'danger');

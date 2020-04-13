@@ -21,7 +21,8 @@ class EnsureEmailIsVerified
         if (
             $request->user() &&
             !$request->user()->hasVerifiedEmail() &&
-            !$request->route()->named('company.verification.notice')
+            !$request->route()->named('company.verification.notice') &&
+            !$request->route()->named('person.profile')
         ) {
             return $request->expectsJson()
                 ? abort(403, 'Your email address is not verified.')
