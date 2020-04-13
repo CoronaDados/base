@@ -116,15 +116,6 @@
                     </li>
                 @endcan
                 @can('Monitorar Colaborador')
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                    <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
-                        <a class="nav-link" href="{{ route('company.monitoring') }}">
-                            <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
-                        </a>
-=======
-=======
->>>>>>> Stashed changes
                     <li class="nav-item {{request()->is('companies/monitoring*') ? 'active' : ''}}">
                         <a class="nav-link" href="#navbar-monitoring" data-toggle="collapse" role="button"
                            aria-expanded="{{request()->is('companies/monitoring*') ? 'true' : 'false'}}"
@@ -149,9 +140,8 @@
                             </ul>
                             <hr class="my-3">
                         </div>
->>>>>>> Stashed changes
                     </li>
-                @endcan                
+                @endcan
                 <li class="nav-item">
                     <a href="{{ route('company.logout') }}" class="nav-link" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
