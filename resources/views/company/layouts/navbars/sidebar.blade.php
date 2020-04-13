@@ -73,15 +73,15 @@
                     </a>
                 </li>
                 @can('Cadastrar Colaborador')
-                    <li class="nav-item {{request()->is('person') ? 'active' : ''}}">
+                    <li class="nav-item {{( request()->is('person*') || request()->segment(1) === 'roles') ? 'active' : ''}}">
                         <a class="nav-link" href="#navbar-colaboradores" data-toggle="collapse" role="button"
-                           aria-expanded="false"
-                           aria-controls="navbar-colaboradores">
+                            aria-expanded="{{ request()->is('person*') || request()->segment(1) === 'roles' ? 'true' : 'false'}}"
+                            aria-controls="navbar-colaboradores">
                             <i class="ni ni-single-02 text-blue"></i>
                             <span class="nav-link-text">{{ __('Colaboradores') }}</span>
                         </a>
 
-                        <div class="collapse " id="navbar-colaboradores">
+                        <div class="collapse {{ request()->is('person*') || request()->segment(1) === 'roles' ? 'show' : ''}}" id="navbar-colaboradores">
                             <ul class="nav nav-sm flex-column">
 
                                 <li class="nav-item {{request()->is('person') ? 'active' : ''}}">
@@ -104,7 +104,7 @@
                                     </li>
                                 @endcan
 
-                                <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
+                                <li class="nav-item {{ request()->is('person/import') ? 'active' : ''}}">
                                     <a class="nav-link" href="{{ route('person.import') }}">
                                         {{ __('Importar') }}
                                     </a>
@@ -116,14 +116,14 @@
                     </li>
                 @endcan
                 @can('Monitorar Colaborador')
-                    <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
+                    <li class="nav-item {{request()->is('companies/monitoring*') ? 'active' : ''}}">
                         <a class="nav-link" href="#navbar-monitoring" data-toggle="collapse" role="button"
-                           aria-expanded="false"
+                           aria-expanded="{{request()->is('companies/monitoring*') ? 'true' : 'false'}}"
                            aria-controls="navbar-monitoring">
                             <i class="ni ni-pin-3 text-orange"></i>
                             <span class="nav-link-text">{{ __('Monitoramento diário') }}</span>
                         </a>
-                        <div class="collapse" id="navbar-monitoring">
+                        <div class="collapse {{request()->is('companies/monitoring*') ? 'show' : ''}}" id="navbar-monitoring">
                             <ul class="nav nav-sm flex-column">
 
                                 <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
