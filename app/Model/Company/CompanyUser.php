@@ -68,7 +68,7 @@ class CompanyUser  extends Authenticatable
         INNER JOIN persons p ON p.id = l.person_id
         INNER JOIN model_has_roles m ON m.model_id = l.id
         INNER JOIN roles r ON m.role_id = r.id
-        WHERE l.company_id ="  . $this->company()->first()->id . " AND role_id = 2";
+        WHERE l.company_id ="  . $this->company()->first()->id . " AND role_id IN (1,2)";
 
         return DB::select(DB::raw($query));
     }
