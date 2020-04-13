@@ -2,11 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => 'auth:company', 'can_login'], function () {
+Route::group(['middleware' => 'auth:company'], function () {
+
+    Route::get('person/profile', 'PersonController@profileShow')->name('person.profile');
+    Route::post('person/profile', 'PersonController@profileUpdate')->name('person.profile');
 
     Route::get('person/import', 'PersonController@importView')->name('person.import');
     Route::post('person/import', 'PersonController@import')->name('person.import');
-    Route::resource('person', 'PersonController');
 
     Route::post('multi/monitoring', 'Company\CompaniesController@multiMonitoring')->name('multi.monitoring');
+
+    Route::resource('person', 'PersonController');
 });

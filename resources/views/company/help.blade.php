@@ -117,7 +117,7 @@
                             <li><strong>phone</strong>: Telefone celular do colaborador/pessoa, este campo é fundamental para o monitoramento da pessoa, pois é através deste número que será enviado o questionamento diário. <code>(Obrigatório)</code></li>
                             <li><strong>cpf</strong>: CPF do colaborador/pessoa. <code>(Obrigatório)</code></li>
                             <li><strong>sector</strong>: Setor que o colaborador/pessoa trabalha. Atualmente esta coluna aceita apenas os valores Administrativo, Financeiro, Operacional, Comercial, Médico ou Diretoria.</li>
-                            <li><strong>bithday</strong>: Data de nascimento do colaborador/pessoa, não é obrigatório, mas é importante para identificar se a pessoa é considerado como idoso e entra no grupo de risco.</li>
+                            <li><strong>birthday</strong>: Data de nascimento do colaborador/pessoa, não é obrigatório, mas é importante para identificar se a pessoa é considerado como idoso e entra no grupo de risco.</li>
                             <li><strong>gender</strong>: Sexo colaborador/pessoa.</li>
                             <li><strong>risk_group</strong>: Campo para identificar se a pessoa está dentro do grupo de risco.</li>
                             <li><strong>status</strong>: Por padrão coloque 1.</li>

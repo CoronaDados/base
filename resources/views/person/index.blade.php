@@ -148,8 +148,8 @@
                         $('#role').val(role);
                         $('#leader').val(data.leader);
 
-                        if(person.bithday) {
-                            $('#birthday').val(formattedDateFromDB(person.bithday))
+                        if(person.birthday) {
+                            $('#birthday').val(formattedDateFromDB(person.birthday))
                         }
 
                         const $radios = $('input:radio[name=gender]');

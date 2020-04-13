@@ -22,7 +22,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     protected $guard = 'company';
 
     protected $fillable = [
-        'email', 'is_admin', 'password', 'email_verfied_at', 'company_id', 'person_id'
+        'email', 'is_admin', 'password', 'email_verified_at', 'company_id', 'person_id', 'force_new_password'
     ];
 
     protected $hidden = ['password'];
@@ -90,5 +90,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return $this->person->companyUsers()->get()->first(function ($c, $key) use ($companyId) {
             return $c->company_id === $companyId;
         });
+    }
+
+    public function needChangePassword()
+    {
+        return $this->force_new_password == true;
     }
 }
