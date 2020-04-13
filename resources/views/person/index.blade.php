@@ -47,6 +47,7 @@
                                 </li>
                             </ul>
                         </div>
+
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade active show" id="tabs-text-1" role="tabpanel" aria-labelledby="tabs-text-1-tab">
                                 @include('person.partials.form', [compact('riskGroups', 'sectors', 'roles'), 'isRequired' => false, 'route' => ''])
@@ -141,6 +142,7 @@
 
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
+                handleMasks();
 
                 let person_id = $(this).data('id');
 
@@ -149,30 +151,31 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
-                        $('#modelHeading').html("Colaborador " + data.person.name);
+                        let person = data.companyUser.person,
+                            role = data.companyUser.roles[0].name;
+
+                        $('#modelHeading').html("Colaborador " + person.name);
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
 
                         $('#person_id').val(person_id);
-                        $('#name').val(data.person.name);
-                        $('#email').val(data.person.email);
-                        $('#phone').val(data.person.phone);
-                        $('#cpf').val(data.person.cpf);
-                        $('#sector').val(data.person.sector);
-                        $('#risk_group').val(data.person.risk_group);
+                        $('#name').val(person.name);
+                        $('#email').val(data.companyUser.email);
+                        $('#phone').val(person.phone).mask(SPMaskBehavior, spOptions);
+                        $('#cpf').val(person.cpf);
+                        $('#sector').val(person.sector);
+                        $('#risk_group').val(person.risk_group);
+                        $('#role').val(role);
+                        $('#leader').val(data.leader);
 
-                        if(data.person.bithday) {
-                            $('#birthday').val(formattedDateFromDB(data.person.bithday))
+                        if(person.bithday) {
+                            $('#birthday').val(formattedDateFromDB(person.bithday))
                         }
 
                         const $radios = $('input:radio[name=gender]');
-                        if($radios.is(':checked') === false) {
-                            $radios.filter('[value=' + data.person.gender + ']').prop('checked', true);
-                        }
+                        $radios.filter('[value=' + person.gender + ']').prop('checked', true);
 
-                        $('.cep-person').val(data.person.cep).mask('000000.000');
-
-                        handleMasks();
+                        $('.cep-person').val(person.cep);
                     },
                     error: function () {
                         Swal.fire({

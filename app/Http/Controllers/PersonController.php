@@ -23,7 +23,6 @@ class PersonController extends Controller
      */
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             if (auth('company')->user()->can('Ver Usuários')) {
                 $data =  auth('company')->user()->personsInCompany();
@@ -37,16 +36,12 @@ class PersonController extends Controller
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
-//                ->editColumn('name', function ($user) {
-//
-//                    $name = $user->name;
-//                    $explodedName = explode(" ", $name);
-//                    $maxLength = count($explodedName);
-//                    $firstName = $explodedName[0];
-//                    $lastName = $explodedName[$maxLength];
-//
-//                    return $firstName . ' ' . $lastName;
-//                })
+                ->editColumn('name', function ($user) {
+                    return $this->getFirstAndLastName($user->name);
+                })
+                ->editColumn('lider', function ($user) {
+                    return $this->getFirstAndLastName($user->lider);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -87,21 +82,19 @@ class PersonController extends Controller
 
         $cpf = $this->removePunctuation($request->cpf);
 
-        $person = Person::create([
-            'name' => $request->name,
-            'cpf' => $cpf,
-            'cep' => $this->removePunctuation($request->cep),
-            'phone' => $this->removePunctuation($request->phone),
-            'city' => $request->city,
-            'sector' => $request->sector,
-            'ibge' => $request->ibge,
-            'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
-            'gender' => $request->gender,
-            'risk_group' => $request->risk_group,
-            'status' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $person = Person::create(
+            [
+                'name' => $request->name,
+                'cpf' => $cpf,
+                'cep' => $this->removePunctuation($request->cep),
+                'phone' => $this->removePunctuation($request->phone),
+                'sector' => $request->sector,
+                'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
+                'gender' => $request->gender,
+                'risk_group' => $request->risk_group,
+                'status' => true
+            ]
+        );
 
         $user = CompanyUser::create(
             [
@@ -146,6 +139,16 @@ class PersonController extends Controller
         return preg_replace('/[^0-9]/', '', $string);
     }
 
+    private function getFirstAndLastName($name): string
+    {
+        $explodedName = explode(" ", $name);
+        $maxLength = count($explodedName) - 1;
+        $firstName = $explodedName[0];
+        $lastName = $explodedName[$maxLength];
+
+        return $firstName . ' ' . $lastName;
+    }
+
     /**
      * Display the specified resource.
      *
@@ -155,8 +158,12 @@ class PersonController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = Person::find($id);
-            return response()->json(['person' => $person]);
+            $companyUser = CompanyUser::with('person', 'roles')->find($id);
+            $leader = $companyUser->leader();
+
+//            dd($leader);
+
+            return response()->json(['companyUser' => $companyUser, 'leader' => $leader->id]);
         }
     }
 
@@ -181,53 +188,48 @@ class PersonController extends Controller
     public function update(Request $request, $id)
     {
         if ($request->ajax()) {
-            $person = Person::find($id);
+            $companyUser = CompanyUser::find($id);
 
-            $cpf = $this->removePunctuation($request->cpf);
+            if ($companyUser) {
+                $cpf = $this->removePunctuation($request->cpf);
 
-            if ($person) {
-                $person->fill($request->all());
-                $person->cpf = $this->removePunctuation($person->cpf);
-                $person->phone = $this->removePunctuation($person->phone);
-                $person->cep = $this->removePunctuation($person->cep);
+                $person = $companyUser->person;
+                $person->name = $request->name;
+                $person->cpf = $cpf;
+                $person->cep = $this->removePunctuation($request->cep);
+                $person->phone = $this->removePunctuation($request->phone);
                 $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
-            }
+                $person->gender = $request->gender;
+                $person->sector = $request->sector;
+                $person->risk_group = $request->risk_group;
+                $person->save();
 
-            $person->save();
+                $companyUser->email = $request->email;
+
+                if($request->password) {
+                    $companyUser->password = Hash::make($request->password);
+                }
+
+                $role = $request->role;
+                $companyUser->syncRoles($role);
+
+                $leaderId = $request->leader;
+                if($leaderId) {
+                    $userLider = CompanyUser::where([
+                        'id' => $leaderId,
+                        'company_id' => $companyUser->company_id
+                    ])->first();
+                }
+
+                $person->companyUsers()->sync($userLider);
+
+                $companyUser->save();
+            }
 
             flash('Colaborador atualizado com sucesso', 'info');
 
             return response()->json(['person' => $person]);
         }
-
-
-//        $person = Person::create([
-//            'name' => $request->name,
-//            'cpf' => $cpf,
-//            'cep' => $this->removePunctuation($request->cep),
-//            'phone' => $this->removePunctuation($request->phone),
-//            'city' => $request->city,
-//            'sector' => $request->sector,
-//            'ibge' => $request->ibge,
-//            'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
-//            'gender' => $request->gender,
-//            'risk_group' => $request->risk_group,
-//            'status' => true,
-//            'created_at' => now(),
-//            'updated_at' => now(),
-//        ]);
-//
-//        $user = CompanyUser::find(
-//            [
-//                'person_id' => $person->id,
-//                'email' => $request->email,
-//                'password' => Hash::make($cpf),
-//            ]
-//        );
-//
-//        $role = $request->role ?? 'Colaborador';
-//
-//        $user->assignRole($role);
     }
 
     /**
