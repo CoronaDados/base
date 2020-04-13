@@ -146,17 +146,17 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-    @if(!$isRequired)
+    @if(isset($companyUser) or !$isRequired)
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label" for="password">Senha (deixe em branco para não alterar)</label>
+                    <label class="control-label" for="password">Senha</label>
                     <input type="password" id="password" name="password" class="form-control form-control-alternative">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label" for="confirm_password">Confirme a senha (se for alterar)</label>
+                    <label class="control-label" for="confirm_password">Confirme a senha</label>
                     <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-alternative">
                 </div>
             </div>
