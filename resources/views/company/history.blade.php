@@ -11,7 +11,7 @@
                     <div class="card-header border-0">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="mb-0">Histórico de sintomas</h3>
+                                <h3 class="mb-0">Histórico de Sintomas</h3>
                             </div>
                         </div>
                     </div>
@@ -21,7 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>Data</th>
-                                        <th>Nome</th>
+                                        <th>Colaborador</th>
                                         <th>Sintomas</th>
                                         <th>Monitorado por</th>
                                     </tr>
@@ -90,9 +90,9 @@
             order: [[1, 'asc']],
             columns: [
                 {data: 'created_at', name: 'created_at'},
-                {data: 'person.name', name: 'person.name'},
-                {data: 'status_format', name: 'status_format'},
-                {data: 'leader.name', name: 'leader.name', orderable: true, searchable: true},
+                {data: 'name', name: 'name'},
+                {data: 'status', name: 'status'},
+                {data: 'leader', name: 'leader', orderable: true, searchable: true},
             ]
         });
     });

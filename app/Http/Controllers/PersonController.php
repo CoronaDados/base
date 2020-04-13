@@ -25,9 +25,11 @@ class PersonController extends Controller
     {
         if ($request->ajax()) {
             if (auth('company')->user()->can('Ver Usuários')) {
-                $data =  auth('company')->user()->personsInCompany();
-            } else {
-                $data =  auth('company')->user()->persons()->get();
+                if (auth()->user()->hasRole('Admin')) {
+                    $data =  auth('company')->user()->personsInCompany();
+                } else {
+                    $data =  auth('company')->user()->personsInCompanyByLeader();
+                }
             }
 
             return DataTables::of($data)
@@ -171,7 +173,7 @@ class PersonController extends Controller
                 "dor-corpo" => "Dor no corpo",
                 "dor-garganta" => "Dor de Garganta",
                 "congestao-nasal" => "Congestão Nasal",
-                "diarreia" => "Diarréia",
+                "diarreia" => "Diarreia",
                 "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
             ];
 
@@ -248,7 +250,9 @@ class PersonController extends Controller
                 }
 
                 $role = $request->role;
-                $companyUser->syncRoles($role);
+                if($role) {
+                    $companyUser->syncRoles($role);
+                }
 
                 $leaderId = $request->leader;
                 if ($leaderId) {
@@ -258,7 +262,6 @@ class PersonController extends Controller
                     ])->first();
                     $person->companyUsers()->sync($userLider);
                 }
-
 
                 $companyUser->save();
             }

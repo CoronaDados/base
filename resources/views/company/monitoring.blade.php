@@ -110,7 +110,7 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="dor-garganta" name="dor-garganta" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="dor-garganta">Dor de garganta corpo</label>
+                                        <label class="custom-control-label" for="dor-garganta">Dor de garganta</label>
                                     </div>
                                 </div>
                             </div>
@@ -134,11 +134,11 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="diarreia">Diarréia</label>
+                                        <label class="custom-control-label" for="diarreia">Diarreia</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="custom-control-input">
