@@ -72,7 +72,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-address-card" aria-hidden="true"></i></span>
                                     </div>
-                                    <input class="form-control cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" placeholder="{{ __('CPF') }}" type="text" name="cpf" value="{{ old('cpf') }}" required>
+                                    <input class="form-control cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" placeholder="{{ __('CPF do responsável') }}" type="text" name="cpf" value="{{ old('cpf') }}" required>
                                 </div>
                                 @if ($errors->has('cpf'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -85,7 +85,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" type="email" name="email" value="{{ old('email') }}" required>
+                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email do responsável') }}" type="email" name="email" value="{{ old('email') }}" required>
                                 </div>
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
