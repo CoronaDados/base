@@ -33,7 +33,9 @@
             <form id="logout-form" action="{{ route('company.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            @include('company.layouts.navbars.sidebar')
+            @if(Route::current()->getName() != 'company.verification.notice')
+                @include('company.layouts.navbars.sidebar')
+            @endif
         @endauth
 
         <div class="main-content">

@@ -83,8 +83,6 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'status' => $row['status'],
                 'state' => $row['state'],
                 'number' => $row['number'],
-                'created_at' => now(),
-                'updated_at' => now(),
             ]
         );
 
@@ -93,6 +91,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
             [
                 'email' => $email,
                 'password' => Hash::make($cpf),
+                'email_verified_at' => now(),
             ]
         );
         $user->email = $email;

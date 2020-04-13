@@ -59,6 +59,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'razao' => ['required', 'string', 'min:8'],
             'cnpj' => ['required', 'string', 'min:8',  'unique:companies'],
+            'cpf' => ['required', 'string', 'min:11',  'unique:persons'],
         ]);
     }
 
@@ -76,6 +77,7 @@ class RegisterController extends Controller
         ]);
         $person = Person::create([
             'name' => $data['name'],
+            'cpf' => $this->removePunctuation($data['cpf']),
         ]);
         $user = CompanyUser::create([
             'company_id' => $company->id,
@@ -96,5 +98,10 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         return view('company.auth.register', ['url' => 'company']);
+    }
+
+    private function removePunctuation($string)
+    {
+        return preg_replace('/[^0-9]/', '', $string);
     }
 }

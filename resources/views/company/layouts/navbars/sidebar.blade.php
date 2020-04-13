@@ -32,6 +32,10 @@
                         <i class="ni ni-support-16"></i>
                         <span>{{ __('Dicas') }}</span>
                     </a>
+                    <a href="{{ route('company.help') }}" class="dropdown-item">
+                        <i class="ni ni-support-16"></i>
+                        <span>{{ __('Ajuda') }}</span>
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
@@ -149,8 +153,8 @@
             <hr class="my-3">
             <ul class="navbar-nav" style="position: absolute; bottom: 0;">
                 <li class="nav-item  bg-info">
-                    <a class="nav-link text-white" href="#" target="_blank">
-                        <i class="ni ni-cloud-download-95"></i>Big Data
+                    <a class="nav-link text-white" href="http://coronadados.dd4b.com.br/" target="_blank">
+                        <i class="ni ni-map-big"></i>Big Data
                     </a>
                 </li>
             </ul>
