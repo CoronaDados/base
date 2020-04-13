@@ -52,6 +52,31 @@ class CompaniesController extends Controller
         return view('company.monitoring');
     }
 
+    public function monitoringHistory(Request $request)
+    {
+        if ($request->ajax()) {
+            $casesPersons = CasePerson::with(['person', 'leader'])->get();
+
+            return DataTables::of($casesPersons)
+                    ->addIndexColumn()
+                    ->editColumn('status_format', function ($status) {
+
+                        $allSymptoms = '<ul class="mb-0">';
+                        foreach ($status->status_format as $symptom) {
+                            $allSymptoms .= '<li>' . $symptom . '</li>';
+                        }
+                        $allSymptoms .= '</ul>';
+
+                        return $allSymptoms;
+
+                    })
+                    ->rawColumns(['status_format'])
+                    ->make(true);
+        }
+
+        return view('company.history');
+    }
+
     public function storeMonitoring($id, Request $request)
     {
         if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
