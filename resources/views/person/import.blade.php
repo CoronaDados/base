@@ -2,13 +2,13 @@
 
 @section('content')
     <div class="container-fluid pb-8 pt-3 pt-md-7">
-        <div class="card  mt-3">
+        <div class="card mt-3">
             <div class="card-header">
-                Importação de Colaboradores
+                <h3>Importação</h3>
             </div>
             <div class="card-body">
-                <div class="row mb-12">
-                    <div class="col-md-4">
+                <div class="row">
+                    <div class="card-deck col-md-12 pr-0">
                         <div class="card card-stats">
                             <!-- Card body -->
                             <div class="card-body">
@@ -25,8 +25,7 @@
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
+
                         <div class="card card-stats">
                             <!-- Card body -->
                             <div class="card-body">
@@ -43,8 +42,7 @@
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
+
                         <div class="card card-stats">
                             <!-- Card body -->
                             <div class="card-body">
@@ -81,12 +79,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="file" name="file" class="form-control">
+                                <input type="file" name="file" class="form-control form-control-alternative">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <select name="role" class="form-control" required>
+                                <select name="role" class="form-control form-control-alternative" required>
                                     <option value="" disabled selected>Tipo de usuário</option>
                                     @foreach($roles as $role)
                                         <option value="{{$role->name}}">{{$role->name}}</option>
