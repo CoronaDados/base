@@ -31,21 +31,21 @@
             </div>
         </div>
         <div class="col-md-3">
-            {{-- <div class="form-group">
+            <div class="form-group">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
                 <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
                        placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
-            </div> --}}
-            <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
+            </div>
+            {{-- <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
-                <input class="form-control form-control-alternative cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="cpf" value="{{ old('cpf') }}"
+                <input type="text" class="form-control form-control-alternative cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
                     placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}>
                 @if ($errors->has('cpf'))
                     <span class="invalid-feedback" style="display: block;" role="alert">
                         <strong>{{ $errors->first('cpf') }}</strong>
                     </span>
                 @endif
-            </div>
+            </div> --}}
         </div>
         <div class="col-md-3">
             <div class="form-group">
@@ -68,7 +68,12 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <div class="form-group{{ $errors->has('birthday') ? ' has-danger' : '' }}">
+            <div class="form-group">
+                <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
+                <input class="form-control form-control-alternative birthday" {{ $isRequired ? 'required' : '' }} placeholder="Data de Nascimento" id="birthday"
+                name="birthday" value="{{ $companyUser->person->birthday_formatted ?? '' }}" type="text">
+            </div>
+            {{-- <div class="form-group{{ $errors->has('birthday') ? ' has-danger' : '' }}">
                 <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
                 <input class="form-control form-control-alternative birthday{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="birthday" value="{{ $companyUser->person->birthday_formatted ?? '' }}"
                     placeholder="Data de Nascimento" {{ $isRequired ? 'required' : '' }}>
@@ -77,7 +82,7 @@
                         <strong>{{ $errors->first('birthday') }}</strong>
                     </span>
                 @endif
-            </div>
+            </div> --}}
         </div>
         <div class="col-md-2">
             <div class="form-group">

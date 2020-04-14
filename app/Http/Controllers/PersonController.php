@@ -79,16 +79,16 @@ class PersonController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'cpf'  => 'required|cpf',
-            'birthday' => 'required|date|regex:/\d{1,2}\/\d{1,2}\/\d{4}/|before:today'
-        ];
+        // $rules = [
+        //     'cpf'  => 'required|cpf',
+        //     'birthday' => 'required|date|regex:/\d{1,2}\/\d{1,2}\/\d{4}/|before:today'
+        // ];
 
-        $messages = [
-            'before' => 'O campo :attribute deve ser uma data anterior a hoje.',
-        ];
+        // $messages = [
+        //     'before' => 'O campo :attribute deve ser uma data anterior a hoje.',
+        // ];
 
-        $validator = $this->validate($request, $rules, $messages);
+        // $validator = $this->validate($request, $rules, $messages);
 
         $companyUser = auth('company')->user();
 
