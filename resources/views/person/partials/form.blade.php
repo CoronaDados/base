@@ -100,10 +100,11 @@
 
         @php
             $isAdmin = auth()->user()->hasRole('Admin');
+            $col = ($isAdmin) ? 'col-md-4' : 'col-md-6'
         @endphp
 
-        @if($isAdmin and !isset($companyUser))
-            <div class="col-md-4">
+        @if(!isset($companyUser))
+            <div class={{ $col }}>
                 <div class="form-group">
                     <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
                     <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
@@ -115,17 +116,19 @@
                 </div>
             </div>
 
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label for="role">Perfil</label>
-                    <select name="role" id="role" class="custom-select form-control-alternative role">
-                        <option value="" disabled>Perfil </option>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->name }}" {{ isset($companyUser->roles[0]) ? ($companyUser->roles[0]->name == $role->name ? 'selected': '') : '' }}>{{ $role->name }}</option>
-                        @endforeach
-                    </select>
+            @if($isAdmin)
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="role">Perfil {{ $isRequired ? '*' : '' }}</label>
+                        <select name="role" id="role" class="custom-select form-control-alternative role" {{ $isRequired ? 'required' : '' }}>
+                            <option value="" disabled selected>Perfil {{ $isRequired ? '(obrigatório)' : '' }}</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}" {{ isset($companyUser->roles[0]) ? ($companyUser->roles[0]->name == $role->name ? 'selected': '') : '' }}>{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
+            @endif
 
         @endif
     </div>
@@ -134,9 +137,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="leader">Líder responsável</label>
-                    <select name="leader" id="leader" class="custom-select form-control-alternative leader">
-                        <option value="" disabled selected>Líder responsável</option>
+                    <label for="leader">Líder responsável {{ $isRequired ? '*' : '' }}</label>
+                    <select name="leader" id="leader" class="custom-select form-control-alternative leader" {{ $isRequired ? 'required' : '' }}>
+                        <option value="" disabled selected>Líder responsável {{ $isRequired ? '(obrigatório)' : '' }}</option>
                         @foreach($leaders as $l)
                             <option value="{{ $l->id }}" {{ isset($leader) ? ($leader == $l->id ? 'selected': '') : '' }}>{{ $l->name }}</option>
                         @endforeach
@@ -167,7 +170,7 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-    @if(isset($companyUser) or !$isRequired)
+    @if(isset($companyUser))
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">

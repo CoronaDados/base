@@ -223,6 +223,17 @@
                         });
 
                         handleMasks();
+                    },
+                    error: function (e) {
+                        $('#ajaxModel').modal('hide');
+                        $('.save').html('Salvar').prop('disabled', false);
+
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao atualizar os dados.',
+                            icon: 'error',
+                            confirmButtonText: 'Fechar'
+                        });
                     }
                 });
             });
