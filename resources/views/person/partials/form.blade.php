@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="name">Nome Completo {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative" required id="name" name="name"
+                <input type="text" class="form-control form-control-alternative" required id="name" value="{{ old('name') }}" name="name"
                        placeholder="Nome Completo {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
 
             </div>
@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="email">E-mail {{ $isRequired ? '*' : '' }}</label>
-                <input type="email" class="form-control form-control-alternative" required id="email" name="email"
+                <input type="email" class="form-control form-control-alternative" required id="email" value="{{ old('email') }}" name="email"
                        placeholder="Email {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
@@ -26,15 +26,25 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
-                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone"
+                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ old('phone') }}"
                        placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
                 <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf"
                        placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+            </div> --}}
+            <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
+                <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
+                <input class="form-control form-control-alternative cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="cpf" value="{{ old('cpf') }}"
+                    placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}>
+                @if ($errors->has('cpf'))
+                    <span class="invalid-feedback" style="display: block;" role="alert">
+                        <strong>{{ $errors->first('cpf') }}</strong>
+                    </span>
+                @endif
             </div>
         </div>
         <div class="col-md-3">
@@ -51,17 +61,22 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" id="cep"
+                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }}  name="cep" id="cep" value="{{ old('cep') }}"
                        placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4">
-            <div class="form-group">
+            <div class="form-group{{ $errors->has('birthday') ? ' has-danger' : '' }}">
                 <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
-                <input class="form-control form-control-alternative birthday" {{ $isRequired ? 'required' : '' }} placeholder="Data de Nascimento" id="birthday"
-                       name="birthday" type="text">
+                <input class="form-control form-control-alternative birthday{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="birthday" value="{{ old('birthday') }}"
+                    placeholder="Data de Nascimento" {{ $isRequired ? 'required' : '' }}>
+                @if ($errors->has('birthday'))
+                    <span class="invalid-feedback" style="display: block;" role="alert">
+                        <strong>{{ $errors->first('birthday') }}</strong>
+                    </span>
+                @endif
             </div>
         </div>
         <div class="col-md-2">
