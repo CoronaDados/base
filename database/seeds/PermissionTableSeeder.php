@@ -31,7 +31,7 @@ class PermissionTableSeeder extends Seeder
         }
 
         $roleAdmin = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Admin']);
-        $roleLider = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Lider']);
+        $roleLider = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Líder']);
         $roleColaborador = Spatie\Permission\Models\Role::create(['guard_name' => 'company', 'name' => 'Colaborador']);
 
         $permissions = \Spatie\Permission\Models\Permission::pluck('id', 'id')->all();

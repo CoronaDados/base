@@ -85,6 +85,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'is_admin' => true,
             'password' => Hash::make($data['password']),
+            'force_new_password' => false,
         ]);
         $user->assignRole('Admin');
         return $user;

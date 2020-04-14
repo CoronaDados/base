@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Person\CasePerson;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -32,6 +33,7 @@ class CompaniesController extends Controller
     {
         if ($request->ajax()) {
             $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
+
             foreach ($datas as $data) {
                 if (!$data->casePersonDay()->exists()) {
                     $person[] = $data;
@@ -55,14 +57,21 @@ class CompaniesController extends Controller
     public function monitoringHistory(Request $request)
     {
         if ($request->ajax()) {
-            $casesPersons = CasePerson::with(['person', 'leader'])->get();
+
+            if (auth()->user()->hasRole('Admin')) {
+                $casesPersons = auth('company')->user()->casesPerson();
+            } else {
+                $casesPersons = auth('company')->user()->casesPersonByLeader();
+            }
 
             return DataTables::of($casesPersons)
                     ->addIndexColumn()
-                    ->editColumn('status_format', function ($status) {
+                    ->editColumn('status', function ($status) {
+
+                        $formattedStatus = $this->formatStatus($status->status);
 
                         $allSymptoms = '<ul class="mb-0">';
-                        foreach ($status->status_format as $symptom) {
+                        foreach ($formattedStatus as $symptom) {
                             $allSymptoms .= '<li>' . $symptom . '</li>';
                         }
                         $allSymptoms .= '</ul>';
@@ -70,7 +79,10 @@ class CompaniesController extends Controller
                         return $allSymptoms;
 
                     })
-                    ->rawColumns(['status_format'])
+                    ->editColumn('created_at', function ($date) {
+                        return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
+                    })
+                    ->rawColumns(['status'])
                     ->make(true);
         }
 
@@ -86,6 +98,35 @@ class CompaniesController extends Controller
         $person->createCasePersonDay()->save($monitoring);
 
         return true;
+    }
+
+    public function formatStatus($status)
+    {
+        $allSymptoms = [
+            "febre" => "Febre",
+            "tosse-seca" => "Tosse seca",
+            "cansaco" => "Cansaço",
+            "dor-corpo" => "Dor no corpo",
+            "dor-garganta" => "Dor de Garganta",
+            "congestao-nasal" => "Congestão Nasal",
+            "diarreia" => "Diarreia",
+            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+        ];
+
+        $status = (array) json_decode($status);
+        unset($status["person_id"], $status['obs']);
+
+        $allSymptomsFiltered = array_values(
+            array_filter(
+                $allSymptoms,
+                function ($key) use ($status) {
+                    return array_key_exists($key, $status);
+                },
+                ARRAY_FILTER_USE_KEY
+            )
+        );
+
+        return $allSymptomsFiltered;
     }
 
     /**

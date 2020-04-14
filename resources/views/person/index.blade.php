@@ -148,8 +148,8 @@
                         $('#role').val(role);
                         $('#leader').val(data.leader);
 
-                        if(person.bithday) {
-                            $('#birthday').val(formattedDateFromDB(person.bithday))
+                        if(person.birthday) {
+                            $('#birthday').val(formattedDateFromDB(person.birthday))
                         }
 
                         const $radios = $('input:radio[name=gender]');
@@ -157,11 +157,11 @@
 
                         $('.cep-person').val(person.cep);
 
-                        let tr = $('<tr>');
                         if(data.cases) {
                             for (casePerson of data.cases) {
-                                let trSymptom = $('<td>').appendTo(tr),
-                                ul = $('<ul>').addClass('m-0');
+                                let tr = $('<tr>'),
+                                    trSymptom = $('<td>').appendTo(tr),
+                                    ul = $('<ul>').addClass('m-0');
 
                                 for(symptom of casePerson.symptoms) {
                                     $('<li>').text(symptom).appendTo(ul);
@@ -178,7 +178,9 @@
                                 historyTable.append(tr);
                             }
                         } else {
-                            let td = $('<td>').attr('colspan', 3).text('Este colaborador não foi monitorado.');
+                            let tr = $('<tr>'),
+                                td = $('<td>').attr('colspan', 3).text('Este colaborador não foi monitorado.');
+
                             td.appendTo(tr);
                             historyTable.append(tr);
                         }

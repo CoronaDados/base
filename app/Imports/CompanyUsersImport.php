@@ -57,7 +57,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cpf = $this->removePunctuation($row['cpf']);
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
         $cep = $this->removePunctuation($row['cep']);
-        $birthday = ($row['bithday'] !== null) ? Carbon::parse($row['bithday'])->format('Y-m-d') : null;
+        $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
         $email = $row['email'];
 
         if ($email == '' || $cpf == '') {
@@ -77,7 +77,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'city' => $row['city'],
                 'sector' => null,
                 'ibge' => $row['ibge'],
-                'bithday' => $birthday,
+                'birthday' => $birthday,
                 'gender' => $row['gender'],
                 'risk_group' => $row['risk_group'],
                 'status' => $row['status'],
@@ -92,6 +92,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'email' => $email,
                 'password' => Hash::make($cpf),
                 'email_verified_at' => now(),
+                'force_new_password' => true,
             ]
         );
         $user->email = $email;

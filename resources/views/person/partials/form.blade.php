@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="name">Nome Completo {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative" required id="name" value="{{ old('name') }}" name="name"
+                <input type="text" class="form-control form-control-alternative" required id="name" name="name" value="{{ $companyUser->person->name ?? '' }}"
                        placeholder="Nome Completo {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
 
             </div>
@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="email">E-mail {{ $isRequired ? '*' : '' }}</label>
-                <input type="email" class="form-control form-control-alternative" required id="email" value="{{ old('email') }}" name="email"
+                <input type="email" class="form-control form-control-alternative" required id="email" name="email" value="{{ $companyUser->email ?? '' }}"
                        placeholder="Email {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
@@ -26,14 +26,14 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
-                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ old('phone') }}"
+                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ $companyUser->person->phone ?? '' }}"
                        placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
         <div class="col-md-3">
             {{-- <div class="form-group">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf"
+                <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
                        placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div> --}}
             <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
@@ -53,7 +53,7 @@
                 <select name="sector" id="sector" class="custom-select form-control-alternative">
                     <option value="">Setor</option>
                     @foreach($sectors as $k => $v)
-                        <option value="{{ $v }}">{{ $v }}</option>
+                        <option value="{{ $v }}" {{ isset($companyUser->person->sector) ? ($companyUser->person->sector == $v ? 'selected': '') : '' }}>{{ $v }}</option>
                     @endforeach
                 </select>
             </div>
@@ -61,8 +61,8 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }}  name="cep" id="cep" value="{{ old('cep') }}"
-                       placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" value="{{ $companyUser->person->cep ?? '' }}"
+                       id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
         <div class="col-md-4">
             <div class="form-group{{ $errors->has('birthday') ? ' has-danger' : '' }}">
                 <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
-                <input class="form-control form-control-alternative birthday{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="birthday" value="{{ old('birthday') }}"
+                <input class="form-control form-control-alternative birthday{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="birthday" value="{{ $companyUser->person->birthday_formatted ?? '' }}"
                     placeholder="Data de Nascimento" {{ $isRequired ? 'required' : '' }}>
                 @if ($errors->has('birthday'))
                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -83,11 +83,11 @@
             <div class="form-group">
                 <label>Gênero {{ $isRequired ? '*' : '' }}</label>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="masculino" {{ $isRequired ? 'required' : '' }} name="gender" value="M" class="custom-control-input">
+                    <input type="radio" id="masculino" {{ $isRequired ? 'required' : '' }} name="gender" value="M" class="custom-control-input" {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'M' ? 'checked': '') : '' }}>
                     <label class="custom-control-label" for="masculino">Masculino</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="feminino" {{ $isRequired ? 'required' : '' }} name="gender" value="F" class="custom-control-input">
+                    <input type="radio" id="feminino" {{ $isRequired ? 'required' : '' }} name="gender" value="F" class="custom-control-input" {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'F' ? 'checked': '') : '' }}>
                     <label class="custom-control-label" for="feminino">Feminino</label>
                 </div>
             </div>
@@ -95,48 +95,50 @@
 
         @php
             $isAdmin = auth()->user()->hasRole('Admin');
-            $col = ($isAdmin) ? 'col-md-4' : 'col-md-6'
         @endphp
 
-        <div class={{ $col }}>
-            <div class="form-group">
-                <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
-                <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
-                    <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
-                    @foreach($riskGroups as $k => $v)
-                        <option value="{{ $v }}">{{ $v }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
         @if($isAdmin)
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
+                    <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
+                        <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
+                        @foreach($riskGroups as $k => $v)
+                            <option value="{{ $v }}" {{ isset($companyUser->person->risk_group) ? ($companyUser->person->risk_group == $v ? 'selected': '') : '' }}>{{ $v }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="role">Perfil</label>
                     <select name="role" id="role" class="custom-select form-control-alternative role">
                         <option value="" disabled>Perfil </option>
                         @foreach($roles as $role)
-                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            <option value="{{ $role->name }}" {{ isset($companyUser->roles[0]) ? ($companyUser->roles[0]->name == $role->name ? 'selected': '') : '' }}>{{ $role->name }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
         @endif
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="leader">Líder responsável</label>
-                <select name="leader" id="leader" class="custom-select form-control-alternative leader">
-                    <option value="" disabled>Líder responsável</option>
-                    @foreach($leaders as $leader)
-                        <option value="{{ $leader->id }}">{{ $leader->name }}</option>
-                    @endforeach
-                </select>
+
+    @if($isAdmin)
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="leader">Líder responsável</label>
+                    <select name="leader" id="leader" class="custom-select form-control-alternative leader">
+                        <option value="" disabled selected>Líder responsável</option>
+                        @foreach($leaders as $l)
+                            <option value="{{ $l->id }}" {{ isset($leader) ? ($leader == $l->id ? 'selected': '') : '' }}>{{ $l->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
 {{--    <div class="row">--}}
 {{--        <div class="col-md-4">--}}
@@ -159,17 +161,17 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-    @if(!$isRequired)
+    @if(isset($companyUser) or !$isRequired)
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label" for="password">Senha (deixe em branco para não alterar)</label>
+                    <label class="control-label" for="password">Senha</label>
                     <input type="password" id="password" name="password" class="form-control form-control-alternative">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label" for="confirm_password">Confirme a senha (se for alterar)</label>
+                    <label class="control-label" for="confirm_password">Confirme a senha</label>
                     <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-alternative">
                 </div>
             </div>
@@ -215,7 +217,7 @@
 {{--    </div>--}}
 {{--    @endif--}}
 
-    <div class="col-12 text-center">
+    <div class="col-12 text-right p-0">
         <button type="submit" class="btn btn-primary my-4 save">{{ $isRequired ? __('Cadastrar') : __('Salvar') }}</button>
     </div>
 </form>
