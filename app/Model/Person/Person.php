@@ -19,7 +19,7 @@ class Person extends Model
         'phone',
         'cpf',
         'sector',
-        'bithday',
+        'birthday',
         'gender',
         'risk_group',
         'status',
@@ -32,6 +32,10 @@ class Person extends Model
         'complement',
         'number',
         'more',
+    ];
+
+    protected $casts = [
+        'birthday' => 'date'
     ];
 
     public function getCodeAttribute()
@@ -62,5 +66,10 @@ class Person extends Model
     public function contacts()
     {
         return $this->hasMany(Contact::class, 'person_id');
+    }
+
+    public function getBirthdayFormattedAttribute()
+    {
+        return $this->birthday ? $this->birthday->format('d/m/Y') : null;
     }
 }

@@ -6,7 +6,7 @@ use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class CheckCanLogin
+class CheckUserCanLogin
 {
     /**
      * Handle an incoming request.
@@ -18,10 +18,11 @@ class CheckCanLogin
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        $auth_guard = Auth::guard($guard);
-
-        if ($auth_guard->check() && !$auth_guard->user()->can('Efetuar Login')) {
-            $auth_guard->logout();
+        if (
+            $request->user() &&
+            !$request->user()->can('Efetuar Login')
+        ) {
+            auth()->logout();
             return redirect('/');
         }
 
