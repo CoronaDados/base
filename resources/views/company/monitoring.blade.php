@@ -6,8 +6,9 @@
 
         <div class="accordion" id="accordionExample">
             <div class="card">
-                <div class="card-header collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseMonitoring" aria-expanded="false" aria-controls="collapseMonitoring">
+                <div class="align-items-center card-header d-flex justify-content-between collapsed monitoramento-titulo" id="headingOne" data-toggle="collapse" data-target="#collapseMonitoring" aria-expanded="false" aria-controls="collapseMonitoring">
                     <h5 class="mb-0">Monitoramento diário</h5>
+                    <i class="ni ni-bold-down"></i>
                 </div>
                 <div id="collapseMonitoring" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
@@ -148,18 +149,18 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12 p-0">
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Alguma observação?</label>
                                     <div class="col-sm-12">
                                 <textarea id="status" rows="4" name="obs" required="" placeholder="Alguma observação?"
-                                          class="form-control"></textarea>
+                                          class="form-control form-control-alternative"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Gravar</button>
+                        <div class="text-right p-0">
+                            <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Salvar</button>
                         </div>
                     </form>
                 </div>
@@ -221,8 +222,8 @@
                     "sZeroRecords": "Nenhum registro encontrado",
                     "sSearch": "Pesquisar",
                     "oPaginate": {
-                        "sNext": "&raquo;",
-                        "sPrevious": "&laquo;",
+                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
                         "sFirst": "Primeiro",
                         "sLast": "Último"
                     },
