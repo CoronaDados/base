@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Person\CasePerson;
@@ -66,9 +67,22 @@ class CompaniesController extends Controller
 
             return DataTables::of($casesPersons)
                     ->addIndexColumn()
+                    ->addColumn('action', function ($row) {
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Observações" class="edit btn btn-primary btn-sm seeObs">Observações</a>';
+                        return $btn;
+                    })
+                    ->editColumn('created_at', function ($date) {
+                        return Helper::formatDateFromDB($date->created_at);
+                    })
+                    ->editColumn('name', function ($user) {
+                        return Helper::getFirstAndLastName($user->name);
+                    })
+                    ->editColumn('leader', function ($leader) {
+                        return Helper::getFirstAndLastName($leader->name);
+                    })
                     ->editColumn('status', function ($status) {
 
-                        $formattedStatus = $this->formatStatus($status->status);
+                        $formattedStatus = Helper::formatStatus($status->status)[0];
 
                         $allSymptoms = '<ul class="mb-0">';
                         foreach ($formattedStatus as $symptom) {
@@ -79,10 +93,7 @@ class CompaniesController extends Controller
                         return $allSymptoms;
 
                     })
-                    ->editColumn('created_at', function ($date) {
-                        return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
-                    })
-                    ->rawColumns(['status'])
+                    ->rawColumns(['status', 'action'])
                     ->make(true);
         }
 
@@ -98,35 +109,6 @@ class CompaniesController extends Controller
         $person->createCasePersonDay()->save($monitoring);
 
         return true;
-    }
-
-    public function formatStatus($status)
-    {
-        $allSymptoms = [
-            "febre" => "Febre",
-            "tosse-seca" => "Tosse seca",
-            "cansaco" => "Cansaço",
-            "dor-corpo" => "Dor no corpo",
-            "dor-garganta" => "Dor de Garganta",
-            "congestao-nasal" => "Congestão Nasal",
-            "diarreia" => "Diarreia",
-            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
-        ];
-
-        $status = (array) json_decode($status);
-        unset($status["person_id"], $status['obs']);
-
-        $allSymptomsFiltered = array_values(
-            array_filter(
-                $allSymptoms,
-                function ($key) use ($status) {
-                    return array_key_exists($key, $status);
-                },
-                ARRAY_FILTER_USE_KEY
-            )
-        );
-
-        return $allSymptomsFiltered;
     }
 
     /**
