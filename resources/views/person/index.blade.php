@@ -4,7 +4,7 @@
 
     <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card shadow">
-            <div class="card-header border-0">
+            <div class="card-header">
                 <div class="row align-items-center">
                     <div class="col">
                         <h3 class="mb-0">Lista de Colaboradores</h3>
