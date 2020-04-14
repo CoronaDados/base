@@ -7,7 +7,7 @@
         <span>{{ __('Meus Dados') }}</span>
     </a>
     <a href="{{ route('company.tips') }}" class="dropdown-item">
-        <i class="ni ni-support-16"></i>
+        <i class="ni ni-bulb-61"></i>
         <span>{{ __('Dicas') }}</span>
     </a>
     <a href="{{ route('company.help') }}" class="dropdown-item">

@@ -250,7 +250,7 @@ class PersonController extends Controller
                 }
 
                 $role = $request->role;
-                if($role) {
+                if ($role) {
                     $companyUser->syncRoles($role);
                 }
 
@@ -346,6 +346,6 @@ class PersonController extends Controller
 
         flash('Dados atualizados com sucesso', 'info');
 
-        return redirect()->route('person.profile');
+        return redirect()->route('company.home');
     }
 }
