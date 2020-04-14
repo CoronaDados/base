@@ -21,27 +21,7 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-                    <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
-                    </div>
-                    <a href="#" class="dropdown-item">
-                        <i class="ni ni-settings-gear-65"></i>
-                        <span>{{ __('Configurações') }}</span>
-                    </a>
-                    <a href="{{ route('company.tips') }}" class="dropdown-item">
-                        <i class="ni ni-support-16"></i>
-                        <span>{{ __('Dicas') }}</span>
-                    </a>
-                    <a href="{{ route('company.help') }}" class="dropdown-item">
-                        <i class="ni ni-support-16"></i>
-                        <span>{{ __('Ajuda') }}</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                        <i class="ni ni-user-run"></i>
-                        <span>{{ __('Sair') }}</span>
-                    </a>
+                    @include('company.layouts.navbars.partials.user')                   
                 </div>
             </li>
         </ul>

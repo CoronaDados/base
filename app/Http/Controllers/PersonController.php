@@ -25,9 +25,11 @@ class PersonController extends Controller
     {
         if ($request->ajax()) {
             if (auth('company')->user()->can('Ver Usuários')) {
-                $data =  auth('company')->user()->personsInCompany();
-            } else {
-                $data =  auth('company')->user()->persons()->get();
+                if (auth()->user()->hasRole('Admin')) {
+                    $data =  auth('company')->user()->personsInCompany();
+                } else {
+                    $data =  auth('company')->user()->personsInCompanyByLeader();
+                }
             }
 
             return DataTables::of($data)
@@ -89,7 +91,7 @@ class PersonController extends Controller
                 'cep' => $this->removePunctuation($request->cep),
                 'phone' => $this->removePunctuation($request->phone),
                 'sector' => $request->sector,
-                'bithday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
+                'birthday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
                 'gender' => $request->gender,
                 'risk_group' => $request->risk_group,
                 'status' => true
@@ -102,6 +104,8 @@ class PersonController extends Controller
                 'company_id' => $companyUser->company_id,
                 'email' => $request->email,
                 'password' => Hash::make($cpf),
+                'email_verified_at' => now(),
+                'force_new_password' => true,
             ]
         );
 
@@ -169,7 +173,7 @@ class PersonController extends Controller
                 "dor-corpo" => "Dor no corpo",
                 "dor-garganta" => "Dor de Garganta",
                 "congestao-nasal" => "Congestão Nasal",
-                "diarreia" => "Diarréia",
+                "diarreia" => "Diarreia",
                 "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
             ];
 
@@ -233,7 +237,7 @@ class PersonController extends Controller
                 $person->cpf = $cpf;
                 $person->cep = $this->removePunctuation($request->cep);
                 $person->phone = $this->removePunctuation($request->phone);
-                $person->bithday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+                $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
                 $person->gender = $request->gender;
                 $person->sector = $request->sector;
                 $person->risk_group = $request->risk_group;
@@ -246,7 +250,9 @@ class PersonController extends Controller
                 }
 
                 $role = $request->role;
-                $companyUser->syncRoles($role);
+                if ($role) {
+                    $companyUser->syncRoles($role);
+                }
 
                 $leaderId = $request->leader;
                 if ($leaderId) {
@@ -256,7 +262,6 @@ class PersonController extends Controller
                     ])->first();
                     $person->companyUsers()->sync($userLider);
                 }
-
 
                 $companyUser->save();
             }
@@ -295,5 +300,52 @@ class PersonController extends Controller
         flash()->overlay('Importação iniciada com sucesso!<br>Aguarde alguns minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
 
         return back();
+    }
+
+    public function profileShow()
+    {
+        $companyUser = auth('company')->user();
+        $riskGroups = RiskGroupType::getValues();
+        $sectors = SectorType::getValues();
+        $roles = Role::query()->where('guard_name', '=', 'company')->get();
+        $leaders = $companyUser->leadersInCompany();
+        $leader = $companyUser->leader()->id ?? null;
+
+        return view('person.profile', compact('riskGroups', 'sectors', 'roles', 'leaders', 'companyUser', 'leader'));
+    }
+
+    public function profileUpdate(Request $request)
+    {
+        $companyUser = auth('company')->user();
+
+        $cpf = $this->removePunctuation($request->cpf);
+
+        $person = $companyUser->person;
+        $person->name = $request->name;
+        $person->cpf = $cpf;
+        $person->cep = $this->removePunctuation($request->cep);
+        $person->phone = $this->removePunctuation($request->phone);
+        $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+        $person->gender = $request->gender;
+        $person->sector = $request->sector;
+        $person->save();
+
+        $companyUser->email = $request->email;
+
+        if ($companyUser->force_new_password && (!$request->password || Hash::check($request->password, $companyUser->password))) {
+            flash('A sua nova senha deve ser diferente da anterior!', 'danger');
+            return redirect()->route('person.profile');
+        }
+
+        if ($request->password) {
+            $companyUser->password = Hash::make($request->password);
+            $companyUser->force_new_password = false;
+        }
+
+        $companyUser->save();
+
+        flash('Dados atualizados com sucesso', 'info');
+
+        return redirect()->route('company.home');
     }
 }
