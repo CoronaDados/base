@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        @include('company.layouts.google.head')
+
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,14 +21,21 @@
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet">
         <link href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet">
         <link type="text/css" href="{{ asset('argon') }}/css/argon.css?v=1.0.0" rel="stylesheet">
+        <link type="text/css" href="{{ asset('argon') }}/css/custom.css" rel="stylesheet">
+        <!-- Select2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
     </head>
     <body class="{{ $class ?? '' }}">
+        @include('company.layouts.google.body')
+
         @auth()
             <form id="logout-form" action="{{ route('company.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
-            @include('company.layouts.navbars.sidebar')
+            @if(Route::current()->getName() != 'company.verification.notice')
+                @include('company.layouts.navbars.sidebar')
+            @endif
         @endauth
 
         <div class="main-content">
@@ -51,7 +60,7 @@
         <script src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
         <script src="/js/jquery.mask.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
         @stack('js')
 

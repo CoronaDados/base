@@ -2,8 +2,10 @@
 
 namespace App\Model\Company;
 
-use App\Model\People\People;
+use App\Model\Person\CasePerson;
+use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
+use App\Notifications\Company\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +15,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Spatie\Permission\Traits\HasRoles;
 
 
-class CompanyUser  extends Authenticatable
+class CompanyUser  extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable,
         HasRoles;
@@ -21,7 +23,7 @@ class CompanyUser  extends Authenticatable
     protected $guard = 'company';
 
     protected $fillable = [
-        'name', 'email', 'is_admin', 'password','email_verfied_at', 'phone', 'cpf', 'department', 'company_id'
+        'email', 'is_admin', 'password', 'email_verified_at', 'company_id', 'person_id', 'force_new_password'
     ];
 
     protected $hidden = ['password'];
@@ -29,9 +31,57 @@ class CompanyUser  extends Authenticatable
 
     public function persons()
     {
-        return $this->morphToMany(People::class, 'personable','personables','personable_id', 'person_id')->orderByDesc('created_at');
+        return $this->morphToMany(Person::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
     }
 
+    public function casesPerson()
+    {
+        $companyUserId = $this->id;
+
+        $query = "SELECT cp.created_at, p.name, cp.status, l.name AS leader
+            FROM cases_person cp
+            INNER JOIN persons p ON p.id = cp.person_id
+            INNER JOIN company_users c_person ON c_person.person_id = p.id
+            INNER JOIN personables pp ON p.id = pp.person_id
+            INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN
+            (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN
+                (
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
+                )
+            )";
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function casesPersonByLeader()
+    {
+        $companyUserId = $this->id;
+
+        $query = "SELECT cp.created_at, p.name, cp.status, l.name AS leader
+            FROM cases_person cp
+            INNER JOIN persons p ON p.id = cp.person_id
+            INNER JOIN company_users c_person ON c_person.person_id = p.id
+            INNER JOIN personables pp ON p.id = pp.person_id
+            INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN
+            (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN
+                (
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
+                )
+            ) AND c.id = ". $companyUserId;
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class);
+    }
 
     public function company()
     {
@@ -40,24 +90,76 @@ class CompanyUser  extends Authenticatable
 
     public function countPersons()
     {
-        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = ".$this->company()->first()->id." ) )"));
+        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"));
     }
 
     public function personsInCompany()
     {
-        return DB::select(DB::raw("select
-		p.id, p.name, p.email,
-        c.id,
-        c.name as lider from persons p
-INNER JOIN personables pp
-ON p.id = pp.person_id 
-INNER JOIN company_users c
-ON pp.personable_id = c.id
-where p.id IN ( select pp.person_id from personables pp where personable_id in ( select c.id  company_users where company_id = ".$this->company()->first()->id." ) )"));
+        $query = "SELECT c_person.id, p.name, c_person.email, l.name AS lider
+            FROM persons p
+            INNER JOIN company_users c_person ON c_person.person_id = p.id
+            INNER JOIN personables pp ON p.id = pp.person_id
+            INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN (
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function personsInCompanyByLeader()
+    {
+        $companyUserId = $this->id;
+
+        $query = "SELECT c_person.id, p.name, c_person.email, l.name AS lider
+            FROM persons p
+            INNER JOIN company_users c_person ON c_person.person_id = p.id
+            INNER JOIN personables pp ON p.id = pp.person_id
+            INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN
+            (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN
+                (
+                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
+                )
+            ) AND c.id = ". $companyUserId;
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function leadersInCompany()
+    {
+        $query = "SELECT l.id, p.name FROM company_users l
+        INNER JOIN persons p ON p.id = l.person_id
+        INNER JOIN model_has_roles m ON m.model_id = l.id
+        INNER JOIN roles r ON m.role_id = r.id
+        WHERE l.company_id ="  . $this->company()->first()->id . " AND role_id IN (1,2)";
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function leader()
+    {
+        $companyId = $this->company_id;
+        return $this->person->companyUsers()->get()->first(function ($c, $key) use ($companyId) {
+            return $c->company_id === $companyId;
+        });
+    }
+
+    public function needChangePassword()
+    {
+        return $this->force_new_password == true;
     }
 }

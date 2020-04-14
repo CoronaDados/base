@@ -3,73 +3,47 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UserController;
-use App\Imports\CompanyUsersImport;
-use App\Imports\PersonsImport;
 use App\Model\Company\Company;
-use App\Model\Company\CompanyUser;
-use App\Model\People\CasePeople;
-use App\Model\People\People;
+use App\Model\Person\CasePerson;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
 {
-
-
     public function dashboard()
     {
-        $peoplesCompany = auth('company')->user()->countPersons();
-        $peoplesUser =   auth('company')->user()->persons()->count();
+        $personsCompany = auth('company')->user()->countPersons();
+        $personsUser =   auth('company')->user()->persons()->count();
 
-        return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
+        return view('company.dashboard', compact(['personsCompany', 'personsUser']));
     }
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
-     */
-
-    public function addPerson(Request $request)
+    public function tips()
     {
-        if ($request->ajax()) {
-            if(auth('company')->user()->can('Ver Usuários')){
-                $data =  auth('company')->user()->personsInCompany();
-            }else{
-                $data =  auth('company')->user()->persons()->get();
-            }
+        return view('company.tips');
+    }
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"data-original-title="Ver" class="edit btn btn-primary btn-sm editMonitoring">Ver / Editar</a>';
-                        return $btn;
-                            })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('company.person.create');
+    public function help()
+    {
+        return view('company.help');
     }
 
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
-            foreach ($datas as $data){
-                if(!$data->casePeopleDay()->exists()){
+            $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
+
+            foreach ($datas as $data) {
+                if (!$data->casePersonDay()->exists()) {
                     $person[] = $data;
                 }
             }
 
             return DataTables::of($person)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>'. $row->code.'</strong>" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>' . $row->code . '</strong>" data-status="' . $row->status . '"  data-id="' . $row->id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
                     //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
 
                     return $btn;
@@ -80,47 +54,80 @@ class CompaniesController extends Controller
         return view('company.monitoring');
     }
 
+    public function monitoringHistory(Request $request)
+    {
+        if ($request->ajax()) {
+
+            if (auth()->user()->hasRole('Admin')) {
+                $casesPersons = auth('company')->user()->casesPerson();
+            } else {
+                $casesPersons = auth('company')->user()->casesPersonByLeader();
+            }
+
+            return DataTables::of($casesPersons)
+                    ->addIndexColumn()
+                    ->editColumn('status', function ($status) {
+
+                        $formattedStatus = $this->formatStatus($status->status);
+
+                        $allSymptoms = '<ul class="mb-0">';
+                        foreach ($formattedStatus as $symptom) {
+                            $allSymptoms .= '<li>' . $symptom . '</li>';
+                        }
+                        $allSymptoms .= '</ul>';
+
+                        return $allSymptoms;
+
+                    })
+                    ->editColumn('created_at', function ($date) {
+                        return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
+                    })
+                    ->rawColumns(['status'])
+                    ->make(true);
+        }
+
+        return view('company.history');
+    }
+
     public function storeMonitoring($id, Request $request)
     {
-        if(!$person = auth('company')->user()->persons()->where('id','=',$id)->first()){
-            return response()->json('error',401);
+        if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
+            return response()->json('error', 401);
         };
-        $monitoring = new CasePeople(['status' => json_encode($request->all())]);
-
-        $person->createCasePeopleDay()->save($monitoring);
+        $monitoring = new CasePerson(['status' => json_encode($request->all())]);
+        $person->createCasePersonDay()->save($monitoring);
 
         return true;
-
     }
 
-    public function storePeople(Request $request)
+    public function formatStatus($status)
     {
+        $allSymptoms = [
+            "febre" => "Febre",
+            "tosse-seca" => "Tosse seca",
+            "cansaco" => "Cansaço",
+            "dor-corpo" => "Dor no corpo",
+            "dor-garganta" => "Dor de Garganta",
+            "congestao-nasal" => "Congestão Nasal",
+            "diarreia" => "Diarreia",
+            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
+        ];
 
-        $people = new People();
-        $people->name = $request->name;
-        $people->email = $request->email;
-        $people->cpf = $request->cpf;
-        $people->phone = $request->phone;
-        $people->sector = $request->sector;
-        $people->bithday = $request->bithday;
-        $people->gender = $request->gender;
-        $people->risk_group = $request->risk_group;
-        $people->status = $request->status;
-        $people->cep = $request->cep;
-        $people->ibge = $request->ibge;
-        $people->state = $request->state;
-        $people->city = $request->city;
-        $people->neighborhood = $request->neighborhood;
-        $people->street = $request->street;
-        $people->complement = $request->complement;
-        $people->more = $request->more;
-        //$people->save();
-        auth('company')->user()->persons()->save($people);
-        //$peoples = auth('company')->user()->persons()->get();
-        flash('Colaborador cadastrado com sucesso', 'info');
-        return view('company.person.create');
+        $status = (array) json_decode($status);
+        unset($status["person_id"], $status['obs']);
+
+        $allSymptomsFiltered = array_values(
+            array_filter(
+                $allSymptoms,
+                function ($key) use ($status) {
+                    return array_key_exists($key, $status);
+                },
+                ARRAY_FILTER_USE_KEY
+            )
+        );
+
+        return $allSymptomsFiltered;
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -141,27 +148,26 @@ class CompaniesController extends Controller
     public function multiMonitoring(Request $request)
     {
 
-        if(!$persons = auth('company')->user()->persons()->whereIn('id',$request->id)->get()){
-            return response()->json('error',401);
+        if (!$persons = auth('company')->user()->persons()->whereIn('id', $request->id)->get()) {
+            return response()->json('error', 401);
         };
 
 
-
         foreach ($persons as $person) {
-            $monitoring = new CasePeople(['status' => 'ok']);
-            $person->createCasePeopleDay()->save($monitoring);
+            $monitoring = new CasePerson(['status' => 'ok']);
+            $person->createCasePersonDay()->save($monitoring);
         }
-       flash('Atualizado com sucesso','info');
-       return redirect(route('company.monitoring'));
+        flash('Atualizado com sucesso', 'info');
+        return redirect(route('company.monitoring'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Model\Company\Company  $companies
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Company $companies)
+    public function show(Request $request, $id)
     {
         //
     }
@@ -198,41 +204,5 @@ class CompaniesController extends Controller
     public function destroy(Company $companies)
     {
         //
-    }
-
-    public function importView()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        return view('company.import');
-    }
-
-    public function import()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        Excel::queueImport(new PersonsImport(),request()->file('file'));
-
-        return back();
-    }
-
-    public function importView2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        return view('company.import2');
-    }
-
-    public function import2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        Excel::queueImport(new CompanyUsersImport(),request()->file('file'));
-
-        return back();
     }
 }

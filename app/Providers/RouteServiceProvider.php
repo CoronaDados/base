@@ -42,13 +42,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        $this->mapApiRoutes();
-
-        $this->mapWebRoutes();
-
         $this->mapCompanyRoutes();
-
-        //
+        $this->mapPersonRoutes();
+        $this->mapWebRoutes();
     }
 
     /**
@@ -69,26 +65,18 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapCompanyRoutes()
     {
-        Route::domain(env('COMPANY_URL'))
+        Route::domain(env('APP_URL'))
             ->middleware('web')
             ->name('company.')
-            ->namespace($this->namespace.'\Company')
+            ->namespace($this->namespace . '\Company')
             ->group(base_path('routes/company.php'));
     }
 
-
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
-    protected function mapApiRoutes()
+    protected function mapPersonRoutes()
     {
-        Route::prefix('api')
-            ->middleware('api')
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
             ->namespace($this->namespace)
-            ->group(base_path('routes/api.php'));
+            ->group(base_path('routes/person.php'));
     }
 }

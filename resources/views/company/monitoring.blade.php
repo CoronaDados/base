@@ -3,19 +3,23 @@
 @section('content')
     {{--    @include('layouts.headers.cards')--}}
     <div class="container-fluid pb-8 pt-3 pt-md-7">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Monitoramento diário</h5>
-                <img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" />
-            </div>
-        </div>
-        <div>
 
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header collapsed" id="headingOne" data-toggle="collapse" data-target="#collapseMonitoring" aria-expanded="false" aria-controls="collapseMonitoring">
+                    <h5 class="mb-0">Monitoramento diário</h5>
+                </div>
+                <div id="collapseMonitoring" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p><img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" /></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row mt-5">
             <div class="col-xl-12 mb-5 mb-xl-0">
-                <form id="multi-monitoring" action="{{route('company.person.multi.monitoring')}}" method="POST">
+                <form id="multi-monitoring" action="{{route('company.monitoring')}}" method="POST">
                     @csrf
                 <div class="card shadow">
                     <div class="card-header border-0">
@@ -89,8 +93,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="cancaso" name="cancaso" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="cancaso">Cansaço</label>
+                                        <input type="checkbox" id="cansaco" name="cansaco" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="cansaco">Cansaço</label>
                                     </div>
                                 </div>
                             </div>
@@ -105,8 +109,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="dar-garganta" name="dar-garganta" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="dar-garganta">Dor de garganta corpo</label>
+                                        <input type="checkbox" id="dor-garganta" name="dor-garganta" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dor-garganta">Dor de garganta</label>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +134,15 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="custom-control-input">
-                                        <label class="custom-control-label" for="diarreia">Diarréia</label>
+                                        <label class="custom-control-label" for="diarreia">Diarreia</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="custom-control-input">
+                                        <label class="custom-control-label" for="dificuldade-respirar">Falta de ar/Dificuldade para respirar</label>
                                     </div>
                                 </div>
                             </div>
@@ -159,8 +171,8 @@
 @push('js')
     <script>
         var ShowForm1 = (function () {
-            let numpeoples = $('#people_in_residence').val()
-            if (numpeoples > 0) {
+            let numpersons = $('#person_in_residence').val()
+            if (numpersons > 0) {
                 let template =
                     '<div class="row m-2">\n' +
                     '                            <div class="col-md-6">\n' +
@@ -174,7 +186,7 @@
                     '                                </div>\n' +
                     '                            </div>\n' +
                     '                        </div>'
-                for (var i = 0; i < numpeoples; i++) {
+                for (var i = 0; i < numpersons; i++) {
                     $('#show1').append(template)
                 }
 
@@ -209,8 +221,8 @@
                     "sZeroRecords": "Nenhum registro encontrado",
                     "sSearch": "Pesquisar",
                     "oPaginate": {
-                        "sNext": "Próximo",
-                        "sPrevious": "Anterior",
+                        "sNext": "&raquo;",
+                        "sPrevious": "&laquo;",
                         "sFirst": "Primeiro",
                         "sLast": "Último"
                     },
@@ -295,7 +307,10 @@
                     );
                 });
             });
+
         });
 
     </script>
 @endpush
+
+

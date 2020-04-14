@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company\Auth;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
+use App\Model\Person\Person;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -58,6 +59,7 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'razao' => ['required', 'string', 'min:8'],
             'cnpj' => ['required', 'string', 'min:8',  'unique:companies'],
+            'cpf' => ['required', 'string', 'min:11',  'unique:persons'],
         ]);
     }
 
@@ -73,12 +75,17 @@ class RegisterController extends Controller
             'razao' => $data['razao'],
             'cnpj' => $data['cnpj'],
         ]);
+        $person = Person::create([
+            'name' => $data['name'],
+            'cpf' => $this->removePunctuation($data['cpf']),
+        ]);
         $user = CompanyUser::create([
             'company_id' => $company->id,
-            'name' => $data['name'],
+            'person_id' => $person->id,
             'email' => $data['email'],
             'is_admin' => true,
             'password' => Hash::make($data['password']),
+            'force_new_password' => false,
         ]);
         $user->assignRole('Admin');
         return $user;
@@ -94,5 +101,8 @@ class RegisterController extends Controller
         return view('company.auth.register', ['url' => 'company']);
     }
 
-
+    private function removePunctuation($string)
+    {
+        return preg_replace('/[^0-9]/', '', $string);
+    }
 }

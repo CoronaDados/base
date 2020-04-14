@@ -13,30 +13,12 @@
                             <i class="ni ni-single-02"></i>
                         </span>
                         <div class="media-body ml-2 d-none d-lg-block">
-                            <span class="mb-0 text-sm  font-weight-bold">{{ auth()->user()->name }}</span>
+                            <span class="mb-0 text-sm  font-weight-bold">{{ auth()->user()->person->name }}</span>
                         </div>
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-                    <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
-                    </div>
-                    @can('Ver Usuários')
-                    <a href="{{route('company.users.index')}}" class="dropdown-item">
-                        <i class="ni ni-settings-gear-65"></i>
-                        <span>{{ __('Usuários') }}</span>
-                    </a>
-                    @endcan
-                    <a href="#" class="dropdown-item">
-                        <i class="ni ni-support-16"></i>
-                        <span>{{ __('Ajuda') }}</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                        <i class="ni ni-user-run"></i>
-                        <span>{{ __('Sair') }}</span>
-                    </a>
+                    @include('company.layouts.navbars.partials.user')
                 </div>
             </li>
         </ul>

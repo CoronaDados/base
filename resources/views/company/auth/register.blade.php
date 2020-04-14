@@ -31,9 +31,9 @@
                             <div class="form-group{{ $errors->has('razao') ? ' has-danger' : '' }}">
                                 <div class="input-group input-group-alternative mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        <span class="input-group-text"><i class="fa fa-industry" aria-hidden="true"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Razão') }}" type="text" name="razao" value="{{ old('razao') }}" required autofocus>
+                                    <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Razão social') }}" type="text" name="razao" value="{{ old('razao') }}" required autofocus>
                                 </div>
                                 @if ($errors->has('razao'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -41,10 +41,23 @@
                                     </span>
                                 @endif
                             </div>
+                            <div class="form-group{{ $errors->has('cnpj') ? ' has-danger' : '' }}">
+                                <div class="input-group input-group-alternative mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-building" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input class="form-control cnpj{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
+                                </div>
+                                @if ($errors->has('cnpj'))
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('cnpj') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
                             <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
                                 <div class="input-group input-group-alternative mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        <span class="input-group-text"><i class="fa fa-user-circle" aria-hidden="true"></i></span>
                                     </div>
                                     <input class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Nome do responsável') }}" type="text" name="name" value="{{ old('name') }}" required autofocus>
                                 </div>
@@ -54,29 +67,29 @@
                                     </span>
                                 @endif
                             </div>
+                            <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
+                                <div class="input-group input-group-alternative mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-address-card" aria-hidden="true"></i></span>
+                                    </div>
+                                    <input class="form-control cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" placeholder="{{ __('CPF do responsável') }}" type="text" name="cpf" value="{{ old('cpf') }}" required>
+                                </div>
+                                @if ($errors->has('cpf'))
+                                    <span class="invalid-feedback" style="display: block;" role="alert">
+                                        <strong>{{ $errors->first('cpf') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
                             <div class="form-group{{ $errors->has('email') ? ' has-danger' : '' }}">
                                 <div class="input-group input-group-alternative mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" type="email" name="email" value="{{ old('email') }}" required>
+                                    <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email do responsável') }}" type="email" name="email" value="{{ old('email') }}" required>
                                 </div>
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
                                         <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                            <div class="form-group{{ $errors->has('cnpj') ? ' has-danger' : '' }}">
-                                <div class="input-group input-group-alternative mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                    </div>
-                                    <input class="form-control cnpj{{ $errors->has('cnpj') ? ' is-invalid' : '' }}" placeholder="{{ __('CNPJ') }}" type="text" name="cnpj" value="{{ old('cnpj') }}" required>
-                                </div>
-                                @if ($errors->has('cnpj'))
-                                    <span class="invalid-feedback" style="display: block;" role="alert">
-                                        <strong>{{ $errors->first('cnpj') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -106,7 +119,7 @@
                                     <div class="custom-control custom-control-alternative custom-checkbox">
                                         <input class="custom-control-input" required id="customCheckRegister" type="checkbox">
                                         <label class="custom-control-label" for="customCheckRegister">
-                                            <span class="text-muted">{{ __('Eu concordo com o') }} <a href="#!">{{ __('Termo de privacidade') }}</a></span>
+                                        <span class="text-muted">{{ __('Eu concordo com os') }} <a href="{{ route('termos-de-privacidade') }}">{{ __('Termos de Privacidade') }}</a></span>
                                         </label>
                                     </div>
                                 </div>
@@ -115,6 +128,13 @@
                                 <button type="submit" class="btn btn-primary mt-4">{{ __('Cadastrar empresa') }}</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <a href="{{ route('company.login') }}" class="text-secondary">
+                            <small>Voltar</small>
+                        </a>
                     </div>
                 </div>
             </div>
