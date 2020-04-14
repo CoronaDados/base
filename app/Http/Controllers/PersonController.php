@@ -247,7 +247,11 @@ class PersonController extends Controller
                 $person->cpf = $cpf;
                 $person->cep = $this->removePunctuation($request->cep);
                 $person->phone = $this->removePunctuation($request->phone);
-                $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+
+                if( $request->birthday) {
+                    $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+                }
+
                 $person->gender = $request->gender;
                 $person->sector = $request->sector;
                 $person->risk_group = $request->risk_group;
