@@ -82,7 +82,7 @@
             $isAdmin = auth()->user()->hasRole('Admin');
         @endphp
 
-        @if($isAdmin)
+        @if($isAdmin and !isset($companyUser))
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
@@ -106,10 +106,11 @@
                     </select>
                 </div>
             </div>
+
         @endif
     </div>
 
-    @if($isAdmin)
+    @if($isAdmin and !isset($companyUser))
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -203,7 +204,7 @@
 {{--    @endif--}}
 
     <div class="col-12 text-right p-0">
-        <button type="submit" class="btn btn-primary my-4 save">{{ $isRequired ? __('Cadastrar') : __('Salvar') }}</button>
+        <button type="submit" class="btn btn-primary my-4 save">{{ ($isRequired and !isset($companyUser)) ? __('Cadastrar') : __('Salvar') }}</button>
     </div>
 </form>
 
