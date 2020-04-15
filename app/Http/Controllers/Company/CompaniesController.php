@@ -13,10 +13,34 @@ class CompaniesController extends Controller
 {
     public function dashboard()
     {
-        $personsCompany = auth('company')->user()->countPersons();
-        $personsUser =   auth('company')->user()->persons()->count();
+        $currentUser = auth('company')->user();
 
-        return view('company.dashboard', compact(['personsCompany', 'personsUser']));
+        $totalPersonsInCompany = $currentUser->countPersons();
+        $totalPersonsInCompanyMonitoredToday = $currentUser->countPersonsInCompanyMonitoredToday();
+        $percentPersonsInCompanyMonitoredToday = $totalPersonsInCompanyMonitoredToday / $totalPersonsInCompany * 100;
+        $percentPersonsInCompanyMonitoredToday = number_format($percentPersonsInCompanyMonitoredToday, 2, ',', '.');
+
+        $totalMyPersons = $currentUser->persons()->count();
+        $totalMyPersonsMonitoredToday = $currentUser->countMyPersonsMonitoredToday();
+        $percentMyPersonsMonitoredToday = $totalMyPersonsMonitoredToday / $totalMyPersons * 100;
+        $percentMyPersonsMonitoredToday = number_format($percentMyPersonsMonitoredToday, 2, ',', '.');
+
+        $totalCasesConfirmed = 0;
+        $totalCasesConfirmedToday = 0;
+        $percentCasesConfirmedToday = 0;
+
+
+        return view('company.dashboard', compact([
+            'totalPersonsInCompany',
+            'totalPersonsInCompanyMonitoredToday',
+            'percentPersonsInCompanyMonitoredToday',
+            'totalMyPersons',
+            'totalMyPersonsMonitoredToday',
+            'percentMyPersonsMonitoredToday',
+            'totalCasesConfirmed',
+            'totalCasesConfirmedToday',
+            'percentCasesConfirmedToday'
+        ]));
     }
 
     public function tips()
@@ -65,25 +89,24 @@ class CompaniesController extends Controller
             }
 
             return DataTables::of($casesPersons)
-                    ->addIndexColumn()
-                    ->editColumn('status', function ($status) {
+                ->addIndexColumn()
+                ->editColumn('status', function ($status) {
 
-                        $formattedStatus = $this->formatStatus($status->status);
+                    $formattedStatus = $this->formatStatus($status->status);
 
-                        $allSymptoms = '<ul class="mb-0">';
-                        foreach ($formattedStatus as $symptom) {
-                            $allSymptoms .= '<li>' . $symptom . '</li>';
-                        }
-                        $allSymptoms .= '</ul>';
+                    $allSymptoms = '<ul class="mb-0">';
+                    foreach ($formattedStatus as $symptom) {
+                        $allSymptoms .= '<li>' . $symptom . '</li>';
+                    }
+                    $allSymptoms .= '</ul>';
 
-                        return $allSymptoms;
-
-                    })
-                    ->editColumn('created_at', function ($date) {
-                        return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
-                    })
-                    ->rawColumns(['status'])
-                    ->make(true);
+                    return $allSymptoms;
+                })
+                ->editColumn('created_at', function ($date) {
+                    return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
+                })
+                ->rawColumns(['status'])
+                ->make(true);
         }
 
         return view('company.history');

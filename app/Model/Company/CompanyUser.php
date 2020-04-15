@@ -36,8 +36,6 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function casesPerson()
     {
-        $companyUserId = $this->id;
-
         $query = "SELECT cp.created_at, p.name, cp.status, l.name AS leader
             FROM cases_person cp
             INNER JOIN persons p ON p.id = cp.person_id
@@ -73,7 +71,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
                 (
                     SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
                 )
-            ) AND c.id = ". $companyUserId;
+            ) AND c.id = " . $companyUserId;
 
         return DB::select(DB::raw($query));
     }
@@ -90,7 +88,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function countPersons()
     {
-        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"));
+        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"))[0]->total;
     }
 
     public function personsInCompany()
@@ -124,7 +122,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
                 (
                     SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
                 )
-            ) AND c.id = ". $companyUserId;
+            ) AND c.id = " . $companyUserId;
 
         return DB::select(DB::raw($query));
     }
@@ -161,5 +159,24 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function needChangePassword()
     {
         return $this->force_new_password == true;
+    }
+
+    public function countPersonsInCompanyMonitoredToday()
+    {
+        return DB::table('cases_person', 'cp')
+            ->select(DB::raw('count(*) as total'))
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->first()->total;
+    }
+
+    public function countMyPersonsMonitoredToday()
+    {
+        return DB::table('cases_person', 'cp')
+            ->select(DB::raw('count(*) as total'))
+            ->where('cp.user_id', $this->id)
+            ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->first()->total;
     }
 }
