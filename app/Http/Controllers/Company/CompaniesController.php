@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
-use App\Model\Person\CasePerson;
+use App\Model\Person\MonitoringPerson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -56,10 +56,10 @@ class CompaniesController extends Controller
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
+            $datas =  auth('company')->user()->persons()->with('monitoringPersonDay')->get();
 
             foreach ($datas as $data) {
-                if (!$data->casePersonDay()->exists()) {
+                if (!$data->monitoringPersonDay()->exists()) {
                     $person[] = $data;
                 }
             }
@@ -83,19 +83,19 @@ class CompaniesController extends Controller
         if ($request->ajax()) {
 
             if (auth()->user()->hasRole('Admin')) {
-                $casesPersons = auth('company')->user()->casesPerson();
+                $monitoringsPersons = auth('company')->user()->monitoringsPerson();
             } else {
-                $casesPersons = auth('company')->user()->casesPersonByLeader();
+                $monitoringsPersons = auth('company')->user()->monitoringsPersonByLeader();
             }
 
-            return DataTables::of($casesPersons)
+            return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
-                ->editColumn('status', function ($status) {
+                ->editColumn('symptoms', function ($symptoms) {
 
-                    $formattedStatus = $this->formatStatus($status->status);
+                    $formattedSymptoms = $this->formatSymptoms($symptoms->symptoms);
 
                     $allSymptoms = '<ul class="mb-0">';
-                    foreach ($formattedStatus as $symptom) {
+                    foreach ($formattedSymptoms as $symptom) {
                         $allSymptoms .= '<li>' . $symptom . '</li>';
                     }
                     $allSymptoms .= '</ul>';
@@ -105,7 +105,7 @@ class CompaniesController extends Controller
                 ->editColumn('created_at', function ($date) {
                     return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
                 })
-                ->rawColumns(['status'])
+                ->rawColumns(['symptoms'])
                 ->make(true);
         }
 
@@ -117,13 +117,13 @@ class CompaniesController extends Controller
         if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
             return response()->json('error', 401);
         };
-        $monitoring = new CasePerson(['status' => json_encode($request->all())]);
-        $person->createCasePersonDay()->save($monitoring);
+        $monitoring = new MonitoringPerson(['symptoms' => json_encode($request->all())]);
+        $person->createMonitoringPersonDay()->save($monitoring);
 
         return true;
     }
 
-    public function formatStatus($status)
+    public function formatSymptoms($symptoms)
     {
         $allSymptoms = [
             "febre" => "Febre",
@@ -136,14 +136,14 @@ class CompaniesController extends Controller
             "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
         ];
 
-        $status = (array) json_decode($status);
-        unset($status["person_id"], $status['obs']);
+        $symptoms = (array) json_decode($symptoms);
+        unset($symptoms["person_id"], $symptoms['obs']);
 
         $allSymptomsFiltered = array_values(
             array_filter(
                 $allSymptoms,
-                function ($key) use ($status) {
-                    return array_key_exists($key, $status);
+                function ($key) use ($symptoms) {
+                    return array_key_exists($key, $symptoms);
                 },
                 ARRAY_FILTER_USE_KEY
             )
@@ -177,8 +177,8 @@ class CompaniesController extends Controller
 
 
         foreach ($persons as $person) {
-            $monitoring = new CasePerson(['status' => 'ok']);
-            $person->createCasePersonDay()->save($monitoring);
+            $monitoring = new MonitoringPerson(['symptoms' => 'ok']);
+            $person->createMonitoringPersonDay()->save($monitoring);
         }
         flash('Atualizado com sucesso', 'info');
         return redirect(route('company.monitoring'));

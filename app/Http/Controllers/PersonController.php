@@ -174,7 +174,7 @@ class PersonController extends Controller
         if ($request->ajax()) {
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $casesPerson = $companyUser->person->casesPerson()->get();
+            $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
 
             $allSymptoms = [
                 "febre" => "Febre",
@@ -187,17 +187,17 @@ class PersonController extends Controller
                 "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
             ];
 
-            foreach ($casesPerson as $case) {
+            foreach ($monitoringsPerson as $monitoring) {
                 $object = new \stdClass();
 
-                $status = (array) json_decode($case['status']);
-                unset($status["person_id"]);
+                $symptoms = (array) json_decode($monitoring['symptoms']);
+                unset($symptoms["person_id"]);
 
                 $allSymptomsFiltered = array_values(
                     array_filter(
                         $allSymptoms,
-                        function ($key) use ($status) {
-                            return array_key_exists($key, $status);
+                        function ($key) use ($symptoms) {
+                            return array_key_exists($key, $symptoms);
                         },
                         ARRAY_FILTER_USE_KEY
                     )
@@ -205,14 +205,14 @@ class PersonController extends Controller
 
                 $object->symptoms = $allSymptomsFiltered;
 
-                $object->leader = CompanyUser::with('person')->find($case['user_id'])->person->name;
-                $object->date = Carbon::parse($case['created_at'])->format('d/m/Y H:i:s');
-                $object->obs = $status['obs'];
+                $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
+                $object->date = Carbon::parse($monitoring['created_at'])->format('d/m/Y H:i:s');
+                $object->obs = $symptoms['obs'];
 
-                $cases[] = $object;
+                $monitorings[] = $object;
             }
 
-            return response()->json(compact('companyUser', 'leader', 'cases'));
+            return response()->json(compact('companyUser', 'leader', 'monitorings'));
         }
     }
 
@@ -248,7 +248,7 @@ class PersonController extends Controller
                 $person->cep = $this->removePunctuation($request->cep);
                 $person->phone = $this->removePunctuation($request->phone);
 
-                if( $request->birthday) {
+                if ($request->birthday) {
                     $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
                 }
 

@@ -157,13 +157,13 @@
 
                         $('.cep-person').val(person.cep);
 
-                        if(data.cases) {
-                            for (casePerson of data.cases) {
+                        if(data.monitorings) {
+                            for (monitoringPerson of data.monitorings) {
                                 let tr = $('<tr>'),
                                     trSymptom = $('<td>').appendTo(tr),
                                     ul = $('<ul>').addClass('m-0');
 
-                                for(symptom of casePerson.symptoms) {
+                                for(symptom of monitoringPerson.symptoms) {
                                     $('<li>').text(symptom).appendTo(ul);
                                 }
 
@@ -172,8 +172,8 @@
                                 let date = $('<td>').appendTo(tr),
                                     leader = $('<td>').appendTo(tr);
 
-                                $('<p>').addClass('m-0').text(casePerson.date).appendTo(date);
-                                $('<p>').addClass('m-0').text(casePerson.leader).appendTo(leader);
+                                $('<p>').addClass('m-0').text(monitoringPerson.date).appendTo(date);
+                                $('<p>').addClass('m-0').text(monitoringPerson.leader).appendTo(leader);
 
                                 historyTable.append(tr);
                             }

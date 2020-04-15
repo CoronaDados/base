@@ -2,7 +2,6 @@
 
 namespace App\Model\Company;
 
-use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
 use App\Notifications\Company\VerifyEmail;
@@ -34,11 +33,11 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return $this->morphToMany(Person::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
     }
 
-    public function casesPerson()
+    public function monitoringsPerson()
     {
-        $query = "SELECT cp.created_at, p.name, cp.status, l.name AS leader
-            FROM cases_person cp
-            INNER JOIN persons p ON p.id = cp.person_id
+        $query = "SELECT mp.created_at, p.name, mp.symptoms, l.name AS leader
+            FROM monitoring_person mp
+            INNER JOIN persons p ON p.id = mp.person_id
             INNER JOIN company_users c_person ON c_person.person_id = p.id
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
@@ -54,13 +53,13 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return DB::select(DB::raw($query));
     }
 
-    public function casesPersonByLeader()
+    public function monitoringsPersonByLeader()
     {
         $companyUserId = $this->id;
 
-        $query = "SELECT cp.created_at, p.name, cp.status, l.name AS leader
-            FROM cases_person cp
-            INNER JOIN persons p ON p.id = cp.person_id
+        $query = "SELECT mp.created_at, p.name, mp.symptoms, l.name AS leader
+            FROM monitoring_person mp
+            INNER JOIN persons p ON p.id = mp.person_id
             INNER JOIN company_users c_person ON c_person.person_id = p.id
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
@@ -163,20 +162,20 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function countPersonsInCompanyMonitoredToday()
     {
-        return DB::table('cases_person', 'cp')
+        return DB::table('monitoring_person', 'mp')
             ->select(DB::raw('count(*) as total'))
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('company_users as cu', 'cu.id', '=', 'mp.user_id')
             ->where('cu.company_id', $this->company_id)
-            ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
     }
 
     public function countMyPersonsMonitoredToday()
     {
-        return DB::table('cases_person', 'cp')
+        return DB::table('monitoring_person', 'mp')
             ->select(DB::raw('count(*) as total'))
-            ->where('cp.user_id', $this->id)
-            ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->where('mp.user_id', $this->id)
+            ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
     }
 }

@@ -91,7 +91,7 @@
             columns: [
                 {data: 'created_at', name: 'created_at'},
                 {data: 'name', name: 'name'},
-                {data: 'status', name: 'status'},
+                {data: 'symptoms', name: 'symptoms'},
                 {data: 'leader', name: 'leader', orderable: true, searchable: true},
             ]
         });
