@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Carbon\Carbon;
+use Vinkla\Hashids\Facades\Hashids;
 
 class Helper
 {
@@ -31,7 +32,8 @@ class Helper
             'dor-garganta' => 'Dor de Garganta',
             'congestao-nasal' => 'Congestão Nasal',
             'diarreia' => 'Diarreia',
-            'dificuldade-respirar' => 'Falta de ar/Dificuldade para respirar'
+            'dificuldade-respirar' => 'Falta de ar/Dificuldade para respirar',
+            'sem-paladar' => 'Sem paladar'
         ];
 
         $status = (array) json_decode($status);
@@ -55,5 +57,10 @@ class Helper
     public static function formatDateFromDB($date): string
     {
         return Carbon::parse($date)->format('d/m/Y \à\s H:i:s');
+    }
+
+    public static function getPersonCode($id)
+    {
+        return Hashids::encode($id);
     }
 }

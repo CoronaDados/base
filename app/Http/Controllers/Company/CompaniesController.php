@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Person\CasePerson;
+use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -33,19 +34,20 @@ class CompaniesController extends Controller
     public function monitoring(Request $request)
     {
         if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
-
-            foreach ($datas as $data) {
-                if (!$data->casePersonDay()->exists()) {
-                    $person[] = $data;
+            if (auth('company')->user()->can('Ver Usuários')) {
+                if (auth()->user()->hasRole('Admin')) {
+                    $options = ['byDay'];
+                    $datas =  auth('company')->user()->casesPerson($options);
+                } else {
+                    $options = ['byLeader', 'byDay'];
+                    $datas =  auth('company')->user()->casesPerson($options);
                 }
             }
 
-            return DataTables::of($person)
+            return DataTables::of($datas)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>' . $row->code . '</strong>" data-status="' . $row->status . '"  data-id="' . $row->id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
-                    //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whatsapp com esse código: <strong>' . Helper::getPersonCode($row->person_id) . '</strong>" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
                 })
@@ -53,6 +55,7 @@ class CompaniesController extends Controller
                 ->make(true);
         }
         return view('company.monitoring');
+
     }
 
     public function monitoringHistory(Request $request)
@@ -60,9 +63,11 @@ class CompaniesController extends Controller
         if ($request->ajax()) {
 
             if (auth()->user()->hasRole('Admin')) {
-                $casesPersons = auth('company')->user()->casesPerson();
+                $options = ['getHistory'];
+                $casesPersons = auth('company')->user()->casesPerson($options);
             } else {
-                $casesPersons = auth('company')->user()->casesPersonByLeader();
+                $options = ['getHistory', 'byLeader'];
+                $casesPersons = auth('company')->user()->casesPerson($options);
             }
 
             return DataTables::of($casesPersons)
@@ -84,13 +89,22 @@ class CompaniesController extends Controller
 
                         $formattedStatus = Helper::formatStatus($status->status)[0];
 
-                        $allSymptoms = '<ul class="mb-0">';
-                        foreach ($formattedStatus as $symptom) {
-                            $allSymptoms .= '<li>' . $symptom . '</li>';
-                        }
-                        $allSymptoms .= '</ul>';
+                        if($formattedStatus) {
+                            $allSymptoms = '<ul class="mb-0">';
+                            foreach ($formattedStatus as $symptom) {
+                                $allSymptoms .= '<li>' . $symptom . '</li>';
+                            }
+                            $allSymptoms .= '</ul>';
 
-                        return $allSymptoms;
+                            return $allSymptoms;
+                        } else {
+                            $obs = (array) json_decode($status->status);
+
+                            return $obs['obs'];
+
+                        }
+
+
 
                     })
                     ->rawColumns(['status', 'action'])
@@ -102,9 +116,7 @@ class CompaniesController extends Controller
 
     public function storeMonitoring($id, Request $request)
     {
-        if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
-            return response()->json('error', 401);
-        };
+        $person = Person::find($id);
         $monitoring = new CasePerson(['status' => json_encode($request->all())]);
         $person->createCasePersonDay()->save($monitoring);
 
@@ -125,21 +137,19 @@ class CompaniesController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function multiMonitoring(Request $request)
     {
-
-        if (!$persons = auth('company')->user()->persons()->whereIn('id', $request->id)->get()) {
-            return response()->json('error', 401);
-        };
-
+        $persons = Person::whereIn('id', $request->id)->get();
 
         foreach ($persons as $person) {
-            $monitoring = new CasePerson(['status' => 'ok']);
+            $monitoring = new CasePerson(['status' => '{"obs":"Sem Sintomas"}']);
             $person->createCasePersonDay()->save($monitoring);
         }
+
         flash('Atualizado com sucesso', 'info');
+
         return redirect(route('company.monitoring'));
     }
 

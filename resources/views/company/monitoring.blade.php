@@ -20,7 +20,7 @@
 
         <div class="row mt-5">
             <div class="col-xl-12 mb-5 mb-xl-0">
-                <form id="multi-monitoring" action="{{route('company.monitoring')}}" method="POST">
+                <form id="multi-monitoring" method="POST">
                     @csrf
                 <div class="card shadow">
                     <div class="card-header">
@@ -71,14 +71,14 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="modelHeading"></h4>
                 </div>
-                <div class="modal-body">
-                    <form id="CustomerForm" name="CustomerForm" class="form-horizontal">
+                <div class="modal-body pt-0">
+                    <form id="monitoringForm" name="monitoringForm" class="form-horizontal">
                         <input type="hidden" name="person_id" id="person_id">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="febre-sim" name="febre" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="febre-sim" name="febre" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="febre-sim">Febre</label>
                                     </div>
                                 </div>
@@ -86,7 +86,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="tosse-seca" name="tosse-seca" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="tosse-seca" name="tosse-seca" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="tosse-seca">Tosse seca</label>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="cansaco" name="cansaco" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="cansaco" name="cansaco" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="cansaco">Cansaço</label>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="dor-corpo" name="dor-corpo" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="dor-corpo" name="dor-corpo" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="dor-corpo">Dor no corpo</label>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="dor-garganta" name="dor-garganta" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="dor-garganta" name="dor-garganta" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="dor-garganta">Dor de garganta</label>
                                     </div>
                                 </div>
@@ -118,7 +118,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="congestao-nasal" name="congestao-nasal" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="congestao-nasal" name="congestao-nasal" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="congestao-nasal">Congestão nasal</label>
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="corrimento-nasal" name="corrimento-nasal" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="corrimento-nasal" name="corrimento-nasal" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="corrimento-nasal">Corrimento nasal</label>
                                     </div>
                                 </div>
@@ -134,15 +134,23 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="diarreia" name="diarreia" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="diarreia">Diarreia</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="sem-paladar" name="sem-paladar" value="sim" class="check-symptoms custom-control-input">
+                                        <label class="custom-control-label" for="sem-paladar">Sem paladar</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="custom-control-input">
+                                        <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="check-symptoms custom-control-input">
                                         <label class="custom-control-label" for="dificuldade-respirar">Falta de ar/Dificuldade para respirar</label>
                                     </div>
                                 </div>
@@ -153,7 +161,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Alguma observação?</label>
                                     <div class="col-sm-12">
-                                <textarea id="status" rows="4" name="obs" required="" placeholder="Alguma observação?"
+                                        <textarea id="status" rows="4" name="obs" placeholder="Alguma observação?"
                                           class="form-control form-control-alternative"></textarea>
                                     </div>
                                 </div>
@@ -196,12 +204,10 @@
                 $('#show1').hide()
             }
         })
-        $(document).ready(function () {
-            ShowForm1();
-
-        })
 
         $(function () {
+            // ShowForm1();
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -253,7 +259,7 @@
                 },
                 order: [[1, 'asc']],
                 columns: [
-                    {data: 'id', name: 'id'},
+                    {data: 'person_id', name: 'person_id'},
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
@@ -263,7 +269,6 @@
             });
 
             $('body').on('click', '.editMonitoring', function () {
-                //$.get("" +'/' + Customer_id +'/edit', function (data) {
                 $('#modelHeading').html("Monitorar " + $(this).data('name'));
                 $('#saveBtn').val("edit-user");
                 $('#ajaxModel').modal('show');
@@ -272,45 +277,78 @@
 
             $('#saveBtn').click(function (e) {
                 e.preventDefault();
-                $(this).html('Gravando..');
-                var person_id = $('#person_id').val();
-                $.ajax({
-                    data: $('#CustomerForm').serialize(),
-                    url: "monitoring/" + person_id,
-                    type: "POST",
-                    dataType: 'json',
-                    success: function (data) {
 
-                        $('#CustomerForm').trigger("reset");
-                        $('#ajaxModel').modal('hide');
-                        table.row($(this)).invalidate().draw();
+                let person_id = $('#person_id').val(),
+                    form = $('#monitoringForm'),
+                    checkSymptoms = $('.check-symptoms');
 
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                        $('#saveBtn').html('Gravar');
-                    }
-                });
+                if($('.check-symptoms:checked').length > 0) {
+                    $(this).html('Gravando..');
+
+                    $.ajax({
+                        data: form.serialize(),
+                        url: "monitoring/" + person_id,
+                        type: "POST",
+                        dataType: 'json',
+                        success: function (data) {
+                            $('#saveBtn').html('Salvar');
+
+                            form.trigger("reset");
+                            $('#ajaxModel').modal('hide');
+
+                            table.row($(this)).invalidate().draw();
+                        },
+                        error: function (data) {
+                            $('#saveBtn').html('Gravar');
+                        }
+                    });
+                } else {
+                    checkSymptoms.toggleClass('is-invalid');
+
+                    Swal.fire({
+                        title: 'Ops!',
+                        text: 'Parece que você esqueceu de selecionar o(s) sintoma(s).',
+                        icon: 'warning',
+                        confirmButtonText: 'Fechar',
+                        onClose: () => {
+                            checkSymptoms.toggleClass('is-invalid');
+                        }
+                    });
+                }
+
             });
-            $('#multi-monitoring').on('submit', function(e){
-                var form = this;
 
-                var rows_selected = table.column(0).checkboxes.selected();
+            $('#multiMoni').on('click', function(e) {
+                e.preventDefault();
+
+                let form = $('#multi-monitoring'),
+                    rows_selected = table.column(0).checkboxes.selected();
 
                 // Iterate over all selected checkboxes
                 $.each(rows_selected, function(index, rowId){
                     // Create a hidden element
-                    $(form).append(
+                    form.append(
                         $('<input>')
                             .attr('type', 'hidden')
                             .attr('name', 'id[]')
+                            .attr('class','temp-input')
                             .val(rowId)
                     );
                 });
+
+                $.ajax({
+                    data: form.serialize(),
+                    url: '{{ route('company.multi.monitoring') }}',
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (data) {
+                        $('.temp-input').remove();
+
+                        table.ajax.reload();
+                    }
+                });
             });
-
         });
-
     </script>
 @endpush
 
