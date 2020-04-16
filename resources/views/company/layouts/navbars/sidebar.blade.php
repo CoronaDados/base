@@ -21,7 +21,7 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-                    @include('company.layouts.navbars.partials.user')                   
+                    @include('company.layouts.navbars.partials.user')
                 </div>
             </li>
         </ul>
@@ -76,19 +76,13 @@
                                     </a>
                                 </li>
 
-                                @can('Ver Funções')
-                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.roles.index') }}">
-                                            {{ __('Gerenciar Perfis') }}
+                                @if(auth('company')->user()->is_admin)
+                                    <li class="nav-item {{ request()->is('person/import') ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('person.import') }}">
+                                            {{ __('Importar') }}
                                         </a>
                                     </li>
-                                @endcan
-
-                                <li class="nav-item {{ request()->is('person/import') ? 'active' : ''}}">
-                                    <a class="nav-link" href="{{ route('person.import') }}">
-                                        {{ __('Importar') }}
-                                    </a>
-                                </li>
+                                @endif
 
                             </ul>
                             <hr class="my-3">

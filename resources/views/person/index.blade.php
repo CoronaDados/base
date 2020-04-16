@@ -68,6 +68,8 @@
 @push('js')
     <script>
         $(function () {
+            $.jMaskGlobals.watchDataMask = true;
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -119,7 +121,6 @@
 
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
-                handleMasks();
 
                 let person_id = $(this).data('id');
 
@@ -141,8 +142,8 @@
                         $('#person_id').val(person_id);
                         $('#name').val(person.name);
                         $('#email').val(data.companyUser.email);
-                        $('#phone').val(person.phone);
-                        $('#cpf').val(person.cpf);
+                        $('#phone').val(person.phone).trigger('input');
+                        $('#cpf').val(person.cpf).trigger('input');
                         $('#sector').val(person.sector);
                         $('#risk_group').val(person.risk_group);
                         $('#role').val(role);
@@ -155,7 +156,7 @@
                         const $radios = $('input:radio[name=gender]');
                         $radios.filter('[value=' + person.gender + ']').prop('checked', true);
 
-                        $('.cep-person').val(person.cep);
+                        $('.cep-person').val(person.cep).trigger('input');
 
                         if(data.monitorings) {
                             for (monitoringPerson of data.monitorings) {
@@ -184,7 +185,6 @@
                             td.appendTo(tr);
                             historyTable.append(tr);
                         }
-
                     },
                     error: function () {
                         Swal.fire({
@@ -221,8 +221,6 @@
                             icon: 'success',
                             confirmButtonText: 'Fechar'
                         });
-
-                        handleMasks();
                     },
                     error: function (e) {
                         $('#ajaxModel').modal('hide');
