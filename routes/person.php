@@ -10,7 +10,5 @@ Route::group(['middleware' => 'auth:company'], function () {
     Route::get('person/import', 'PersonController@importView')->name('person.import');
     Route::post('person/import', 'PersonController@import')->name('person.import');
 
-    Route::post('multi/monitoring', 'Company\CompaniesController@multiMonitoring')->name('multi.monitoring');
-
     Route::resource('person', 'PersonController');
 });
