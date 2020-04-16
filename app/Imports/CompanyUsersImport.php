@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Mail\Imports\importUsersErrorMail;
+use App\Mail\ImportUsersErrorMail;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
@@ -35,9 +35,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     {
         return [
             ImportFailed::class => function (ImportFailed $event) {
-                Mail::to('willian.maria@sc.senai.br')
-                    ->cc('douglas.baptista@sc.senai.br')
-                    ->send(new importUsersErrorMail($this->importedBy, $event));
+                Mail::to(config('app.email_list_error'))->send(new ImportUsersErrorMail($this->importedBy, $event));
             },
         ];
     }
