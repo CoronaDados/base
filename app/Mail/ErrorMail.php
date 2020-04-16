@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Model\Company\CompanyUser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -23,9 +22,15 @@ class ErrorMail extends Mailable
     {
         $user = auth('company')->user();
         $date = date('d/m/Y H:i');
-        $file = $this->exception->getPrevious()->getFile();
-        $line = $this->exception->getPrevious()->getLine();
-        $message = $this->exception->getPrevious()->getMessage();
+
+        $exception = $this->exception->getPrevious();
+        if (!$exception) {
+            $exception = $this->exception;
+        }
+
+        $file = $exception->getFile();
+        $line = $exception->getLine();
+        $message = $exception->getMessage();
 
         return $this->subject('Ocorreu um erro no sistema - ' . config('app.name'))
             ->markdown('emails.error')
