@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Company\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewCompanyMail;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
@@ -11,6 +12,7 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -98,6 +100,9 @@ class RegisterController extends Controller
 
         $user->person->companyUsers()->sync($user);
         $user->assignRole('Admin');
+
+        Mail::to(config('app.email_list_info'))->send(new NewCompanyMail($user));
+
         return $user;
     }
 

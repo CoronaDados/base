@@ -79,7 +79,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="file" name="file" class="form-control form-control-alternative">
+                                <input type="file" name="file" class="form-control form-control-alternative" accept="xls, csvcsv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                             </div>
                         </div>
                         <div class="col-md-6">
