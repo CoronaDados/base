@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-        if (config('app.env') == 'production') {
+        if ($this->shouldReport($exception) && config('app.env') == 'production') {
             Mail::to(config('app.email_list_error'))->send(new ErrorMail($exception));
         }
 
