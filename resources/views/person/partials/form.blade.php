@@ -34,7 +34,7 @@
             <div class="form-group">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
                 <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
-                       placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                       data-mask="000.000.000-00" placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
             {{-- <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
@@ -294,11 +294,10 @@
             };
 
             $('.phone').mask(SPMaskBehavior, spOptions);
-            $('.cpf').mask('000.000.000-00');
             $('.birthday').mask('00/00/0000', optionsBirthday);
         };
 
-        handleMasks();
+        // handleMasks();
 
         let TypeTransport = (function () {
             let type = $('#type_transport').val();
