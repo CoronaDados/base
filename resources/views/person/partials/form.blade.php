@@ -27,7 +27,7 @@
             <div class="form-group">
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
                 <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ $companyUser->person->phone ?? '' }}"
-                       placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                       data-mask="(00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
         <div class="col-md-3">
@@ -149,27 +149,6 @@
         </div>
     @endif
 
-{{--    <div class="row">--}}
-{{--        <div class="col-md-4">--}}
-{{--            <div class="form-group">--}}
-{{--                <label for="type_transport">Como vai ao trabalho</label>--}}
-{{--                <select name="type_transport" id="type_transport" required class="custom-select form-control-alternative"--}}
-{{--                        onchange="TypeTransport()">--}}
-{{--                    <option disabled selected>Como vai ao trabalho</option>--}}
-{{--                    <option value="1">Ônibus</option>--}}
-{{--                    <option value="2">Carro</option>--}}
-{{--                    <option value="3">A pé</option>--}}
-{{--                    <option value="3">Bicicleta</option>--}}
-{{--                    <option value="4">Outros</option>--}}
-{{--                </select>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--        <div id="show_type_transport" class="col-md-4">--}}
-{{--            <div class="form-group">--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-
     @if(isset($companyUser))
         <div class="row">
             <div class="col-md-6">
@@ -186,45 +165,6 @@
             </div>
         </div>
     @endif
-
-{{--    @if($isRequired)--}}
-{{--    <div class="row">--}}
-{{--        <div class="col-12 p-1">--}}
-{{--            <div class="card p-1">--}}
-{{--                <div class="card-header text-center">--}}
-{{--                    <h3>Relacionamento com pessoas</h3>--}}
-{{--                    <h5>Liste todas as pessoas em sua residência, meio de transporte, meio de convívio etc</h5>--}}
-{{--                </div>--}}
-{{--                <div class="card-body" id="related_persons">--}}
-{{--                    <div class="row">--}}
-{{--                        <div class="col-6 p-1">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Nome</label>--}}
-{{--                                <input type="text" name="related_persons[1][name]" placeholder="Nome"--}}
-{{--                                       onchange="addP(1)" class="form-control form-control-alternative"/>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-3 p-1">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Telefone</label>--}}
-{{--                                <input type="tel" name="related_persons[1][phone]"--}}
-{{--                                       placeholder="Telefone"--}}
-{{--                                       class="form-control form-control-alternative phone"/>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="col-3 p-1">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>CPF</label>--}}
-{{--                                <input type="text" name="related_persons[1][cpf]" placeholder="CPF"--}}
-{{--                                       class="form-control form-control-alternative cpf"/>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--    @endif--}}
 
     <div class="col-12 text-right p-0">
         <button type="submit" class="btn btn-primary my-4 save">{{ ($isRequired and !isset($companyUser)) ? __('Cadastrar') : __('Salvar') }}</button>
@@ -286,18 +226,11 @@
         };
 
         let handleMasks = function () {
-            const options = {
-                onKeyPress: function (cep, e, field, options) {
-                    const mask = '00000-000';
-                    $('.cep-person').mask(mask, options);
-                }
-            };
-
-            $('.phone').mask(SPMaskBehavior, spOptions);
             $('.birthday').mask('00/00/0000', optionsBirthday);
+            $('.cpf').mask('000.000.000-00');
         };
 
-        // handleMasks();
+        handleMasks();
 
         let TypeTransport = (function () {
             let type = $('#type_transport').val();
@@ -316,10 +249,6 @@
             } else {
                 $('#show_type_transport').hide()
             }
-        });
-
-        $(function () {
-            // $("#leaders").select2();
         });
     </script>
 @endpush
