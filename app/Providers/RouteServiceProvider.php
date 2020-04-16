@@ -45,6 +45,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapCompanyRoutes();
         $this->mapPersonRoutes();
         $this->mapMonitoringPersonRoutes();
+        $this->mapCasesPersonRoutes();
         $this->mapWebRoutes();
     }
 
@@ -87,5 +88,14 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/monitoringPerson.php'));
+    }
+
+
+    protected function mapCasesPersonRoutes()
+    {
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/casesPerson.php'));
     }
 }

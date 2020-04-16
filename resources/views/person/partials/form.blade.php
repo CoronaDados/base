@@ -1,6 +1,6 @@
 <form role="form"  {{ $route ? 'method=POST action=' . $route : ''}} id="person_form">
     @if(!$isRequired)
-        <input type="hidden" name="person_id" id="person_id">
+        <input type="hidden" name="person_id" class="person_id">
     @endif
 
     @csrf
@@ -52,8 +52,8 @@
                 <label for="sector">Setor</label>
                 <select name="sector" id="sector" class="custom-select form-control-alternative">
                     <option value="">Setor</option>
-                    @foreach($sectors as $k => $v)
-                        <option value="{{ $v }}" {{ isset($companyUser->person->sector) ? ($companyUser->person->sector == $v ? 'selected': '') : '' }}>{{ $v }}</option>
+                    @foreach($sectors as $sector)
+                        <option value="{{ $sector }}" {{ isset($companyUser->person->sector) ? ($companyUser->person->sector == $sector ? 'selected': '') : '' }}>{{ $sector }}</option>
                     @endforeach
                 </select>
             </div>

@@ -47,10 +47,10 @@
                                     <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Visualização / Edição</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Diagnosticar</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-3-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-3-tab" data-toggle="tab" href="#tabs-text-3" role="tab" aria-controls="tabs-text-3" aria-selected="false">Histórico</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-3" role="tab" aria-controls="tabs-text-3" aria-selected="false">Diagnosticar</a>
                                 </li>
                             </ul>
                         </div>
@@ -61,11 +61,11 @@
                             </div>
 
                             <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                @include('person.partials.diagnostic')
+                                @include('person.partials.history')
                             </div>
 
-                            <div class="tab-pane fade" id="tabs-text-3" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                @include('person.partials.history')
+                            <div class="tab-pane fade" id="tabs-text-3" role="tabpanel" aria-labelledby="tabs-text-3-tab">
+                                @include('person.partials.diagnostic')
                             </div>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
 
-                        $('#person_id').val(person_id);
+                        $('.person_id').val(person_id);
                         $('#name').val(person.name);
                         $('#email').val(data.companyUser.email);
                         $('#phone').val(person.phone).trigger('input');
@@ -213,7 +213,7 @@
 
                 $(this).html('Atualizando...').prop('disabled', true);
 
-                let person_id = $('#person_id').val();
+                let person_id = $('.person_id').val();
 
                 $.ajax({
                     data: $('#person_form').serialize(),

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
 use App\Helpers\Helper;
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
@@ -55,8 +57,10 @@ class PersonController extends Controller
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders', 'tests', 'status'));
     }
 
     /**
