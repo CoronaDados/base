@@ -104,7 +104,7 @@ class CompaniesController extends Controller
                     return Helper::getFirstAndLastName($user->name);
                 })
                 ->editColumn('leader', function ($leader) {
-                    return Helper::getFirstAndLastName($leader->name);
+                    return Helper::getFirstAndLastName($leader->leader);
                 })
                 ->editColumn('symptoms', function ($symptoms) {
 
