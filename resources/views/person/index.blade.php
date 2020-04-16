@@ -117,9 +117,15 @@
                 ]
             });
 
+            var options =  {
+                onKeyPress: function(cep, e, field, options) {
+                    var masks = ['00000-000', '0-00-00-00'];
+                    var mask = (cep.length>7) ? masks[1] : masks[0];
+                    $('.crazy_cep').mask(mask, options);
+                }};
+
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
-                handleMasks();
 
                 let person_id = $(this).data('id');
 
@@ -221,8 +227,6 @@
                             icon: 'success',
                             confirmButtonText: 'Fechar'
                         });
-
-                        handleMasks();
                     },
                     error: function (e) {
                         $('#ajaxModel').modal('hide');

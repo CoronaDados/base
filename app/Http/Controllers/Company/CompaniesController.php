@@ -73,6 +73,9 @@ class CompaniesController extends Controller
 
                     return $btn;
                 })
+                ->editColumn('name', function ($person) {
+                    return Helper::getFirstAndLastName($person->name);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }

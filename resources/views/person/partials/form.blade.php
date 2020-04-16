@@ -62,7 +62,7 @@
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
                 <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" value="{{ $companyUser->person->cep ?? '' }}"
-                       id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                       data-mask="000000-00" id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
     </div>
@@ -286,8 +286,14 @@
         };
 
         let handleMasks = function () {
+            const options = {
+                onKeyPress: function (cep, e, field, options) {
+                    const mask = '00000-000';
+                    $('.cep-person').mask(mask, options);
+                }
+            };
+
             $('.phone').mask(SPMaskBehavior, spOptions);
-            $('.cep-person').mask('00000-000');
             $('.cpf').mask('000.000.000-00');
             $('.birthday').mask('00/00/0000', optionsBirthday);
         };
