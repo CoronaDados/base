@@ -14,7 +14,7 @@
         j.src =
             'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
         f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', '{!! env('GOOGLE_TAG_MANAGER_ID') !!}');
+    })(window, document, 'script', 'dataLayer', '{!! config('app.google_tag_manager_id') !!}');
 </script>
 <!-- End Google Tag Manager -->
 @endif
