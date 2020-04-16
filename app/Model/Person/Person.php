@@ -38,11 +38,6 @@ class Person extends Model
         'birthday' => 'date'
     ];
 
-    public function getCodeAttribute()
-    {
-        return Hashids::encode($this->id);
-    }
-
     public function companyUsers()
     {
         return $this->morphedByMany(CompanyUser::class, 'personable');

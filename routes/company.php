@@ -18,6 +18,7 @@ Route::group(['middleware' => ['auth:company']], function () {
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 
     Route::get('companies/monitoring/history', 'CompaniesController@monitoringHistory')->name('monitoring.history');
+    Route::post('companies/multi/monitoring', 'CompaniesController@multiMonitoring')->name('multi.monitoring');
 
     Route::get('files/{file}', function ($file) {
         return response()->download(storage_path('files/' . $file));

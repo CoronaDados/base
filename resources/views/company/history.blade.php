@@ -20,10 +20,11 @@
                             <table class="table table-bordered data-table align-items-center">
                                 <thead>
                                     <tr>
-                                        <th>Data</th>
+                                        <th>Caso Relatado</th>
                                         <th>Colaborador</th>
                                         <th>Sintomas</th>
                                         <th>Monitorado por</th>
+                                        <th>Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -35,6 +36,23 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="ajaxModel" aria-hidden="true">
+        <div class="modal-dialog modal-lg ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modelHeading"></h4>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="col-lg-12 pl-0 pt-0 pr-0">
+                        @include('company.partials.obsTable')
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 @endsection
 
@@ -92,8 +110,53 @@
                 {data: 'created_at', name: 'created_at'},
                 {data: 'name', name: 'name'},
                 {data: 'symptoms', name: 'symptoms'},
-                {data: 'leader', name: 'leader', orderable: true, searchable: true},
+                {data: 'leader', name: 'leader'},
+                {data: 'action', name: 'action'}
             ]
+        });
+
+        $('body').on('click', '.seeObs', function (e) {
+            e.preventDefault();
+
+            let monitoringPerson_id = $(this).data('id');
+
+            $.ajax({
+                url: '{{ url('monitoringPerson/') }}/' + monitoringPerson_id,
+                type: "GET",
+                dataType: 'json',
+                success: function (data) {
+                    $('#ajaxModel').modal('show');
+
+                    let monitoringPerson = data.monitoring,
+                        symptomsDiv = $('.symptoms'),
+                        obs = $('.obs-monitoring');
+
+                    symptomsDiv.empty();
+
+                    $('#modelHeading').html("Mais informações do Colaborador " + monitoringPerson.person);
+
+                    for(symptom of monitoringPerson.symptoms) {
+                        $('<span>').addClass(['badge', 'badge-pill', 'badge-warning', 'mr-1', 'mb-1']).text(symptom).appendTo(symptomsDiv);
+                    }
+
+                    $('.date-monitoring').text('Caso relatado dia ' + monitoringPerson.date);
+
+
+                    if(monitoringPerson.obs) {
+                        obs.text(monitoringPerson.obs);
+                    } else {
+                        obs.text('Não foi cadastrado nenhuma observação.');
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Erro ao carregar os dados, atualize a página.',
+                        icon: 'error',
+                        confirmButtonText: 'Fechar'
+                    });
+                }
+            });
         });
     });
 

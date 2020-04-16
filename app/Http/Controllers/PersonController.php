@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
 use App\Enums\RiskGroupType;
@@ -28,7 +29,8 @@ class PersonController extends Controller
                 if (auth()->user()->hasRole('Admin')) {
                     $data =  auth('company')->user()->personsInCompany();
                 } else {
-                    $data =  auth('company')->user()->personsInCompanyByLeader();
+                    $options = ['byLeader'];
+                    $data =  auth('company')->user()->personsInCompany($options);
                 }
             }
 
@@ -39,10 +41,10 @@ class PersonController extends Controller
                     return $btn;
                 })
                 ->editColumn('name', function ($user) {
-                    return $this->getFirstAndLastName($user->name);
+                    return Helper::getFirstAndLastName($user->name);
                 })
                 ->editColumn('lider', function ($user) {
-                    return $this->getFirstAndLastName($user->lider);
+                    return Helper::getFirstAndLastName($user->lider);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -92,14 +94,14 @@ class PersonController extends Controller
 
         $companyUser = auth('company')->user();
 
-        $cpf = $this->removePunctuation($request->cpf);
+        $cpf = Helper::removePunctuation($request->cpf);
 
         $person = Person::create(
             [
                 'name' => $request->name,
                 'cpf' => $cpf,
-                'cep' => $this->removePunctuation($request->cep),
-                'phone' => $this->removePunctuation($request->phone),
+                'cep' => Helper::removePunctuation($request->cep),
+                'phone' => Helper::removePunctuation($request->phone),
                 'sector' => $request->sector,
                 'birthday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
                 'gender' => $request->gender,
@@ -148,21 +150,6 @@ class PersonController extends Controller
         return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
     }
 
-    private function removePunctuation($string)
-    {
-        return preg_replace('/[^0-9]/', '', $string);
-    }
-
-    private function getFirstAndLastName($name): string
-    {
-        $explodedName = explode(" ", $name);
-        $maxLength = count($explodedName) - 1;
-        $firstName = $explodedName[0];
-        $lastName = $explodedName[$maxLength];
-
-        return $firstName . ' ' . $lastName;
-    }
-
     /**
      * Display the specified resource.
      *
@@ -176,38 +163,16 @@ class PersonController extends Controller
             $leader = $companyUser->leader()->id;
             $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
 
-            $allSymptoms = [
-                "febre" => "Febre",
-                "tosse-seca" => "Tosse seca",
-                "cansaco" => "Cansaço",
-                "dor-corpo" => "Dor no corpo",
-                "dor-garganta" => "Dor de Garganta",
-                "congestao-nasal" => "Congestão Nasal",
-                "diarreia" => "Diarreia",
-                "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
-            ];
-
             foreach ($monitoringsPerson as $monitoring) {
                 $object = new \stdClass();
 
-                $symptoms = (array) json_decode($monitoring['symptoms']);
-                unset($symptoms["person_id"]);
+                $symptomsFormatted = Helper::formatSymptoms($monitoring['symptoms']);
 
-                $allSymptomsFiltered = array_values(
-                    array_filter(
-                        $allSymptoms,
-                        function ($key) use ($symptoms) {
-                            return array_key_exists($key, $symptoms);
-                        },
-                        ARRAY_FILTER_USE_KEY
-                    )
-                );
-
-                $object->symptoms = $allSymptomsFiltered;
+                $object->symptoms = $symptomsFormatted[0];
 
                 $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
-                $object->date = Carbon::parse($monitoring['created_at'])->format('d/m/Y H:i:s');
-                $object->obs = $symptoms['obs'];
+                $object->date = Helper::formatDateFromDB($monitoring['created_at']);
+                $object->obs = $symptomsFormatted[1];
 
                 $monitorings[] = $object;
             }
@@ -240,13 +205,13 @@ class PersonController extends Controller
             $companyUser = CompanyUser::find($id);
 
             if ($companyUser) {
-                $cpf = $this->removePunctuation($request->cpf);
+                $cpf = Helper::removePunctuation($request->cpf);
 
                 $person = $companyUser->person;
                 $person->name = $request->name;
                 $person->cpf = $cpf;
-                $person->cep = $this->removePunctuation($request->cep);
-                $person->phone = $this->removePunctuation($request->phone);
+                $person->cep = Helper::removePunctuation($request->cep);
+                $person->phone = Helper::removePunctuation($request->phone);
 
                 if ($request->birthday) {
                     $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
@@ -332,13 +297,13 @@ class PersonController extends Controller
     {
         $companyUser = auth('company')->user();
 
-        $cpf = $this->removePunctuation($request->cpf);
+        $cpf = Helper::removePunctuation($request->cpf);
 
         $person = $companyUser->person;
         $person->name = $request->name;
         $person->cpf = $cpf;
-        $person->cep = $this->removePunctuation($request->cep);
-        $person->phone = $this->removePunctuation($request->phone);
+        $person->cep = Helper::removePunctuation($request->cep);
+        $person->phone = Helper::removePunctuation($request->phone);
         $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
         $person->gender = $request->gender;
         $person->sector = $request->sector;

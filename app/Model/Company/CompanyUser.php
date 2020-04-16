@@ -27,52 +27,9 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     protected $hidden = ['password'];
 
-
     public function persons()
     {
         return $this->morphToMany(Person::class, 'personable', 'personables', 'personable_id', 'person_id')->orderByDesc('personables.created_at');
-    }
-
-    public function monitoringsPerson()
-    {
-        $query = "SELECT mp.created_at, p.name, mp.symptoms, l.name AS leader
-            FROM monitoring_person mp
-            INNER JOIN persons p ON p.id = mp.person_id
-            INNER JOIN company_users c_person ON c_person.person_id = p.id
-            INNER JOIN personables pp ON p.id = pp.person_id
-            INNER JOIN company_users c ON pp.personable_id = c.id
-            INNER JOIN persons l ON l.id = c.person_id
-            WHERE p.id IN
-            (
-                SELECT pp.person_id FROM personables pp WHERE personable_id IN
-                (
-                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
-                )
-            )";
-
-        return DB::select(DB::raw($query));
-    }
-
-    public function monitoringsPersonByLeader()
-    {
-        $companyUserId = $this->id;
-
-        $query = "SELECT mp.created_at, p.name, mp.symptoms, l.name AS leader
-            FROM monitoring_person mp
-            INNER JOIN persons p ON p.id = mp.person_id
-            INNER JOIN company_users c_person ON c_person.person_id = p.id
-            INNER JOIN personables pp ON p.id = pp.person_id
-            INNER JOIN company_users c ON pp.personable_id = c.id
-            INNER JOIN persons l ON l.id = c.person_id
-            WHERE p.id IN
-            (
-                SELECT pp.person_id FROM personables pp WHERE personable_id IN
-                (
-                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
-                )
-            ) AND c.id = " . $companyUserId;
-
-        return DB::select(DB::raw($query));
     }
 
     public function person()
@@ -90,9 +47,11 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"))[0]->total;
     }
 
-    public function personsInCompany()
+    public function personsInCompany($options = [])
     {
-        $query = "SELECT c_person.id, p.name, c_person.email, l.name AS lider
+        $companyUserId = $this->id;
+
+        $query = "SELECT c_person.id, p.name, c_person.email, p.sector, l.name AS lider
             FROM persons p
             INNER JOIN company_users c_person ON c_person.person_id = p.id
             INNER JOIN personables pp ON p.id = pp.person_id
@@ -102,26 +61,9 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
                 SELECT pp.person_id FROM personables pp WHERE personable_id IN (
                     SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
-        return DB::select(DB::raw($query));
-    }
-
-    public function personsInCompanyByLeader()
-    {
-        $companyUserId = $this->id;
-
-        $query = "SELECT c_person.id, p.name, c_person.email, l.name AS lider
-            FROM persons p
-            INNER JOIN company_users c_person ON c_person.person_id = p.id
-            INNER JOIN personables pp ON p.id = pp.person_id
-            INNER JOIN company_users c ON pp.personable_id = c.id
-            INNER JOIN persons l ON l.id = c.person_id
-            WHERE p.id IN
-            (
-                SELECT pp.person_id FROM personables pp WHERE personable_id IN
-                (
-                    SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . "
-                )
-            ) AND c.id = " . $companyUserId;
+        if (in_array("byLeader", $options)) {
+            $query .=  "AND c.id = " . $companyUserId;
+        }
 
         return DB::select(DB::raw($query));
     }
@@ -133,6 +75,41 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         INNER JOIN model_has_roles m ON m.model_id = l.id
         INNER JOIN roles r ON m.role_id = r.id
         WHERE l.company_id ="  . $this->company()->first()->id . " AND role_id IN (1,2)";
+
+        return DB::select(DB::raw($query));
+    }
+
+    public function monitoringsPerson($options = [])
+    {
+        $companyUserId = $this->id;
+
+        $query = 'SELECT mp.id, c_person.id AS person_id, mp.created_at, p.name, c_person.email, p.sector, mp.symptoms, l.name AS leader FROM persons p ';
+
+        if (in_array('getHistory', $options, true)) {
+            $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id ';
+        } else {
+            $query .= ' LEFT JOIN monitoring_person mp ON p.id = mp.person_id ';
+        }
+
+        $query .= 'INNER JOIN company_users c_person ON c_person.person_id = p.id
+            INNER JOIN personables pp ON p.id = pp.person_id
+            INNER JOIN company_users c ON pp.personable_id = c.id
+            INNER JOIN persons l ON l.id = c.person_id
+            WHERE p.id IN
+            (
+                SELECT pp.person_id FROM personables pp WHERE personable_id IN
+                (
+                    SELECT id FROM company_users WHERE company_id = ' . $this->company()->first()->id . '
+                )
+            )';
+
+        if (in_array("byLeader", $options, true)) {
+            $query .= ' AND c.id = ' . $companyUserId;
+        }
+
+        if (in_array('byDay', $options, true)) {
+            $query .= ' AND (DATE(mp.created_at) != CURDATE() OR mp.created_at IS NULL)';
+        }
 
         return DB::select(DB::raw($query));
     }
