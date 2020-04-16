@@ -2,6 +2,7 @@
 
 namespace App\Model\Company;
 
+use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
 use App\Notifications\Company\VerifyEmail;
@@ -154,5 +155,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->where('mp.user_id', $this->id)
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
+    }
+
+    public function casesPersonCreator()
+    {
+        return $this->hasMany(CasePerson::class, 'user_id');
     }
 }
