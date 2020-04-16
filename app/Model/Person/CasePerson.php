@@ -5,19 +5,16 @@ namespace App\Model\Person;
 use App\Model\Company\CompanyUser;
 use Illuminate\Database\Eloquent\Model;
 
-class MonitoringPerson extends Model
+class CasePerson extends Model
 {
-    protected $table = 'monitoring_person';
+    protected $table = 'cases_person';
 
     protected $fillable = [
         'person_id',
-        'symptoms',
+        'status_covid',
+        'status_test',
         'user_id',
         'type_user',
-    ];
-
-    protected $casts = [
-        'created_at' => 'datetime:d/m/Y',
     ];
 
     protected static function boot()

@@ -67,4 +67,9 @@ class Person extends Model
     {
         return $this->birthday ? $this->birthday->format('d/m/Y') : null;
     }
+
+    public function casesPerson()
+    {
+        return $this->hasMany(CasePerson::class, 'person_id');
+    }
 }
