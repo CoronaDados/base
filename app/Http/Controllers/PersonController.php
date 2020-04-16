@@ -37,7 +37,8 @@ class PersonController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" title="Ver / Editar" data-name="' . $row->name . '" data-id="' . $row->id . '"
+                                data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
                 ->editColumn('name', function ($user) {

@@ -97,8 +97,19 @@ class CompaniesController extends Controller
             return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Observações" class="edit btn btn-primary btn-sm seeObs">Observações</a>';
-                    return $btn;
+
+                    $buttons = '<a href="#!" class="table-action mr-4 see-details" data-name="' . $row->name . '" data-id="' . $row->id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Detalhes" data-original-title="Detalhes">
+                                    <i class="fas fa-address-card"></i>
+                                </a>';
+
+                    $buttons .= '<a href="#!" class="table-action set-dignostic" data-name="' . $row->name . '" data-id="' . $row->id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Diagnosticar" data-original-title="Diagnosticar">
+                                    <i class="fas fa-user-md"></i>
+                                </a>';
+
+
+                    return $buttons;
                 })
                 ->editColumn('created_at', function ($date) {
                     return Helper::formatDateFromDB($date->created_at);

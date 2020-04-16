@@ -20,9 +20,11 @@
                             <table class="table table-bordered data-table align-items-center">
                                 <thead>
                                     <tr>
-                                        <th>Caso Relatado</th>
+                                        <th>Monitorado em:</th>
+{{--                                        <th>Diagnosticado em:</th>--}}
                                         <th>Colaborador</th>
                                         <th>Sintomas</th>
+{{--                                        <th>Diagnóstico</th>--}}
                                         <th>Monitorado por</th>
                                         <th>Ação</th>
                                     </tr>
@@ -115,7 +117,9 @@
             ]
         });
 
-        $('body').on('click', '.seeObs', function (e) {
+        $('.table-action').tooltip();
+
+        $('body').on('click', '.see-details', function (e) {
             e.preventDefault();
 
             let monitoringPerson_id = $(this).data('id');

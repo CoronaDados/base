@@ -1,3 +1,9 @@
+/* Actions Buttons company/history.blade */
+.table-action {
+    font-size: 30px;
+}
+
+/* Details Timeline (obsTable.blade) */
 .timeline {
     position: relative;
 }
