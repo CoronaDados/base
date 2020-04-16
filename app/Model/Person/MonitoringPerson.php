@@ -4,15 +4,15 @@ namespace App\Model\Person;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CasePerson extends Model
+class MonitoringPerson extends Model
 {
-    protected $table = 'cases_person';
+    protected $table = 'monitoring_person';
 
     protected $fillable = [
-        'status',
+        'person_id',
+        'symptoms',
         'user_id',
         'type_user',
-        'created_at'
     ];
 
     protected $casts = [

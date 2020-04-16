@@ -22,7 +22,7 @@ class Helper
         return $firstName . ' ' . $lastName;
     }
 
-    public static function formatStatus($status): array
+    public static function formatSymptoms($symptoms): array
     {
         $allSymptoms = [
             'febre' => 'Febre',
@@ -36,20 +36,20 @@ class Helper
             'sem-paladar' => 'Sem paladar'
         ];
 
-        $status = (array) json_decode($status);
-        unset($status['person_id']);
+        $symptoms = (array) json_decode($symptoms);
+        unset($symptoms['person_id']);
 
         $allSymptomsFiltered = array_values(
             array_filter(
                 $allSymptoms,
-                function ($key) use ($status) {
-                    return array_key_exists($key, $status);
+                function ($key) use ($symptoms) {
+                    return array_key_exists($key, $symptoms);
                 },
                 ARRAY_FILTER_USE_KEY
             )
         );
 
-        $obs = $status['obs'];
+        $obs = $symptoms['obs'];
 
         return [$allSymptomsFiltered, $obs];
     }
@@ -62,5 +62,17 @@ class Helper
     public static function getPersonCode($id)
     {
         return Hashids::encode($id);
+    }
+
+    public static function getPercentValueFromTotal($value, $total)
+    {
+        if (!$value) return 0;
+
+        return $value / $total * 100;
+    }
+
+    public static function getPercentFormatted($value)
+    {
+        return number_format($value, 2, ',', '.');
     }
 }

@@ -161,7 +161,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Alguma observação?</label>
                                     <div class="col-sm-12">
-                                        <textarea id="status" rows="4" name="obs" placeholder="Alguma observação?"
+                                        <textarea id="symptoms" rows="4" name="obs" placeholder="Alguma observação?"
                                           class="form-control form-control-alternative"></textarea>
                                     </div>
                                 </div>

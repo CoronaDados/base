@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
-use App\Model\Person\CasePerson;
+use App\Model\Person\MonitoringPerson;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,10 +15,32 @@ class CompaniesController extends Controller
 {
     public function dashboard()
     {
-        $personsCompany = auth('company')->user()->countPersons();
-        $personsUser =   auth('company')->user()->persons()->count();
+        $currentUser = auth('company')->user();
 
-        return view('company.dashboard', compact(['personsCompany', 'personsUser']));
+        $totalPersonsInCompany = $currentUser->countPersons();
+        $totalPersonsInCompanyMonitoredToday = $currentUser->countPersonsInCompanyMonitoredToday();
+        $percentPersonsInCompanyMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalPersonsInCompanyMonitoredToday, $totalPersonsInCompany));
+
+        $totalMyPersons = $currentUser->persons()->count();
+        $totalMyPersonsMonitoredToday = $currentUser->countMyPersonsMonitoredToday();
+        $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
+
+        $totalCasesConfirmed = 0;
+        $totalCasesConfirmedToday = 0;
+        $percentCasesConfirmedToday = 0;
+
+
+        return view('company.dashboard', compact([
+            'totalPersonsInCompany',
+            'totalPersonsInCompanyMonitoredToday',
+            'percentPersonsInCompanyMonitoredToday',
+            'totalMyPersons',
+            'totalMyPersonsMonitoredToday',
+            'percentMyPersonsMonitoredToday',
+            'totalCasesConfirmed',
+            'totalCasesConfirmedToday',
+            'percentCasesConfirmedToday'
+        ]));
     }
 
     public function tips()
@@ -37,10 +59,10 @@ class CompaniesController extends Controller
             if (auth('company')->user()->can('Ver Usuários')) {
                 if (auth()->user()->hasRole('Admin')) {
                     $options = ['byDay'];
-                    $datas =  auth('company')->user()->casesPerson($options);
+                    $datas =  auth('company')->user()->monitoringsPerson($options);
                 } else {
                     $options = ['byLeader', 'byDay'];
-                    $datas =  auth('company')->user()->casesPerson($options);
+                    $datas =  auth('company')->user()->monitoringsPerson($options);
                 }
             }
 
@@ -55,7 +77,6 @@ class CompaniesController extends Controller
                 ->make(true);
         }
         return view('company.monitoring');
-
     }
 
     public function monitoringHistory(Request $request)
@@ -64,51 +85,47 @@ class CompaniesController extends Controller
 
             if (auth()->user()->hasRole('Admin')) {
                 $options = ['getHistory'];
-                $casesPersons = auth('company')->user()->casesPerson($options);
+                $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
             } else {
                 $options = ['getHistory', 'byLeader'];
-                $casesPersons = auth('company')->user()->casesPerson($options);
+                $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
             }
 
-            return DataTables::of($casesPersons)
-                    ->addIndexColumn()
-                    ->addColumn('action', function ($row) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Observações" class="edit btn btn-primary btn-sm seeObs">Observações</a>';
-                        return $btn;
-                    })
-                    ->editColumn('created_at', function ($date) {
-                        return Helper::formatDateFromDB($date->created_at);
-                    })
-                    ->editColumn('name', function ($user) {
-                        return Helper::getFirstAndLastName($user->name);
-                    })
-                    ->editColumn('leader', function ($leader) {
-                        return Helper::getFirstAndLastName($leader->name);
-                    })
-                    ->editColumn('status', function ($status) {
+            return DataTables::of($monitoringsPersons)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Observações" class="edit btn btn-primary btn-sm seeObs">Observações</a>';
+                    return $btn;
+                })
+                ->editColumn('created_at', function ($date) {
+                    return Helper::formatDateFromDB($date->created_at);
+                })
+                ->editColumn('name', function ($user) {
+                    return Helper::getFirstAndLastName($user->name);
+                })
+                ->editColumn('leader', function ($leader) {
+                    return Helper::getFirstAndLastName($leader->name);
+                })
+                ->editColumn('symptoms', function ($symptoms) {
 
-                        $formattedStatus = Helper::formatStatus($status->status)[0];
+                    $formattedSymptoms = Helper::formatSymptoms($symptoms->symptoms)[0];
 
-                        if($formattedStatus) {
-                            $allSymptoms = '<ul class="mb-0">';
-                            foreach ($formattedStatus as $symptom) {
-                                $allSymptoms .= '<li>' . $symptom . '</li>';
-                            }
-                            $allSymptoms .= '</ul>';
-
-                            return $allSymptoms;
-                        } else {
-                            $obs = (array) json_decode($status->status);
-
-                            return $obs['obs'];
-
+                    if ($formattedSymptoms) {
+                        $allSymptoms = '<ul class="mb-0">';
+                        foreach ($formattedSymptoms as $symptom) {
+                            $allSymptoms .= '<li>' . $symptom . '</li>';
                         }
+                        $allSymptoms .= '</ul>';
 
+                        return $allSymptoms;
+                    } else {
+                        $obs = (array) json_decode($symptoms->symptoms);
 
-
-                    })
-                    ->rawColumns(['status', 'action'])
-                    ->make(true);
+                        return $obs['obs'];
+                    }
+                })
+                ->rawColumns(['symptoms', 'action'])
+                ->make(true);
         }
 
         return view('company.history');
@@ -117,8 +134,8 @@ class CompaniesController extends Controller
     public function storeMonitoring($id, Request $request)
     {
         $person = Person::find($id);
-        $monitoring = new CasePerson(['status' => json_encode($request->all())]);
-        $person->createCasePersonDay()->save($monitoring);
+        $monitoring = new MonitoringPerson(['symptoms' => json_encode($request->all())]);
+        $person->createMonitoringPersonDay()->save($monitoring);
 
         return true;
     }
@@ -144,8 +161,8 @@ class CompaniesController extends Controller
         $persons = Person::whereIn('id', $request->id)->get();
 
         foreach ($persons as $person) {
-            $monitoring = new CasePerson(['status' => '{"obs":"Sem Sintomas"}']);
-            $person->createCasePersonDay()->save($monitoring);
+            $monitoring = new MonitoringPerson(['symptoms' => '{"obs":"Sem Sintomas"}']);
+            $person->createMonitoringPersonDay()->save($monitoring);
         }
 
         flash('Atualizado com sucesso', 'info');

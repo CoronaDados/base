@@ -2,7 +2,6 @@
 
 namespace App\Model\Company;
 
-use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
 use App\Notifications\Company\VerifyEmail;
@@ -45,7 +44,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function countPersons()
     {
-        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"));
+        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"))[0]->total;
     }
 
     public function personsInCompany($options = [])
@@ -62,8 +61,8 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
                 SELECT pp.person_id FROM personables pp WHERE personable_id IN (
                     SELECT id FROM company_users WHERE company_id = " . $this->company()->first()->id . " ) )";
 
-        if(in_array("byLeader", $options)) {
-            $query .=  "AND c.id = ". $companyUserId;
+        if (in_array("byLeader", $options)) {
+            $query .=  "AND c.id = " . $companyUserId;
         }
 
         return DB::select(DB::raw($query));
@@ -80,16 +79,16 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return DB::select(DB::raw($query));
     }
 
-    public function casesPerson($options = [])
+    public function monitoringsPerson($options = [])
     {
         $companyUserId = $this->id;
 
-        $query = 'SELECT cp.id, c_person.id AS person_id, cp.created_at, p.name, c_person.email, p.sector, cp.status, l.name AS leader FROM persons p ';
+        $query = 'SELECT mp.id, c_person.id AS person_id, mp.created_at, p.name, c_person.email, p.sector, mp.symptoms, l.name AS leader FROM persons p ';
 
-        if(in_array('getHistory', $options, true)) {
-            $query .= ' INNER JOIN cases_person cp ON p.id = cp.person_id ';
+        if (in_array('getHistory', $options, true)) {
+            $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id ';
         } else {
-            $query .= ' LEFT JOIN cases_person cp ON p.id = cp.person_id ';
+            $query .= ' LEFT JOIN monitoring_person mp ON p.id = mp.person_id ';
         }
 
         $query .= 'INNER JOIN company_users c_person ON c_person.person_id = p.id
@@ -104,12 +103,12 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
                 )
             )';
 
-        if(in_array("byLeader", $options, true)) {
+        if (in_array("byLeader", $options, true)) {
             $query .= ' AND c.id = ' . $companyUserId;
         }
 
-        if(in_array('byDay', $options, true)) {
-            $query .= ' AND (DATE(cp.created_at) != CURDATE() OR cp.created_at IS NULL)';
+        if (in_array('byDay', $options, true)) {
+            $query .= ' AND (DATE(mp.created_at) != CURDATE() OR mp.created_at IS NULL)';
         }
 
         return DB::select(DB::raw($query));
@@ -136,5 +135,24 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function needChangePassword()
     {
         return $this->force_new_password == true;
+    }
+
+    public function countPersonsInCompanyMonitoredToday()
+    {
+        return DB::table('monitoring_person', 'mp')
+            ->select(DB::raw('count(*) as total'))
+            ->join('company_users as cu', 'cu.id', '=', 'mp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
+            ->first()->total;
+    }
+
+    public function countMyPersonsMonitoredToday()
+    {
+        return DB::table('monitoring_person', 'mp')
+            ->select(DB::raw('count(*) as total'))
+            ->where('mp.user_id', $this->id)
+            ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
+            ->first()->total;
     }
 }

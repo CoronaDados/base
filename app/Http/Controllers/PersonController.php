@@ -161,23 +161,23 @@ class PersonController extends Controller
         if ($request->ajax()) {
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $casesPerson = $companyUser->person->casesPerson()->get();
+            $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
 
-            foreach ($casesPerson as $case) {
+            foreach ($monitoringsPerson as $monitoring) {
                 $object = new \stdClass();
 
-                $statusFormatted = Helper::formatStatus($case['status']);
+                $symptomsFormatted = Helper::formatSymptoms($monitoring['symptoms']);
 
-                $object->symptoms = $statusFormatted[0];
+                $object->symptoms = $symptomsFormatted[0];
 
-                $object->leader = CompanyUser::with('person')->find($case['user_id'])->person->name;
-                $object->date = Helper::formatDateFromDB($case['created_at']);
-                $object->obs = $statusFormatted[1];
+                $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
+                $object->date = Helper::formatDateFromDB($monitoring['created_at']);
+                $object->obs = $symptomsFormatted[1];
 
-                $cases[] = $object;
+                $monitorings[] = $object;
             }
 
-            return response()->json(compact('companyUser', 'leader', 'cases'));
+            return response()->json(compact('companyUser', 'leader', 'monitorings'));
         }
     }
 
@@ -213,7 +213,7 @@ class PersonController extends Controller
                 $person->cep = Helper::removePunctuation($request->cep);
                 $person->phone = Helper::removePunctuation($request->phone);
 
-                if( $request->birthday) {
+                if ($request->birthday) {
                     $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
                 }
 

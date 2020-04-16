@@ -109,7 +109,7 @@
             columns: [
                 {data: 'created_at', name: 'created_at'},
                 {data: 'name', name: 'name'},
-                {data: 'status', name: 'status'},
+                {data: 'symptoms', name: 'symptoms'},
                 {data: 'leader', name: 'leader'},
                 {data: 'action', name: 'action'}
             ]
@@ -118,32 +118,32 @@
         $('body').on('click', '.seeObs', function (e) {
             e.preventDefault();
 
-            let casePerson_id = $(this).data('id');
+            let monitoringPerson_id = $(this).data('id');
 
             $.ajax({
-                url: '{{ url('casePerson/') }}/' + casePerson_id,
+                url: '{{ url('monitoringPerson/') }}/' + monitoringPerson_id,
                 type: "GET",
                 dataType: 'json',
                 success: function (data) {
                     $('#ajaxModel').modal('show');
 
-                    let casePerson = data.case,
+                    let monitoringPerson = data.monitoring,
                         symptomsDiv = $('.symptoms'),
-                        obs = $('.obs-case');
+                        obs = $('.obs-monitoring');
 
                     symptomsDiv.empty();
 
-                    $('#modelHeading').html("Mais informações do Colaborador " + casePerson.person);
+                    $('#modelHeading').html("Mais informações do Colaborador " + monitoringPerson.person);
 
-                    for(symptom of casePerson.symptoms) {
+                    for(symptom of monitoringPerson.symptoms) {
                         $('<span>').addClass(['badge', 'badge-pill', 'badge-warning', 'mr-1', 'mb-1']).text(symptom).appendTo(symptomsDiv);
                     }
 
-                    $('.date-case').text('Caso relatado dia ' + casePerson.date);
+                    $('.date-monitoring').text('Caso relatado dia ' + monitoringPerson.date);
 
 
-                    if(casePerson.obs) {
-                        obs.text(casePerson.obs);
+                    if(monitoringPerson.obs) {
+                        obs.text(monitoringPerson.obs);
                     } else {
                         obs.text('Não foi cadastrado nenhuma observação.');
                     }

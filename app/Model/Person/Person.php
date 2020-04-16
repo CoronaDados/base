@@ -43,19 +43,19 @@ class Person extends Model
         return $this->morphedByMany(CompanyUser::class, 'personable');
     }
 
-    public function casePersonDay()
+    public function monitoringPersonDay()
     {
-        return $this->hasOne(CasePerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
+        return $this->hasOne(MonitoringPerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
     }
 
-    public function createCasePersonDay()
+    public function createMonitoringPersonDay()
     {
-        return $this->hasMany(CasePerson::class, 'person_id');
+        return $this->hasMany(MonitoringPerson::class, 'person_id');
     }
 
-    public function casesPerson()
+    public function monitoringsPerson()
     {
-        return $this->hasMany(CasePerson::class, 'person_id');
+        return $this->hasMany(MonitoringPerson::class, 'person_id');
     }
 
     public function contacts()
