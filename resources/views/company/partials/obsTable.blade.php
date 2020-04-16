@@ -4,9 +4,9 @@
             <i class="ni ni-calendar-grid-58"></i>
         </span>
         <div class="timeline-content">
-            <small class="text-muted font-weight-bold date-case"></small>
+            <small class="text-muted font-weight-bold date-monitoring"></small>
             <h5 class=" mt-3 mb-0">Observações</h5>
-            <p class=" text-sm mt-1 mb-0 obs-case"></p>
+            <p class=" text-sm mt-1 mb-0 obs-monitoring"></p>
             <div class="mt-3 symptoms">
                 <h5 class=" mt-3 mb-0">Sintomas</h5>
             </div>
