@@ -145,7 +145,7 @@
                         $('#phone').val(person.phone).trigger('input');
                         $('#cpf').val(person.cpf).trigger('input');
                         $('#sector').val(person.sector);
-                        $('#risk_group').val(person.risk_group);
+                        // $('#risk_group').val(person.risk_group);
                         $('#role').val(role);
                         $('#leader').val(data.leader);
 

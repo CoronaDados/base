@@ -105,10 +105,14 @@ class PersonController extends Controller
                 'sector' => $request->sector,
                 'birthday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
                 'gender' => $request->gender,
-                'risk_group' => $request->risk_group,
                 'status' => true
             ]
         );
+        
+        # TODO: percorrer a lista dos grupo de riscos que forem selecionados
+        $person->riskGroups->sync([
+            'name' => $request->risk_group
+        ]);
 
         $user = CompanyUser::create(
             [
@@ -219,8 +223,12 @@ class PersonController extends Controller
 
                 $person->gender = $request->gender;
                 $person->sector = $request->sector;
-                $person->risk_group = $request->risk_group;
                 $person->save();
+
+                # TODO: percorrer a lista dos grupo de riscos que forem selecionados
+                $person->riskGroups->sync([
+                    'name' => $request->risk_group
+                ]);
 
                 $companyUser->email = $request->email;
 
