@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Model\Person\CasePerson;
-use App\Model\Person\MonitoringPerson;
 use App\Model\Person\Person;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CasesPersonController extends Controller
@@ -32,36 +32,72 @@ class CasesPersonController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Person $id
-     * @param \Illuminate\Http\Request $request
-     * @return void
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request): void
+    public function store(Request $request)
     {
+        $personId = $request->person_id;
+        $statusTest = $request->status_test;
+        $statusCovid = $request->status_covid;
+        $notes = $request->notes;
 
+        $person = Person::find($personId);
+        $oldCases = $person->casesPerson->last();
 
-        $person = Person::find($request->person_id);
-        dd($person->companyUsers()->id);
+        if($oldCases) {
+            if($statusTest !== $oldCases->status_test || $statusCovid !== $oldCases->status_covid) {
+                $casesPerson = new CasePerson(
+                    [
+                        'status_test' => $statusTest,
+                        'status_covid' => $statusCovid,
+                    ]
+                );
 
-        $casesPerson = CasePerson::create(
-            [
-                'status_test' => $request->status_test,
-                'status_covid' => $request->status_covid,
-            ]
-        );
+                $person->casesPerson()->save($casesPerson);
+            } else if($notes) {
+                $oldCases->notes = $notes;
+                $oldCases->save();
+            }
+        } else {
+            $casesPerson = new CasePerson(
+                [
+                    'status_test' => $statusTest,
+                    'status_covid' => $statusCovid,
+                    'notes' => $notes
+                ]
+            );
 
-        $person->casesPerson()->save($casesPerson);
+            $person->casesPerson()->save($casesPerson);
+        }
+
+        flash('Diagnóstico cadastrado com sucesso!', 'info');
+
+        return response()->json(['success' => true], 200);
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id, Request $request): JsonResponse
     {
-        //
+        if ($request->ajax()) {
+            $person = Person::with('casesPerson')->find($id);
+            $casesPerson = $person->casesPerson->last();
+
+            $cases = new \stdClass();
+            $cases->status_covid = $casesPerson->status_covid;
+            $cases->status_test = $casesPerson->status_test;
+            $cases->notes = $casesPerson->notes;
+            $cases->person = $person->name;
+
+            return response()->json(compact('cases'));
+        }
     }
 
     /**
@@ -78,7 +114,7 @@ class CasesPersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

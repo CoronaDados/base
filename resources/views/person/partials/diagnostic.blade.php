@@ -10,7 +10,7 @@
             @foreach($tests as $test)
                 <div class="form-group">
                     <div class="custom-control custom-radio mb-3">
-                        <input name="status_test" class="custom-control-input" id="test-{{$loop->index}}" value={{ $test }} type="radio">
+                        <input name="status_test" class="custom-control-input status-test" id="test-{{$loop->index}}" value="{{ $test }}" type="radio">
                         <label class="custom-control-label" for="test-{{$loop->index}}">{{ $test }}</label>
                     </div>
                 </div>
@@ -23,11 +23,21 @@
             @foreach($status as $s)
                 <div class="form-group">
                     <div class="custom-control custom-radio mb-3">
-                        <input name="status_covid" class="custom-control-input" id="status-{{$loop->index}}" value={{ $s }} type="radio">
+                        <input name="status_covid" class="custom-control-input status-covid" id="status-{{$loop->index}}" value={{ $s }} type="radio">
                         <label class="custom-control-label" for="status-{{$loop->index}}">{{ $s }}</label>
                     </div>
                 </div>
             @endforeach
+        </div>
+
+        <div class="col-md-12 p-0">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Alguma observação?</label>
+                <div class="col-sm-12">
+                    <textarea id="symptoms" rows="4" name="notes" placeholder="Alguma observação?"
+                              class="form-control form-control-alternative"></textarea>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -50,8 +60,6 @@
 
                 $(this).html('Atualizando...').prop('disabled', true);
 
-                let person_id = $('.person_id').val();
-
                 $.ajax({
                     data: $('#diagnostic_form').serialize(),
                     url: "{{ route('casesPerson.store') }}",
@@ -60,8 +68,8 @@
                     success: function (data) {
                         table.ajax.reload();
 
-                        $('.save').html('Salvar').prop('disabled', false);
-                        $('#ajaxModel').modal('hide');
+                        $('.btn-diagnostic').html('Salvar').prop('disabled', false);
+                        $('.modal').modal('hide');
 
                         Swal.fire({
                             title: 'Sucesso!',
@@ -71,8 +79,8 @@
                         });
                     },
                     error: function (e) {
-                        $('#ajaxModel').modal('hide');
-                        $('.save').html('Salvar').prop('disabled', false);
+                        $('.modal').modal('hide');
+                        $('.btn-diagnostic').html('Salvar').prop('disabled', false);
 
                         Swal.fire({
                             title: 'Erro!',

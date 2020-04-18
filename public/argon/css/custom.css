@@ -1,6 +1,7 @@
 /* Actions Buttons company/history.blade */
 .table-action {
-    font-size: 30px;
+    font-size: 20px;
+    width: 50%;
 }
 
 /* Details Timeline (obsTable.blade) */

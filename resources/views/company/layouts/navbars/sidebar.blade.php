@@ -106,6 +106,14 @@
                                     </a>
                                 </li>
 
+                                @if(auth('company')->user()->hasRole('Admin'))
+                                    <li class="nav-item {{request()->is('companies/monitoringAll') ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('company.monitoringAll') }}">
+                                            {{ __('Monitorar Todos') }}
+                                        </a>
+                                    </li>
+                                @endif
+
                                 <li class="nav-item {{request()->is('companies/monitoring/history') ? 'active' : ''}}">
                                     <a class="nav-link" href="{{ route('company.monitoring.history') }}">
                                         {{ __('Histórico') }}

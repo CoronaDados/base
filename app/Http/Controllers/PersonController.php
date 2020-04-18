@@ -12,8 +12,11 @@ use App\Enums\SectorType;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -22,7 +25,7 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function index(Request $request)
     {
@@ -66,7 +69,7 @@ class PersonController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function create()
     {
@@ -82,7 +85,7 @@ class PersonController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function store(Request $request)
     {
@@ -158,8 +161,9 @@ class PersonController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
      */
     public function show(Request $request, $id)
     {
@@ -167,6 +171,7 @@ class PersonController extends Controller
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
             $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
+            $cases = $companyUser->person->casesPerson()->get()->last();
 
             foreach ($monitoringsPerson as $monitoring) {
                 $object = new \stdClass();
@@ -182,7 +187,7 @@ class PersonController extends Controller
                 $monitorings[] = $object;
             }
 
-            return response()->json(compact('companyUser', 'leader', 'monitorings'));
+            return response()->json(compact('companyUser', 'leader', 'monitorings', 'cases'));
         }
     }
 
@@ -202,7 +207,7 @@ class PersonController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {

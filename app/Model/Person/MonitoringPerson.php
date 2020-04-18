@@ -31,7 +31,7 @@ class MonitoringPerson extends Model
 
     public function person()
     {
-        return $this->belongsTo(Person::class, 'id', 'person_id');
+        return $this->belongsTo(Person::class, 'person_id');
     }
 
     public function creator()

@@ -69,7 +69,10 @@
         <div class="modal-dialog modal-lg ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h3 class="modal-title" id="modelHeading"></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
                 <div class="modal-body pt-0">
                     <form id="monitoringForm" name="monitoringForm" class="form-horizontal">
@@ -247,7 +250,7 @@
                 },
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('company.monitoring') }}",
+                ajax: "{{ route($route) }}",
                 columnDefs: [{
                     targets: 0,
                     checkboxes: {

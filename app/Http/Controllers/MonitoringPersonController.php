@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Model\Person\MonitoringPerson;
+use App\Model\Person\Person;
 use Illuminate\Http\Request;
 
 class MonitoringPersonController extends Controller
@@ -43,22 +44,37 @@ class MonitoringPersonController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id, Request $request)
     {
         if ($request->ajax()) {
-            $monitoringPerson = MonitoringPerson::with('person')->find($id);
+            $person = Person::with('monitoringsPerson', 'casesPerson')->find($id);
 
-            $symptomsFormatted = Helper::formatSymptoms($monitoringPerson['symptoms']);
+            $monitoringsPerson = $person->monitoringsPerson;
+            $personName = $person->name;
+            foreach ($monitoringsPerson as $monitoring) {
+                $object = new \stdClass();
+                $symptomsFormatted = Helper::formatSymptoms($monitoring->symptoms);
+                $object->symptoms = $symptomsFormatted[0];
+                $object->date = Helper::formatDateFromDB($monitoring->created_at);
+                $object->obs = $symptomsFormatted[1];
 
-            $monitoring = new \stdClass();
-            $monitoring->symptoms = $symptomsFormatted[0];
-            $monitoring->obs = $symptomsFormatted[1];
-            $monitoring->person = $monitoringPerson->person->name;
-            $monitoring->date = Helper::formatDateFromDB($monitoringPerson['created_at']);
+                $monitorings[] = $object;
+            }
 
-            return response()->json(compact('monitoring'));
+            $casesPerson = $person->casesPerson;
+            foreach ($casesPerson as $case) {
+                $caseDbject = new \stdClass();
+                $caseDbject->status_covid = $case->status_covid;
+                $caseDbject->status_test = $case->status_test;
+                $caseDbject->date = Helper::formatDateFromDB($case->created_at);
+                $caseDbject->notes = $case->notes;
+
+                $cases[] = $caseDbject;
+            }
+
+            return view('company.partials.details', compact('monitorings', 'cases', 'personName'));
         }
     }
 

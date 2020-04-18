@@ -34,7 +34,7 @@
         <div class="modal-dialog modal-lg ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h3 class="modal-title" id="modelHeading"></h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -47,10 +47,10 @@
                                     <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Visualização / Edição</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-3-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-3" role="tab" aria-controls="tabs-text-3" aria-selected="false">Diagnosticar</a>
+                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-3-tab" data-toggle="tab" href="#tabs-text-3" role="tab" aria-controls="tabs-text-3" aria-selected="false">Diagnosticar</a>
                                 </li>
                             </ul>
                         </div>
@@ -78,6 +78,49 @@
 
 @push('js')
     <script>
+        let table = $('.data-table').DataTable({
+            language: {
+                "sEmptyTable": "Nenhum registro encontrado",
+                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "_MENU_ resultados por página",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                    "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                    "sFirst": "Primeiro",
+                    "sLast": "Último"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                },
+                "select": {
+                    "rows": {
+                        "_": "Selecionado %d linhas",
+                        "0": "Nenhuma linha selecionada",
+                        "1": "Selecionado 1 linha"
+                    }
+                }
+            },
+            processing: true,
+            serverSide: false,
+            ajax: "{{ route('person.index') }}",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'name', name: 'name'},
+                {data: 'email', name: 'email'},
+                {data: 'lider', name: 'lider'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ]
+        });
+
         $(function () {
             $.jMaskGlobals.watchDataMask = true;
 
@@ -85,49 +128,6 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            });
-
-            let table = $('.data-table').DataTable({
-                language: {
-                    "sEmptyTable": "Nenhum registro encontrado",
-                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sInfoThousands": ".",
-                    "sLengthMenu": "_MENU_ resultados por página",
-                    "sLoadingRecords": "Carregando...",
-                    "sProcessing": "Processando...",
-                    "sZeroRecords": "Nenhum registro encontrado",
-                    "sSearch": "Pesquisar",
-                    "oPaginate": {
-                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
-                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
-                        "sFirst": "Primeiro",
-                        "sLast": "Último"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Ordenar colunas de forma ascendente",
-                        "sSortDescending": ": Ordenar colunas de forma descendente"
-                    },
-                    "select": {
-                        "rows": {
-                            "_": "Selecionado %d linhas",
-                            "0": "Nenhuma linha selecionada",
-                            "1": "Selecionado 1 linha"
-                        }
-                    }
-                },
-                processing: true,
-                serverSide: false,
-                ajax: "{{ route('person.index') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'lider', name: 'lider'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
-                ]
             });
 
             $('body').on('click', '.editPerson', function (e) {
@@ -169,6 +169,7 @@
 
                         $('.cep-person').val(person.cep).trigger('input');
 
+                        // History
                         if(data.monitorings) {
                             for (monitoringPerson of data.monitorings) {
                                 let tr = $('<tr>'),
@@ -195,6 +196,16 @@
 
                             td.appendTo(tr);
                             historyTable.append(tr);
+                        }
+
+                        // Diagnostic
+                        if(data.cases) {
+                            const $statusTest = $('input:radio[name=status_test]'),
+                                $statusCovid =  $('input:radio[name=status_covid]');
+
+                            $statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
+                            $statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);
+                            $('textarea[name=notes]').val(data.cases.notes);
                         }
                     },
                     error: function () {
