@@ -170,24 +170,10 @@ class PersonController extends Controller
         if ($request->ajax()) {
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
+            $countMonitoringsPerson = $companyUser->person->monitoringsPerson()->count();
             $cases = $companyUser->person->casesPerson()->get()->last();
 
-            foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();
-
-                $symptomsFormatted = Helper::formatSymptoms($monitoring['symptoms']);
-
-                $object->symptoms = $symptomsFormatted[0];
-
-                $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
-                $object->date = Helper::formatDateFromDB($monitoring['created_at']);
-                $object->obs = $symptomsFormatted[1];
-
-                $monitorings[] = $object;
-            }
-
-            return response()->json(compact('companyUser', 'leader', 'monitorings', 'cases'));
+            return response()->json(compact('companyUser', 'leader', 'countMonitoringsPerson', 'cases'));
         }
     }
 

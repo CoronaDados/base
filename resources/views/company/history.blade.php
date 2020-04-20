@@ -22,9 +22,7 @@
                                     <tr>
                                         <th>Colaborador</th>
                                         <th>Sintomas</th>
-                                        <th>Monitorado por</th>
                                         <th>Diagnóstico</th>
-                                        <th>Diagnosticado por</th>
                                         <th>Ação</th>
                                     </tr>
                                 </thead>
@@ -41,6 +39,13 @@
     <div class="modal fade" id="ajaxModel" aria-hidden="true">
         <div class="modal-dialog modal-lg ">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modelHeading"></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
                 <div class="modal-body pt-0">
                     <div class="col-lg-12 pl-0 pt-0 pr-0 details-container"></div>
                 </div>
@@ -106,9 +111,15 @@
         processing: true,
         serverSide: true,
         ajax: "{{ route('company.monitoring.history') }}",
-        columnDefs: [{
-            targets: 0
-        }],
+        columnDefs: [
+            {
+                targets: 0
+            },
+            {
+                targets: 3,
+                className: 'text-center'
+            }
+        ],
         select: {
             style: 'multi',
         },
@@ -116,9 +127,7 @@
         columns: [
             {data: 'name', name: 'name'},
             {data: 'symptoms', name: 'symptoms'},
-            {data: 'leader', name: 'leader'},
             {data: 'status_covid', name: 'status_covid'},
-            {data: 'medic', name: 'medic'},
             {data: 'action', name: 'action'}
         ]
     });
@@ -144,6 +153,7 @@
                 success: function (data) {
                     $('#ajaxModel').modal('show');
                     $('.details-container').html(data);
+                    $('#modelHeading').html("Mais informações do Colaborador " + $('.details').data('person-name'));
                 },
                 error: function () {
                     Swal.fire({
@@ -170,16 +180,18 @@
                     $('#ajaxModelDiagnostic').modal('show');
                     $('#modelHeadingDiagnostic').html("Diagnóstico do Colaborador " + data.cases.person);
 
-                    const $statusTest = $('input:radio[name=status_test]'),
-                        $statusCovid =  $('input:radio[name=status_covid]');
+                    const statusTest = $('input:radio[name=status_test]'),
+                        statusCovid =  $('input:radio[name=status_covid]'),
+                        textArea = $('textarea[name=notes]');
 
-                    $statusTest.prop('checked', false);
-                    $statusCovid.prop('checked', false);
+                    statusTest.prop('checked', false);
+                    statusCovid.prop('checked', false);
+                    textArea.val('');
 
-                    $statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
-                    $statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);
+                    statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
+                    statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);
 
-                    $('textarea[name=notes]').val(data.cases.notes);
+                    textArea.val(data.cases.notes);
                 },
                 error: function () {
                     Swal.fire({

@@ -41,15 +41,15 @@
                 </div>
                 <div class="modal-body pt-0">
                     <div class="col-lg-12 pl-0 pt-0 pr-0">
-                        <div class="nav-wrapper">
+                        <div class="nav-wrapper pt-0">
                             <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-text" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-text-1-tab" data-toggle="tab" href="#tabs-text-1" role="tab" aria-controls="tabs-text-1" aria-selected="true">Visualização / Edição</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
+                                <li class="nav-item d-none">
+                                    <a class="nav-link mb-sm-3 mb-md-0 historic" id="tabs-text-2-tab" data-toggle="tab" href="#tabs-text-2" role="tab" aria-controls="tabs-text-2" aria-selected="false">Histórico</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item d-none">
                                     <a class="nav-link mb-sm-3 mb-md-0" id="tabs-text-3-tab" data-toggle="tab" href="#tabs-text-3" role="tab" aria-controls="tabs-text-3" aria-selected="false">Diagnosticar</a>
                                 </li>
                             </ul>
@@ -60,9 +60,8 @@
                                 @include('person.partials.form', ['isRequired' => false, 'route' => ''])
                             </div>
 
-                            <div class="tab-pane fade" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab">
-                                @include('person.partials.history')
-                            </div>
+
+                                <div class="tab-pane fade historic-container" id="tabs-text-2" role="tabpanel" aria-labelledby="tabs-text-2-tab"></div>
 
                             <div class="tab-pane fade" id="tabs-text-3" role="tabpanel" aria-labelledby="tabs-text-3-tab">
                                 @include('person.partials.diagnostic')
@@ -130,10 +129,23 @@
                 }
             });
 
+            let person_id = 0;
+
             $('body').on('click', '.editPerson', function (e) {
                 e.preventDefault();
 
-                let person_id = $(this).data('id');
+                person_id = $(this).data('id');
+                $('.historic-container').empty();
+
+                const navItem =  $('#ajaxModel .nav .nav-item'),
+                        navItemFirst = navItem.first();
+                navItemFirst.children().addClass(['active', 'show']).prop('aria-selected', true);
+                navItemFirst.siblings().addClass('d-none');
+                navItemFirst.siblings().children().removeClass(['active', 'show']).prop('aria-selected', false);
+
+                const tabPane =  $('#ajaxModel .tab-content .tab-pane:first');
+                tabPane.addClass(['active', 'show']);
+                tabPane.siblings().removeClass(['active', 'show']);
 
                 $.ajax({
                     url: 'person/' + person_id,
@@ -170,43 +182,45 @@
                         $('.cep-person').val(person.cep).trigger('input');
 
                         // History
-                        if(data.monitorings) {
-                            for (monitoringPerson of data.monitorings) {
-                                let tr = $('<tr>'),
-                                    trSymptom = $('<td>').appendTo(tr),
-                                    ul = $('<ul>').addClass('m-0');
-
-                                for(symptom of monitoringPerson.symptoms) {
-                                    $('<li>').text(symptom).appendTo(ul);
-                                }
-
-                                ul.appendTo(trSymptom);
-
-                                let date = $('<td>').appendTo(tr),
-                                    leader = $('<td>').appendTo(tr);
-
-                                $('<p>').addClass('m-0').text(monitoringPerson.date).appendTo(date);
-                                $('<p>').addClass('m-0').text(monitoringPerson.leader).appendTo(leader);
-
-                                historyTable.append(tr);
-                            }
-                        } else {
-                            let tr = $('<tr>'),
-                                td = $('<td>').attr('colspan', 3).text('Este colaborador não foi monitorado.');
-
-                            td.appendTo(tr);
-                            historyTable.append(tr);
+                        if(data.countMonitoringsPerson) {
+                            navItem.removeClass('d-none');
                         }
 
                         // Diagnostic
-                        if(data.cases) {
-                            const $statusTest = $('input:radio[name=status_test]'),
-                                $statusCovid =  $('input:radio[name=status_covid]');
+                        const statusTest = $('input:radio[name=status_test]'),
+                            statusCovid =  $('input:radio[name=status_covid]'),
+                            textArea = $('textarea[name=notes]');
 
-                            $statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
-                            $statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);
-                            $('textarea[name=notes]').val(data.cases.notes);
+                        statusTest.prop('checked', false);
+                        statusCovid.prop('checked', false);
+                        textArea.val('');
+
+                        if(data.cases) {
+                            statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
+                            statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);
+
+                            textArea.val(data.cases.notes);
                         }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao carregar os dados, atualize a página.',
+                            icon: 'error',
+                            confirmButtonText: 'Fechar'
+                        });
+                    }
+                });
+            });
+
+            $('body').on('click', '.historic', function () {
+                $.ajax({
+                    url: '{{ url('monitoringPerson') }}/' + person_id,
+                    type: "GET",
+                    dataType: 'html',
+                    success: function (data) {
+                        $('#ajaxModel').modal('show');
+                        $('.historic-container').html(data);
                     },
                     error: function () {
                         Swal.fire({

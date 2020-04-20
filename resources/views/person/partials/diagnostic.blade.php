@@ -34,7 +34,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">Alguma observação?</label>
                 <div class="col-sm-12">
-                    <textarea id="symptoms" rows="4" name="notes" placeholder="Alguma observação?"
+                    <textarea id="notes" rows="4" name="notes" placeholder="Alguma observação?"
                               class="form-control form-control-alternative"></textarea>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                         table.ajax.reload();
 
                         $('.btn-diagnostic').html('Salvar').prop('disabled', false);
-                        $('.modal').modal('hide');
+                        $('#ajaxModelDiagnostic').modal('hide');
 
                         Swal.fire({
                             title: 'Sucesso!',
@@ -79,7 +79,7 @@
                         });
                     },
                     error: function (e) {
-                        $('.modal').modal('hide');
+                        $('#ajaxModelDiagnostic').modal('hide');
                         $('.btn-diagnostic').html('Salvar').prop('disabled', false);
 
                         Swal.fire({

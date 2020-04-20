@@ -115,24 +115,6 @@ class CompaniesController extends Controller
                 ->editColumn('name', function ($user) {
                     return Helper::getFirstAndLastName($user->name);
                 })
-                ->editColumn('leader', function ($leader) {
-
-                    $nameLeader = Helper::getFirstAndLastName($leader->leader);
-                    $dateMonitoring = Helper::formatDateFromDB($leader->created_at);
-
-                    return $nameLeader . '<small class="d-flex">' . $dateMonitoring . '</small>';
-                })
-                ->editColumn('medic', function ($medic) {
-
-                    $name = $medic->medic ?? 'Não diagnosticado';
-                    if($medic->diagnostic_date) {
-                        $date = Helper::formatDateFromDB($medic->diagnostic_date);
-                    } else {
-                        $date = '';
-                    }
-
-                    return $name . '<small class="d-flex">' . $date . '</small>';
-                })
                 ->editColumn('symptoms', function ($symptoms) {
 
                     $formattedSymptoms = Helper::formatSymptoms($symptoms->symptoms)[0];
@@ -151,7 +133,10 @@ class CompaniesController extends Controller
                         return $obs['obs'];
                     }
                 })
-                ->rawColumns(['symptoms', 'action', 'leader', 'medic'])
+                ->editColumn('status_covid', function ($case) {
+                    return $case->status_covid ?? 'Não foi diagnosticado';
+                })
+                ->rawColumns(['symptoms', 'action'])
                 ->make(true);
         }
 
