@@ -14,7 +14,7 @@ Route::group(['middleware' => ['auth:company']], function () {
     Route::get('/help', 'CompaniesController@help')->name('help');
 
     Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
-    // Route::post('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
+    Route::get('companies/monitoringAll', 'CompaniesController@monitoring')->name('monitoringAll');
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 
     Route::get('companies/monitoring/history', 'CompaniesController@monitoringHistory')->name('monitoring.history');

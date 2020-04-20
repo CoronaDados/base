@@ -84,18 +84,19 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     {
         $companyUserId = $this->id;
 
-        $query = 'SELECT mp.id, c_person.id AS person_id, mp.created_at, p.name, c_person.email, p.sector, mp.symptoms, l.name AS leader FROM persons p ';
+        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
 
         if (in_array('getHistory', $options, true)) {
-            $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id ';
+            $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id';
         } else {
-            $query .= ' LEFT JOIN monitoring_person mp ON p.id = mp.person_id ';
+            $query .= ' LEFT JOIN monitoring_person mp ON p.id = mp.person_id';
         }
 
-        $query .= 'INNER JOIN company_users c_person ON c_person.person_id = p.id
+        $query .= ' LEFT JOIN (SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max ON (cp_max.person_id = p.id)
+            LEFT JOIN cases_person cp ON cp.id = cp_max.max_id
+            INNER JOIN company_users c_person ON c_person.person_id = p.id
             INNER JOIN personables pp ON p.id = pp.person_id
             INNER JOIN company_users c ON pp.personable_id = c.id
-            INNER JOIN persons l ON l.id = c.person_id
             WHERE p.id IN
             (
                 SELECT pp.person_id FROM personables pp WHERE personable_id IN

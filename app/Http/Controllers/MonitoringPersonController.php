@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Model\Company\CompanyUser;
 use App\Model\Person\MonitoringPerson;
+use App\Model\Person\Person;
 use Illuminate\Http\Request;
 
 class MonitoringPersonController extends Controller
@@ -43,22 +45,43 @@ class MonitoringPersonController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id, Request $request)
     {
         if ($request->ajax()) {
-            $monitoringPerson = MonitoringPerson::with('person')->find($id);
+            $person = Person::with('monitoringsPerson', 'casesPerson')->find($id);
+            $personName = $person->name;
 
-            $symptomsFormatted = Helper::formatSymptoms($monitoringPerson['symptoms']);
+            $monitoringsPerson = $person->monitoringsPerson;
+            foreach ($monitoringsPerson as $monitoring) {
+                $object = new \stdClass();
+                $symptomsFormatted = Helper::formatSymptoms($monitoring->symptoms);
+                $object->symptoms = $symptomsFormatted[0];
+                $object->date = Helper::formatDateFromDB($monitoring->created_at);
+                $object->obs = $symptomsFormatted[1];
 
-            $monitoring = new \stdClass();
-            $monitoring->symptoms = $symptomsFormatted[0];
-            $monitoring->obs = $symptomsFormatted[1];
-            $monitoring->person = $monitoringPerson->person->name;
-            $monitoring->date = Helper::formatDateFromDB($monitoringPerson['created_at']);
+                $user = CompanyUser::find($monitoring->user_id);
+                $object->monitoredBy = $user->person->name;
 
-            return response()->json(compact('monitoring'));
+                $monitorings[] = $object;
+            }
+
+            $casesPerson = $person->casesPerson;
+            foreach ($casesPerson as $case) {
+                $caseObject = new \stdClass();
+                $caseObject->status_covid = $case->status_covid;
+                $caseObject->status_test = $case->status_test;
+                $caseObject->date = Helper::formatDateFromDB($case->created_at);
+                $caseObject->notes = $case->notes;
+
+                $user = CompanyUser::find($case->user_id);
+                $caseObject->diagnosedBy = $user->person->name;
+
+                $cases[] = $caseObject;
+            }
+
+            return view('company.partials.details', compact('monitorings', 'cases', 'personName'));
         }
     }
 

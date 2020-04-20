@@ -69,7 +69,10 @@
         <div class="modal-dialog modal-lg ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h3 class="modal-title" id="modelHeading"></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
                 <div class="modal-body pt-0">
                     <form id="monitoringForm" name="monitoringForm" class="form-horizontal">
@@ -151,7 +154,7 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="check-symptoms custom-control-input">
-                                        <label class="custom-control-label" for="dificuldade-respirar">Falta de ar/Dificuldade para respirar</label>
+                                        <label class="custom-control-label" for="dificuldade-respirar">Dificuldade para respirar</label>
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +250,7 @@
                 },
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('company.monitoring') }}",
+                ajax: "{{ route($route) }}",
                 columnDefs: [{
                     targets: 0,
                     checkboxes: {

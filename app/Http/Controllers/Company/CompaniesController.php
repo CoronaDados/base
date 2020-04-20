@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
@@ -9,6 +11,7 @@ use App\Model\Person\MonitoringPerson;
 use App\Model\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
@@ -55,15 +58,15 @@ class CompaniesController extends Controller
 
     public function monitoring(Request $request)
     {
+        $route = Route::currentRouteName();
+
         if ($request->ajax()) {
-            if (auth('company')->user()->can('Ver Usuários')) {
-                if (auth()->user()->hasRole('Admin')) {
-                    $options = ['byDay'];
-                    $datas =  auth('company')->user()->monitoringsPerson($options);
-                } else {
-                    $options = ['byLeader', 'byDay'];
-                    $datas =  auth('company')->user()->monitoringsPerson($options);
-                }
+            if ($request->route()->getName() === 'company.monitoringAll') {
+                $options = ['byDay'];
+                $datas =  auth('company')->user()->monitoringsPerson($options);
+            } else {
+                $options = ['byLeader', 'byDay'];
+                $datas =  auth('company')->user()->monitoringsPerson($options);
             }
 
             return DataTables::of($datas)
@@ -79,7 +82,7 @@ class CompaniesController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('company.monitoring');
+        return view('company.monitoring', compact('route'));
     }
 
     public function monitoringHistory(Request $request)
@@ -97,24 +100,27 @@ class CompaniesController extends Controller
             return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Observações" class="edit btn btn-primary btn-sm seeObs">Observações</a>';
-                    return $btn;
-                })
-                ->editColumn('created_at', function ($date) {
-                    return Helper::formatDateFromDB($date->created_at);
+                    $buttons = '<button type="button" rel="tooltip" class="table-action btn btn-info btn-icon btn-sm see-details" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Detalhes" data-original-title="Detalhes">
+                                    <i class="fas fa-address-card"></i>
+                                </button>';
+
+                    $buttons .= '<button type="button" rel="tooltip" class="table-action btn btn-success btn-icon btn-sm btn-simple set-diagnostic" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Diagnosticar" data-original-title="Diagnosticar">
+                                    <i class="fas fa-user-md"></i>
+                                </button>';
+
+                    return $buttons;
                 })
                 ->editColumn('name', function ($user) {
                     return Helper::getFirstAndLastName($user->name);
-                })
-                ->editColumn('leader', function ($leader) {
-                    return Helper::getFirstAndLastName($leader->leader);
                 })
                 ->editColumn('symptoms', function ($symptoms) {
 
                     $formattedSymptoms = Helper::formatSymptoms($symptoms->symptoms)[0];
 
                     if ($formattedSymptoms) {
-                        $allSymptoms = '<ul class="mb-0">';
+                        $allSymptoms = '<ul class="mb-0 pl-1">';
                         foreach ($formattedSymptoms as $symptom) {
                             $allSymptoms .= '<li>' . $symptom . '</li>';
                         }
@@ -127,11 +133,17 @@ class CompaniesController extends Controller
                         return $obs['obs'];
                     }
                 })
+                ->editColumn('status_covid', function ($case) {
+                    return $case->status_covid ?? 'Não foi diagnosticado';
+                })
                 ->rawColumns(['symptoms', 'action'])
                 ->make(true);
         }
 
-        return view('company.history');
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
+
+        return view('company.history', compact('tests', 'status'));
     }
 
     public function storeMonitoring($id, Request $request)
