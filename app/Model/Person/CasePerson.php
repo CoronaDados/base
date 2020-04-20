@@ -13,6 +13,7 @@ class CasePerson extends Model
         'person_id',
         'status_covid',
         'status_test',
+        'notes',
         'user_id',
         'type_user',
     ];

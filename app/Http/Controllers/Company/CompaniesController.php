@@ -122,19 +122,23 @@ class CompaniesController extends Controller
 
                     return $nameLeader . '<small class="d-flex">' . $dateMonitoring . '</small>';
                 })
-                ->editColumn('medic', function ($leader) {
+                ->editColumn('medic', function ($medic) {
 
-                    $nameMedic = Helper::getFirstAndLastName($leader->medic);
-                    $dateDiagnostic = Helper::formatDateFromDB($leader->diagnostic_date);
+                    $name = $medic->medic ?? 'Não diagnosticado';
+                    if($medic->diagnostic_date) {
+                        $date = Helper::formatDateFromDB($medic->diagnostic_date);
+                    } else {
+                        $date = '';
+                    }
 
-                    return $nameMedic . '<small class="d-flex">' . $dateDiagnostic . '</small>';
+                    return $name . '<small class="d-flex">' . $date . '</small>';
                 })
                 ->editColumn('symptoms', function ($symptoms) {
 
                     $formattedSymptoms = Helper::formatSymptoms($symptoms->symptoms)[0];
 
                     if ($formattedSymptoms) {
-                        $allSymptoms = '<ul class="mb-0">';
+                        $allSymptoms = '<ul class="mb-0 pl-1">';
                         foreach ($formattedSymptoms as $symptom) {
                             $allSymptoms .= '<li>' . $symptom . '</li>';
                         }

@@ -154,7 +154,7 @@
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" id="dificuldade-respirar" name="dificuldade-respirar" value="sim" class="check-symptoms custom-control-input">
-                                        <label class="custom-control-label" for="dificuldade-respirar">Falta de ar/Dificuldade para respirar</label>
+                                        <label class="custom-control-label" for="dificuldade-respirar">Dificuldade para respirar</label>
                                     </div>
                                 </div>
                             </div>

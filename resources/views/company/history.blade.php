@@ -167,12 +167,14 @@
                 type: "GET",
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data);
                     $('#ajaxModelDiagnostic').modal('show');
                     $('#modelHeadingDiagnostic').html("Diagnóstico do Colaborador " + data.cases.person);
 
                     const $statusTest = $('input:radio[name=status_test]'),
                         $statusCovid =  $('input:radio[name=status_covid]');
+
+                    $statusTest.prop('checked', false);
+                    $statusCovid.prop('checked', false);
 
                     $statusTest.filter('[value="' + data.cases.status_test + '"]').prop('checked', true);
                     $statusCovid.filter('[value="' + data.cases.status_covid + '"]').prop('checked', true);

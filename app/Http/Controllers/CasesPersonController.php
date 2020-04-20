@@ -56,8 +56,9 @@ class CasesPersonController extends Controller
 
                 $person->casesPerson()->save($casesPerson);
             } else if($notes) {
-                $oldCases->notes = $notes;
-                $oldCases->save();
+                $saveNote = CasePerson::find($oldCases->id);
+                $saveNote->notes = $notes;
+                $saveNote->save();
             }
         } else {
             $casesPerson = new CasePerson(
@@ -91,9 +92,9 @@ class CasesPersonController extends Controller
             $casesPerson = $person->casesPerson->last();
 
             $cases = new \stdClass();
-            $cases->status_covid = $casesPerson->status_covid;
-            $cases->status_test = $casesPerson->status_test;
-            $cases->notes = $casesPerson->notes;
+            $cases->status_covid = $casesPerson->status_covid ?? null;
+            $cases->status_test = $casesPerson->status_test ?? null;
+            $cases->notes = $casesPerson->notes ?? null;
             $cases->person = $person->name;
 
             return response()->json(compact('cases'));

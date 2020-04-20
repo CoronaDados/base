@@ -19,9 +19,6 @@
     <script>
         let c = 1;
         var addP = (count) =(function (count) {
-
-            console.log('count' + count)
-            console.log('c' + c)
             if(count != c)
                 return true;
             count++;
