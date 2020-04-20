@@ -9,6 +9,7 @@ use App\Enums\RiskGroupType;
 use App\Enums\SectorType;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -50,12 +51,12 @@ class PersonController extends Controller
                 ->make(true);
         }
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.index', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -108,11 +109,12 @@ class PersonController extends Controller
                 'status' => true
             ]
         );
-        
-        # TODO: percorrer a lista dos grupo de riscos que forem selecionados
-        $person->riskGroups->sync([
-            'name' => $request->risk_group
-        ]);
+
+        $riskGroups = array_map(function($riskGroup) {
+           return new RiskGroupPerson(['name' => $riskGroup]);
+        }, $request->risk_groups);
+
+        $person->riskGroups()->saveMany($riskGroups);
 
         $user = CompanyUser::create(
             [
@@ -146,12 +148,12 @@ class PersonController extends Controller
 
         flash('Colaborador cadastrado com sucesso!', 'info');
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -163,25 +165,10 @@ class PersonController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $companyUser = CompanyUser::with('person', 'roles')->find($id);
+            $companyUser = CompanyUser::with('person', 'person.riskGroups', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
 
-            foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();
-
-                $symptomsFormatted = Helper::formatSymptoms($monitoring['symptoms']);
-
-                $object->symptoms = $symptomsFormatted[0];
-
-                $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
-                $object->date = Helper::formatDateFromDB($monitoring['created_at']);
-                $object->obs = $symptomsFormatted[1];
-
-                $monitorings[] = $object;
-            }
-
-            return response()->json(compact('companyUser', 'leader', 'monitorings'));
+            return response()->json(compact('companyUser', 'leader'));
         }
     }
 
@@ -225,10 +212,12 @@ class PersonController extends Controller
                 $person->sector = $request->sector;
                 $person->save();
 
-                # TODO: percorrer a lista dos grupo de riscos que forem selecionados
-                $person->riskGroups->sync([
-                    'name' => $request->risk_group
-                ]);
+                $riskGroups = array_map(function($riskGroup) {
+                    return new RiskGroupPerson(['name' => $riskGroup]);
+                }, $request->risk_groups);
+
+                $person->riskGroups()->delete();
+                $person->riskGroups()->saveMany($riskGroups);
 
                 $companyUser->email = $request->email;
 

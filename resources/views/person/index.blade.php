@@ -129,6 +129,7 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
+
                         let person = data.companyUser.person,
                             role = data.companyUser.roles[0].name,
                             historyTable = $('.history-table tbody');
@@ -145,7 +146,6 @@
                         $('#phone').val(person.phone).trigger('input');
                         $('#cpf').val(person.cpf).trigger('input');
                         $('#sector').val(person.sector);
-                        // $('#risk_group').val(person.risk_group);
                         $('#role').val(role);
                         $('#leader').val(data.leader);
 
@@ -155,6 +155,14 @@
 
                         const $radios = $('input:radio[name=gender]');
                         $radios.filter('[value=' + person.gender + ']').prop('checked', true);
+
+                        if(person.risk_groups) {
+                            const $checkboxes = $('.risk-groups');
+
+                            for(risk_group of person.risk_groups) {
+                                $checkboxes.filter('[value="' + risk_group.name + '"]').prop('checked', true);
+                            }
+                        }
 
                         $('.cep-person').val(person.cep).trigger('input');
 

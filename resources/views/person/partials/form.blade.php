@@ -107,12 +107,13 @@
             <div class={{ $col }}>
                 <div class="form-group">
                     <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
-                    <select name="risk_group" id="risk_group" {{ $isRequired ? 'required' : '' }} class="custom-select form-control-alternative risk_group">
-                        <option value="">Grupo de Risco {{ $isRequired ? '(obrigatório)' : '' }}</option>
-                        @foreach($riskGroups as $k => $v)
-                            <option value="{{ $v }}" {{ isset($companyUser->person->risk_group) ? ($companyUser->person->risk_group == $v ? 'selected': '') : '' }}>{{ $v }}</option>
-                        @endforeach
-                    </select>
+
+                    @foreach($riskGroupsType as $k => $v)
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}" class="custom-control-input risk-groups">
+                            <label class="custom-control-label" for="risk_group-{{ $loop->index }}">{{ $v }}</label>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -207,12 +208,12 @@
         let optionsBirthday =  {
             onComplete: function(birthday) {
                 let newDate = formattedDateToDB(birthday),
-                    $option = $(".risk_group option:contains('Acima de 60 anos')");
+                    $option = $('.risk-groups:checkbox[value="Acima de 60 anos"]');
 
                 if(calculateAge(newDate) >= 60) {
-                    $option.prop("selected", true);
+                    $option.prop("checked", true);
                 } else {
-                    $option.prop("selected", false);
+                    $option.prop("checked", false);
                 }
             }
         },
