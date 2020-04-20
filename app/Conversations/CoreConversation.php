@@ -2,6 +2,7 @@
 
 namespace App\Conversations;
 
+use App\Enums\SymptomsType;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use Illuminate\Support\Facades\Log;
@@ -25,28 +26,12 @@ class CoreConversation extends Conversation
     protected $cellNumber;
     protected $acceptedTerms;
     protected $protocol;
-
-    const FREBE = 1;
-    const TOSSE_SECA = 2;
-    const DORES_CORPO_CANSASO = 3;
-    const DIFICULDADE_RESPIRAR = 4;
-    const DOR_GARGANTA = 5;
-    const CONGESTAO_CORIZA = 6;
-    const DOR_ABDOMINAL_DIARREIA_VOMITO = 7;
-
-    protected $validSymptoms = [
-        CoreConversation::FREBE,
-        CoreConversation::TOSSE_SECA,
-        CoreConversation::DORES_CORPO_CANSASO,
-        CoreConversation::DIFICULDADE_RESPIRAR,
-        CoreConversation::DOR_GARGANTA,
-        CoreConversation::CONGESTAO_CORIZA,
-        CoreConversation::DOR_ABDOMINAL_DIARREIA_VOMITO,
-    ];
+    protected $validSymptoms = [];
 
     public function run()
     {
         $this->userId = $this->bot->getUser()->getId();
+        $this->validSymptoms = SymptomsType::getValues();
     }
 
     public function finishConversation()
@@ -56,7 +41,7 @@ class CoreConversation extends Conversation
         $log .= $this->protocol ? 'protocolo='.$this->protocol.'|' : '';
         $log .= $this->firstFeelings ? 'como_esta_sentindo='.$this->firstFeelings.'|' : '';
         $log .= $this->confirmFeelings ? 'confirma_sentindo_mal='.$this->confirmFeelings.'|' : '';
-        $log .= $this->symptoms ? 'sintomas='.implode(",", $this->symptoms).'|' : '';
+        $log .= $this->symptoms ? 'sintomas='.$this->symptoms->implode(',').'|' : '';
         $log .= $this->confirmSymptoms ? 'confirma_sintomas='.$this->confirmSymptoms.'|' : '';
         $log .= $this->levelFever ? 'nivel_febre='.$this->levelFever.'|' : '';
         $log .= $this->confirmStillHaveSymptoms ? 'confirma_ainda_tem_simtomas='.$this->confirmStillHaveSymptoms.'|' : '';
@@ -71,6 +56,25 @@ class CoreConversation extends Conversation
         $log .= $this->acceptedTerms ? 'aceite_termos='.$this->acceptedTerms.'|' : '';
 
         Log::info($log);
+    }
+
+    public function translateSymptoms()
+    {
+        // $translateSymptoms = [
+        //     ['id' => SymptomsType::FEBRE, 'slug' => 'febre'],
+        //     ['id' => SymptomsType::TOSSE_SECA, 'slug' => ''],
+        //     ['id' => SymptomsType::CANSACO, 'slug' => ''],
+        //     ['id' => SymptomsType::DOR_CORPO, 'slug' => ''],
+        //     ['id' => SymptomsType::DOR_GARGANTA, 'slug' => ''],
+        //     ['id' => SymptomsType::CONGESTAO_NASAL, 'slug' => ''],
+        //     ['id' => SymptomsType::CORIZA, 'slug' => ''],
+        //     ['id' => SymptomsType::DIARREIA, 'slug' => ''],
+        //     ['id' => SymptomsType::SEM_PALADAR, 'slug' => ''],
+        //     ['id' => SymptomsType::DIFICULDADE_RESPIRAR, 'slug' => ''],
+
+            
+        // ];
+        return $this->symptoms;
     }
 
     public function sayWrongAnswer()
@@ -261,13 +265,16 @@ Se estiver sentindo algum desses sintomas, responda com "Sim".';
     public function askConfirmBadFeelings()
     {
         $question = 'Quais desses sintomas vocês está sentindo?
-1- febre
-2- tosse seca
-3- dores pelo corpo / cansaço
-4- dificuldade para respirar
-5- dor de garganta
-6- congestão nasal/coriza
-7- dor abdominal, diarréia, náuseas, vômitos
+1- Febre
+2- Tosse seca
+3- Cansaço
+4- Dor no corpo
+5- Dor de Garganta
+6- Congestão nasal
+7- Coriza
+8- Diarreia
+9- Sem paladar
+10- Falta de ar/Dificuldade para respirar
 
 Responda os números correspondentes ao seus sintomas. 
 (Por exemplo: 1, 3 e 7.)';
@@ -275,14 +282,18 @@ Responda os números correspondentes ao seus sintomas.
         $this->ask($question, function (Answer $answer) {
 
             preg_match_all('!\d+!', $answer->getText(), $match);
-            $this->symptoms = array_map('intval', array_unique($match[0]));
+            
+            $this->symptoms = collect($match[0])->unique()->map(function($id) {
+                return SymptomsType::getValueById($id); 
+            });
 
             // se não foi informado nenhum sintoma
             $emptySymptoms = !count($this->symptoms);
-            // se foi informado um número inválido
-            $invalidSymptoms = array_diff($this->symptoms, $this->validSymptoms);
 
-            if ($emptySymptoms || $invalidSymptoms) {
+            // se foi informado um número inválido
+            $invalidSymptoms = $this->symptoms->diff($this->validSymptoms);
+            
+            if ($emptySymptoms || !$invalidSymptoms->isEmpty()) {
                 $this->sayWrongAnswer();
                 return $this->askConfirmBadFeelings(true);
             }
@@ -323,24 +334,27 @@ Responda "Sim" ou "Não"';
 
     public function checkConfirmedSymptomsRecommendation()
     {
-        $hasDifficultyBreathing = in_array(CoreConversation::DIFICULDADE_RESPIRAR, $this->symptoms);
+        $hasDifficultyBreathing = $this->symptoms->has(SymptomsType::DIFICULDADE_RESPIRAR);
         if ($hasDifficultyBreathing) {
             return $this->sayToLookForEmergyCare();
         }
 
-        $hasFever = in_array(CoreConversation::FREBE, $this->symptoms);
+        $hasFever = $this->symptoms->has(SymptomsType::FEBRE);
         if ($hasFever) {
             return $this->checkFeverRecommendation();
         }
 
         $mildSymptoms = [
-            CoreConversation::TOSSE_SECA,
-            CoreConversation::DORES_CORPO_CANSASO,
-            CoreConversation::DOR_GARGANTA,
-            CoreConversation::CONGESTAO_CORIZA,
-            CoreConversation::DOR_ABDOMINAL_DIARREIA_VOMITO,
+            SymptomsType::TOSSE_SECA,
+            SymptomsType::CANSACO,
+            SymptomsType::DOR_CORPO,
+            SymptomsType::DOR_GARGANTA,
+            SymptomsType::CONGESTAO_NASAL,
+            SymptomsType::CORIZA,
+            SymptomsType::DIARREIA,
+            SymptomsType::SEM_PALADAR,
         ];
-        $countConfirmedMildSymptoms = array_intersect($this->symptoms, $mildSymptoms);
+        $countConfirmedMildSymptoms = $this->symptoms->intersect($mildSymptoms);
         if ($countConfirmedMildSymptoms) {
             return $this->checkMildSymptomRecommendation($countConfirmedMildSymptoms);
         }
@@ -381,7 +395,7 @@ Responda com o número 1 ou 2 referente a sua febre.';
 
     public function checkMildSymptomRecommendation($countSymptoms)
     {
-        if ($countSymptoms >= 2) {
+        if ($countSymptoms->count() >= 2) {
             return $this->sayToStayHomeOrLookForEmergyCare();
         }
 
