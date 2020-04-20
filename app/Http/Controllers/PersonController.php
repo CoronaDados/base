@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
 use App\Helpers\Helper;
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
@@ -10,8 +12,11 @@ use App\Enums\SectorType;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -20,7 +25,7 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function index(Request $request)
     {
@@ -37,7 +42,8 @@ class PersonController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" title="Ver / Editar" data-name="' . $row->name . '" data-id="' . $row->id . '"
+                                data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
                 ->editColumn('name', function ($user) {
@@ -54,14 +60,16 @@ class PersonController extends Controller
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders', 'tests', 'status'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function create()
     {
@@ -77,7 +85,7 @@ class PersonController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function store(Request $request)
     {
@@ -153,31 +161,19 @@ class PersonController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
      */
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
             $companyUser = CompanyUser::with('person', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $monitoringsPerson = $companyUser->person->monitoringsPerson()->get();
+            $countMonitoringsPerson = $companyUser->person->monitoringsPerson()->count();
+            $cases = $companyUser->person->casesPerson()->get()->last();
 
-            foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();
-
-                $symptomsFormatted = Helper::formatSymptoms($monitoring['symptoms']);
-
-                $object->symptoms = $symptomsFormatted[0];
-
-                $object->leader = CompanyUser::with('person')->find($monitoring['user_id'])->person->name;
-                $object->date = Helper::formatDateFromDB($monitoring['created_at']);
-                $object->obs = $symptomsFormatted[1];
-
-                $monitorings[] = $object;
-            }
-
-            return response()->json(compact('companyUser', 'leader', 'monitorings'));
+            return response()->json(compact('companyUser', 'leader', 'countMonitoringsPerson', 'cases'));
         }
     }
 
@@ -197,7 +193,7 @@ class PersonController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {

@@ -29,10 +29,11 @@ class Helper
             'tosse-seca' => 'Tosse seca',
             'cansaco' => 'Cansaço',
             'dor-corpo' => 'Dor no corpo',
-            'dor-garganta' => 'Dor de Garganta',
-            'congestao-nasal' => 'Congestão Nasal',
+            'dor-garganta' => 'Dor de garganta',
+            'congestao-nasal' => 'Congestão nasal',
+            'corrimento-nasal' => 'Corrimento Nasal',
             'diarreia' => 'Diarreia',
-            'dificuldade-respirar' => 'Falta de ar/Dificuldade para respirar',
+            'dificuldade-respirar' => 'Dificuldade para respirar',
             'sem-paladar' => 'Sem paladar'
         ];
 
