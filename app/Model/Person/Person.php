@@ -21,7 +21,6 @@ class Person extends Model
         'sector',
         'birthday',
         'gender',
-        'risk_group',
         'status',
         'cep',
         'ibge',
@@ -41,6 +40,11 @@ class Person extends Model
     public function companyUsers()
     {
         return $this->morphedByMany(CompanyUser::class, 'personable');
+    }
+
+    public function riskGroups()
+    {
+        return $this->hasMany(RiskGroupPerson::class, 'person_id');
     }
 
     public function monitoringPersonDay()

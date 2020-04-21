@@ -152,6 +152,7 @@
                     type: "GET",
                     dataType: 'json',
                     success: function (data) {
+
                         let person = data.companyUser.person,
                             role = data.companyUser.roles[0].name,
                             historyTable = $('.history-table tbody');
@@ -168,7 +169,6 @@
                         $('#phone').val(person.phone).trigger('input');
                         $('#cpf').val(person.cpf).trigger('input');
                         $('#sector').val(person.sector);
-                        $('#risk_group').val(person.risk_group);
                         $('#role').val(role);
                         $('#leader').val(data.leader);
 
@@ -178,6 +178,14 @@
 
                         const $radios = $('input:radio[name=gender]');
                         $radios.filter('[value=' + person.gender + ']').prop('checked', true);
+
+                        const $checkboxes = $('.risk-groups').prop('checked', false);
+
+                        if(person.risk_groups) {
+                            for(risk_group of person.risk_groups) {
+                                $checkboxes.filter('[value="' + risk_group.name + '"]').prop('checked', true);
+                            }
+                        }
 
                         $('.cep-person').val(person.cep).trigger('input');
 
@@ -236,41 +244,45 @@
             $('.save').on('click', function (e) {
                 e.preventDefault();
 
-                $(this).html('Atualizando...').prop('disabled', true);
-
                 let person_id = $('.person_id').val();
 
-                $.ajax({
-                    data: $('#person_form').serialize(),
-                    url: "person/" + person_id,
-                    type: "PUT",
-                    dataType: 'json',
-                    success: function (data) {
-                        table.ajax.reload();
+                if(isValid()) {
+                    $(this).html('Atualizando...').prop('disabled', true);
 
-                        $('.save').html('Salvar').prop('disabled', false);
-                        $('#ajaxModel').modal('hide');
+                    $.ajax({
+                        data: $('#person_form').serialize(),
+                        url: "person/" + person_id,
+                        type: "PUT",
+                        dataType: 'json',
+                        success: function (data) {
+                            table.ajax.reload();
 
-                        Swal.fire({
-                            title: 'Sucesso!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'Fechar'
-                        });
-                    },
-                    error: function (e) {
-                        $('#ajaxModel').modal('hide');
-                        $('.save').html('Salvar').prop('disabled', false);
+                            $('.save').html('Salvar').prop('disabled', false);
+                            $('#ajaxModel').modal('hide');
 
-                        Swal.fire({
-                            title: 'Erro!',
-                            text: 'Erro ao atualizar os dados.',
-                            icon: 'error',
-                            confirmButtonText: 'Fechar'
-                        });
-                    }
-                });
+                            Swal.fire({
+                                title: 'Sucesso!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'Fechar'
+                            });
+                        },
+                        error: function (e) {
+                            $('#ajaxModel').modal('hide');
+                            $('.save').html('Salvar').prop('disabled', false);
+
+                            Swal.fire({
+                                title: 'Erro!',
+                                text: 'Erro ao atualizar os dados.',
+                                icon: 'error',
+                                confirmButtonText: 'Fechar'
+                            });
+                        }
+                    });
+                }
             });
+
+
         });
 
     </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Enums\RiskGroupType;
 use App\Enums\StatusCovidTestType;
 use App\Enums\StatusCovidType;
 use App\Helpers\Helper;
@@ -31,7 +32,6 @@ class CompaniesController extends Controller
         $totalCasesConfirmed = 0;
         $totalCasesConfirmedToday = 0;
         $percentCasesConfirmedToday = 0;
-
 
         return view('company.dashboard', compact([
             'totalPersonsInCompany',

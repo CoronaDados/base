@@ -11,6 +11,7 @@ use App\Enums\RiskGroupType;
 use App\Enums\SectorType;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -56,14 +57,14 @@ class PersonController extends Controller
                 ->make(true);
         }
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
         $tests = StatusCovidTestType::getValues();
         $status = StatusCovidType::getValues();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders', 'tests', 'status'));
+        return view('person.index', compact('riskGroupsType', 'sectors', 'roles', 'leaders', 'tests', 'status'));
     }
 
     /**
@@ -73,12 +74,12 @@ class PersonController extends Controller
      */
     public function create()
     {
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -113,10 +114,15 @@ class PersonController extends Controller
                 'sector' => $request->sector,
                 'birthday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
                 'gender' => $request->gender,
-                'risk_group' => $request->risk_group,
                 'status' => true
             ]
         );
+
+        $riskGroups = array_map(function($riskGroup) {
+           return new RiskGroupPerson(['name' => $riskGroup]);
+        }, $request->risk_groups);
+
+        $person->riskGroups()->saveMany($riskGroups);
 
         $user = CompanyUser::create(
             [
@@ -150,12 +156,12 @@ class PersonController extends Controller
 
         flash('Colaborador cadastrado com sucesso!', 'info');
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
@@ -168,7 +174,7 @@ class PersonController extends Controller
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $companyUser = CompanyUser::with('person', 'roles')->find($id);
+            $companyUser = CompanyUser::with('person', 'person.riskGroups', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
             $countMonitoringsPerson = $companyUser->person->monitoringsPerson()->count();
             $cases = $companyUser->person->casesPerson()->get()->last();
@@ -215,8 +221,14 @@ class PersonController extends Controller
 
                 $person->gender = $request->gender;
                 $person->sector = $request->sector;
-                $person->risk_group = $request->risk_group;
                 $person->save();
+
+                $riskGroups = array_map(function($riskGroup) {
+                    return new RiskGroupPerson(['name' => $riskGroup]);
+                }, $request->risk_groups);
+
+                $person->riskGroups()->delete();
+                $person->riskGroups()->saveMany($riskGroups);
 
                 $companyUser->email = $request->email;
 

@@ -77,12 +77,14 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'ibge' => $row['ibge'],
                 'birthday' => $birthday,
                 'gender' => $row['gender'],
-                'risk_group' => $row['risk_group'],
                 'status' => $row['status'],
                 'state' => $row['state'],
                 'number' => $row['number'],
             ]
         );
+        $person->riskGroups->syncWithoutDetaching([
+            'name' => $row['risk_group']
+        ]);
 
         $user = CompanyUser::firstOrCreate(
             ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
