@@ -46,6 +46,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapPersonRoutes();
         $this->mapMonitoringPersonRoutes();
         $this->mapCasesPersonRoutes();
+        $this->mapChatBotRoutes();
         $this->mapWebRoutes();
     }
 
@@ -97,5 +98,13 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/casesPerson.php'));
+    }
+    
+    protected function mapChatBotRoutes()
+    {
+        Route::domain(env('APP_URL'))
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/chatbot.php'));
     }
 }
