@@ -83,106 +83,106 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header border-0">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h3 class="mb-0">Grupos de Risco</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table align-items-center table-flush">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">Grupo</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col">Suspeitos</th>
-                                        <th scope="col">Negativo</th>
-                                        <th scope="col">Positivos</th>
-                                        <th scope="col">Recuperados</th>
-                                        <th scope="col">Óbitos</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach([['name' => 'Não', 'count' => 1000],['name' => 'Gestante', 'count' => 200],['name' => 'Acima de 60 anos', 'count' => 400],['name' => 'Diabetes', 'count' => 500],['name' => 'Problemas Cardiovasculares', 'count' => 300],['name' => 'Problemas Respiratórios', 'count' => 100],['name' => 'Imunossuprimido', 'count' => 50],] as $riskGroup)
-                                    <tr>
-                                        <th scope="row">
-                                            {{$riskGroup['name']}}
-                                        </th>
-                                        <td>
-                                            {{$riskGroup['count']}}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">60%</span>
-                                                <div>
-                                                    <div class="progress">
-                                                        <div class="progress-bar bg-gradient-warning"
-                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                            aria-valuemax="100" style="width: 60%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">60%</span>
-                                                <div>
-                                                    <div class="progress">
-                                                        <div class="progress-bar bg-gradient-primary"
-                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                            aria-valuemax="100" style="width: 60%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">60%</span>
-                                                <div>
-                                                    <div class="progress">
-                                                        <div class="progress-bar bg-gradient-danger"
-                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                            aria-valuemax="100" style="width: 60%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">60%</span>
-                                                <div>
-                                                    <div class="progress">
-                                                        <div class="progress-bar bg-gradient-success"
-                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                            aria-valuemax="100" style="width: 60%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">60%</span>
-                                                <div>
-                                                    <div class="progress">
-                                                        <div class="progress-bar bg-dark"
-                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                                                            aria-valuemax="100" style="width: 60%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--            <div class="row mt-4">--}}
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="card-header border-0">--}}
+{{--                            <div class="row align-items-center">--}}
+{{--                                <div class="col">--}}
+{{--                                    <h3 class="mb-0">Grupos de Risco</h3>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="table-responsive">--}}
+{{--                            <table class="table align-items-center table-flush">--}}
+{{--                                <thead class="thead-light">--}}
+{{--                                    <tr>--}}
+{{--                                        <th scope="col">Grupo</th>--}}
+{{--                                        <th scope="col">Total</th>--}}
+{{--                                        <th scope="col">Suspeitos</th>--}}
+{{--                                        <th scope="col">Negativo</th>--}}
+{{--                                        <th scope="col">Positivos</th>--}}
+{{--                                        <th scope="col">Recuperados</th>--}}
+{{--                                        <th scope="col">Óbitos</th>--}}
+{{--                                    </tr>--}}
+{{--                                </thead>--}}
+{{--                                <tbody>--}}
+{{--                                    @foreach([['name' => 'Não', 'count' => 1000],['name' => 'Gestante', 'count' => 200],['name' => 'Acima de 60 anos', 'count' => 400],['name' => 'Diabetes', 'count' => 500],['name' => 'Problemas Cardiovasculares', 'count' => 300],['name' => 'Problemas Respiratórios', 'count' => 100],['name' => 'Imunossuprimido', 'count' => 50],] as $riskGroup)--}}
+{{--                                    <tr>--}}
+{{--                                        <th scope="row">--}}
+{{--                                            {{$riskGroup['name']}}--}}
+{{--                                        </th>--}}
+{{--                                        <td>--}}
+{{--                                            {{$riskGroup['count']}}--}}
+{{--                                        </td>--}}
+{{--                                        <td>--}}
+{{--                                            <div class="d-flex align-items-center">--}}
+{{--                                                <span class="mr-2">60%</span>--}}
+{{--                                                <div>--}}
+{{--                                                    <div class="progress">--}}
+{{--                                                        <div class="progress-bar bg-gradient-warning"--}}
+{{--                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"--}}
+{{--                                                            aria-valuemax="100" style="width: 60%;"></div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
+{{--                                        <td>--}}
+{{--                                            <div class="d-flex align-items-center">--}}
+{{--                                                <span class="mr-2">60%</span>--}}
+{{--                                                <div>--}}
+{{--                                                    <div class="progress">--}}
+{{--                                                        <div class="progress-bar bg-gradient-primary"--}}
+{{--                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"--}}
+{{--                                                            aria-valuemax="100" style="width: 60%;"></div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
+{{--                                        <td>--}}
+{{--                                            <div class="d-flex align-items-center">--}}
+{{--                                                <span class="mr-2">60%</span>--}}
+{{--                                                <div>--}}
+{{--                                                    <div class="progress">--}}
+{{--                                                        <div class="progress-bar bg-gradient-danger"--}}
+{{--                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"--}}
+{{--                                                            aria-valuemax="100" style="width: 60%;"></div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
+{{--                                        <td>--}}
+{{--                                            <div class="d-flex align-items-center">--}}
+{{--                                                <span class="mr-2">60%</span>--}}
+{{--                                                <div>--}}
+{{--                                                    <div class="progress">--}}
+{{--                                                        <div class="progress-bar bg-gradient-success"--}}
+{{--                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"--}}
+{{--                                                            aria-valuemax="100" style="width: 60%;"></div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
+{{--                                        <td>--}}
+{{--                                            <div class="d-flex align-items-center">--}}
+{{--                                                <span class="mr-2">60%</span>--}}
+{{--                                                <div>--}}
+{{--                                                    <div class="progress">--}}
+{{--                                                        <div class="progress-bar bg-dark"--}}
+{{--                                                            role="progressbar" aria-valuenow="60" aria-valuemin="0"--}}
+{{--                                                            aria-valuemax="100" style="width: 60%;"></div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </td>--}}
+{{--                                    </tr>--}}
+{{--                                    @endforeach--}}
+{{--                                </tbody>--}}
+{{--                            </table>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
         </div>
     </div>
 </div>
