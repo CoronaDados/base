@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company\Auth;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Mail\NewCompanyMail;
 use App\Model\Company\Company;
@@ -83,7 +84,7 @@ class RegisterController extends Controller
         $person = Person::create(
             [
                 'name' => $data['name'],
-                'cpf' => $this->removePunctuation($data['cpf']),
+                'cpf' => Helper::removePunctuation($data['cpf']),
             ]
         );
 
@@ -114,10 +115,5 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         return view('company.auth.register', ['url' => 'company']);
-    }
-
-    private function removePunctuation($string)
-    {
-        return preg_replace('/[^0-9]/', '', $string);
     }
 }

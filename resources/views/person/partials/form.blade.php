@@ -1,6 +1,6 @@
 <form role="form"  {{ $route ? 'method=POST action=' . $route : ''}} id="person_form">
-    @if(!$isRequired)
-        <input type="hidden" name="person_id" class="person_id">
+    @if(!$isRequired or isset($companyUser))
+        <input type="hidden" name="person_id" class="person_id" value="{{ $companyUser->person->id ?? '' }}">
     @endif
 
     @csrf
@@ -8,17 +8,23 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="name">Nome Completo {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative" required id="name" name="name" value="{{ $companyUser->person->name ?? '' }}"
+                <input type="text" class="form-control form-control-alternative" required id="name" name="name" value="{{ old('name') ?? $companyUser->person->name ?? '' }}"
                        placeholder="Nome Completo {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
 
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="form-group">
+            <div class="form-group @error('email') has-danger @enderror">
                 <label for="email">E-mail {{ $isRequired ? '*' : '' }}</label>
-                <input type="email" class="form-control form-control-alternative" required id="email" name="email" value="{{ $companyUser->email ?? '' }}"
+                <input type="email" class="form-control form-control-alternative @error('email') is-invalid @enderror" required id="email" name="email" value="{{ old('email') ?? $companyUser->email ?? '' }}"
                        placeholder="Email {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+
+                @error('email')
+                    <div class="invalid-feedback" role="alert">
+                        {{ $errors->first('email') }}
+                    </div>
+                @enderror
             </div>
         </div>
     </div>
@@ -26,73 +32,78 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
-                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ $companyUser->person->phone ?? '' }}"
-                       data-mask="(00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ old('phone') ?? $companyUser->person->phone ?? '' }}"
+                       data-mask="+00 (00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
+
         <div class="col-md-3">
-            <div class="form-group">
+             <div class="form-group @error('cpf') has-danger @enderror">
                 <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cpf" required id="cpf" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
-                       data-mask="000.000.000-00" placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                <input type="text" class="form-control form-control-alternative cpf @error('cpf') is-invalid @enderror" name="cpf" id="cpf" value="{{ old('cpf') ?? old('cpf') ?? $companyUser->person->cpf ?? '' }}"
+                    placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}  data-mask="000.000.000-00">
+
+                @error('cpf')
+                    <div class="invalid-feedback" role="alert">
+                        {{ $errors->first('cpf') }}
+                    </div>
+                @enderror
             </div>
-            {{-- <div class="form-group{{ $errors->has('cpf') ? ' has-danger' : '' }}">
-                <label for="cpf">CPF {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cpf{{ $errors->has('cpf') ? ' is-invalid' : '' }}" name="cpf" value="{{ $companyUser->person->cpf ?? '' }}"
-                    placeholder="CPF {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}>
-                @if ($errors->has('cpf'))
-                    <span class="invalid-feedback" style="display: block;" role="alert">
-                        <strong>{{ $errors->first('cpf') }}</strong>
-                    </span>
-                @endif
-            </div> --}}
         </div>
+
         <div class="col-md-3">
             <div class="form-group">
                 <label for="sector">Setor</label>
                 <select name="sector" id="sector" class="custom-select form-control-alternative">
                     <option value="">Setor</option>
                     @foreach($sectors as $sector)
-                        <option value="{{ $sector }}" {{ isset($companyUser->person->sector) ? ($companyUser->person->sector == $sector ? 'selected': '') : '' }}>{{ $sector }}</option>
+                        @if(old('sector') == $sector)
+                            <option value="{{ $sector }}" selected>{{ $sector }}</option>
+                        @else
+                            <option value="{{ $sector }}" {{ isset($companyUser->person->sector) ? ($companyUser->person->sector == $sector ? 'selected': '') : '' }}>{{ $sector }}</option>
+                        @endif
                     @endforeach
                 </select>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
-                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" value="{{ $companyUser->person->cep ?? '' }}"
+                <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" value="{{ old('cep') ?? $companyUser->person->cep ?? '' }}"
                        data-mask="000000-00" id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-4">
-            <div class="form-group">
+             <div class="form-group @error('birthday') has-danger @enderror">
                 <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
-                <input class="form-control form-control-alternative birthday" {{ $isRequired ? 'required' : '' }} placeholder="Data de Nascimento" id="birthday"
-                name="birthday" value="{{ $companyUser->person->birthday_formatted ?? '' }}" type="text">
-            </div>
-            {{-- <div class="form-group{{ $errors->has('birthday') ? ' has-danger' : '' }}">
-                <label for="birthday">Data de Nascimento {{ $isRequired ? '*' : '' }}</label>
-                <input class="form-control form-control-alternative birthday{{ $errors->has('cpf') ? ' is-invalid' : '' }}" type="text" name="birthday" value="{{ $companyUser->person->birthday_formatted ?? '' }}"
+                <input class="form-control form-control-alternative birthday @error('birthday') is-invalid @enderror" type="text" id="birthday" name="birthday" value="{{ old('birthday') ?? $companyUser->person->birthday_formatted ?? '' }}"
                     placeholder="Data de Nascimento" {{ $isRequired ? 'required' : '' }}>
-                @if ($errors->has('birthday'))
-                    <span class="invalid-feedback" style="display: block;" role="alert">
-                        <strong>{{ $errors->first('birthday') }}</strong>
-                    </span>
-                @endif
-            </div> --}}
+
+                 @error('birthday')
+                    <div class="invalid-feedback" role="alert">
+                        {{ $errors->first('birthday') }}
+                    </div>
+                @enderror
+            </div>
         </div>
+
         <div class="col-md-2">
             <div class="form-group">
                 <label>Gênero {{ $isRequired ? '*' : '' }}</label>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="masculino" {{ $isRequired ? 'required' : '' }} name="gender" value="M" class="custom-control-input" {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'M' ? 'checked': '') : '' }}>
+                    <input type="radio" id="masculino" {{ $isRequired ? 'required' : '' }} name="gender" value="M" class="custom-control-input"
+                        {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'M' ? 'checked': '') : '' }}
+                        {{ old('gender') == 'M' ? 'checked' : ''  }}>
                     <label class="custom-control-label" for="masculino">Masculino</label>
                 </div>
                 <div class="custom-control custom-radio">
-                    <input type="radio" id="feminino" {{ $isRequired ? 'required' : '' }} name="gender" value="F" class="custom-control-input" {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'F' ? 'checked': '') : '' }}>
+                    <input type="radio" id="feminino" {{ $isRequired ? 'required' : '' }} name="gender" value="F" class="custom-control-input"
+                        {{ isset($companyUser->person->gender) ? ($companyUser->person->gender == 'F' ? 'checked': '') : '' }}
+                        {{ old('gender') == 'F' ? 'checked' : ''  }}>
                     <label class="custom-control-label" for="feminino">Feminino</label>
                 </div>
             </div>
@@ -110,8 +121,10 @@
 
                     @foreach($riskGroupsType as $k => $v)
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}" class="custom-control-input risk-groups">
+                            <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}"
+                                   {{ (is_array(old('risk_groups')) and in_array($v, old('risk_groups'))) ? ' checked' : '' }} class="custom-control-input risk-groups">
                             <label class="custom-control-label" for="risk_group-{{ $loop->index }}">{{ $v }}</label>
+
                             @if($loop->last)
                                 <div class="invalid-feedback">
                                     Selecione ao menos um grupo de risco.
@@ -129,7 +142,11 @@
                         <select name="role" id="role" class="custom-select form-control-alternative role" {{ $isRequired ? 'required' : '' }}>
                             <option value="" disabled selected>Perfil {{ $isRequired ? '(obrigatório)' : '' }}</option>
                             @foreach($roles as $role)
-                                <option value="{{ $role->name }}" {{ isset($companyUser->roles[0]) ? ($companyUser->roles[0]->name == $role->name ? 'selected': '') : '' }}>{{ $role->name }}</option>
+                                @if(old('role') == $role->name)
+                                    <option value="{{ $role->name }}" selected>{{ $role->name }}</option>
+                                @else
+                                    <option value="{{ $role->name }}" {{ isset($companyUser->roles[0]) ? ($companyUser->roles[0]->name == $role->name ? 'selected': '') : '' }}>{{ $role->name }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
@@ -147,7 +164,11 @@
                     <select name="leader" id="leader" class="custom-select form-control-alternative leader" {{ $isRequired ? 'required' : '' }}>
                         <option value="" disabled selected>Líder responsável {{ $isRequired ? '(obrigatório)' : '' }}</option>
                         @foreach($leaders as $l)
-                            <option value="{{ $l->id }}" {{ isset($leader) ? ($leader == $l->id ? 'selected': '') : '' }}>{{ $l->name }}</option>
+                            @if(old('leader') == $l->id)
+                                <option value="{{ $l->id }}" selected>{{ $l->name }}</option>
+                            @else
+                                <option value="{{ $l->id }}" {{ isset($leader) ? ($leader == $l->id ? 'selected': '') : '' }}>{{ $l->name }}</option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
