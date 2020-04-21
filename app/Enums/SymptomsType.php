@@ -47,7 +47,7 @@ final class SymptomsType extends Enum
             return 'Sem paladar';
         }
         if ($value === self::DIFICULDADE_RESPIRAR) {
-            return 'Falta de ar/Dificuldade para respirar';
+            return 'Dificuldade para respirar';
         }
     }
 

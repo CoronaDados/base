@@ -12,6 +12,7 @@ class MonitoringPerson extends Model
     protected $fillable = [
         'person_id',
         'symptoms',
+        'notes',
         'user_id',
         'type_user',
     ];
@@ -36,6 +37,11 @@ class MonitoringPerson extends Model
 
     public function creator()
     {
-        return $this->belongsTo(CompanyUser::class, 'id', 'user_id');
+        return $this->belongsTo(CompanyUser::class, 'user_id');
+    }
+
+    public function getSymptomsAttribute()
+    {
+        return $this->attributes['symptoms'] ? json_decode($this->attributes['symptoms'])->monitored : [];
     }
 }

@@ -55,11 +55,10 @@ class MonitoringPersonController extends Controller
 
             $monitoringsPerson = $person->monitoringsPerson;
             foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();
-                $symptomsFormatted = Helper::formatSymptoms($monitoring->symptoms);
-                $object->symptoms = $symptomsFormatted[0];
+                $object = new \stdClass();                
+                $object->symptoms = Helper::getSymptomsDescriptionByValues($monitoring->symptoms);
                 $object->date = Helper::formatDateFromDB($monitoring->created_at);
-                $object->obs = $symptomsFormatted[1];
+                $object->notes = $monitoring->notes;
 
                 $user = CompanyUser::find($monitoring->user_id);
                 $object->monitoredBy = $user->person->name;
