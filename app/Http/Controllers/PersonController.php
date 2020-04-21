@@ -74,12 +74,12 @@ class PersonController extends Controller
      */
     public function create()
     {
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**

@@ -1,7 +1,8 @@
-<div class="header bg-gradient-success pb-8 pt-5 pt-md-8">
+<div class="pb-8 pt-5 pt-md-8">
     <div class="container-fluid">
         <div class="header-body">
             <!-- Card stats -->
+
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
                     <div class="card card-stats col-sm-12">
@@ -81,15 +82,15 @@
                     </div>
                 </div>
             </div>
-            <br>
-            <div class="row">
-                <div class="col">
+
+            <div class="row mt-4">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
                                 <div class="col">
                                     <h3 class="mb-0">Grupos de Risco</h3>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -175,7 +176,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    @endforeach                              
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

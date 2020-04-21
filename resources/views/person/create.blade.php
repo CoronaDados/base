@@ -17,40 +17,14 @@
 
 @push('js')
     <script>
-        let c = 1;
-        var addP = (count) =(function (count) {
-            if(count != c)
-                return true;
-            count++;
-            c =count;
-            var newInput = $(document.createElement('div'))
-                .attr("class", 'row');
+        $(function () {
+            $('#person_form').on('submit', function (e) {
+                if(isValid()) {
+                    return;
+                }
 
-            newInput.after().html(
-                '<div class="col-6 p-sm-1">\n' +
-                '    <div class="form-group">\n' +
-                '        <label>Nome</label>\n' +
-                '        <input type="text" name="related_persons['+count+'][name]" placeholder="Nome"\n' +
-                '            onchange="addP('+count+')" class="form-control"/>\n' +
-                '    </div>\n' +
-                '</div>\n' +
-                '<div class="col-3 p-sm-1">\n' +
-                '    <div class="form-group">\n' +
-                '        <label>Telefone</label>\n' +
-                '        <input type="tel" name="related_persons['+count+'][phone]" placeholder="Telefone"\n' +
-                '               class="form-control phone"/>\n' +
-                '    </div>\n' +
-                '</div>\n' +
-                '<div class="col-3 p-sm-1">\n' +
-                '    <div class="form-group">\n' +
-                '        <label>CPF</label>\n' +
-                '        <input type="text" name="related_persons['+count+'][cpf]" placeholder="CPF"\n' +
-                '               class="form-control cpf"/>\n' +
-                '    </div>\n' +
-                '</div>');
-
-            newInput.appendTo("#related_persons");
-            handleMasks();
+                e.preventDefault();
+            });
         });
     </script>
 @endpush
