@@ -43,9 +43,9 @@ class Person extends Model
         return $this->morphedByMany(CompanyUser::class, 'personable');
     }
 
-    public function monitoringPersonDay()
+    public function monitoringPersonToday()
     {
-        return $this->hasOne(MonitoringPerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
+        return $this->monitoringsPerson()->whereDay('created_at', '=', Carbon::today())->first();
     }
 
     public function monitoringsPerson()

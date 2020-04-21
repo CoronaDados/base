@@ -34,6 +34,6 @@ class CasePerson extends Model
 
     public function creator()
     {
-        return $this->belongsTo(CompanyUser::class, 'id', 'user_id');
+        return $this->belongsTo(CompanyUser::class, 'user_id');
     }
 }

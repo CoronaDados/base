@@ -23,8 +23,8 @@
             <div class="timeline timeline-one-side">
                 @foreach($monitorings as $monitoring)
                 <div class="timeline-block">
-                    <span class="timeline-step text-white bg-gradient-warning">
-                        <i class="ni ni-calendar-grid-58"></i>
+                    <span class="timeline-step text-white {{ $monitoring->iconColor }}">
+                        <i class="{{ $monitoring->icon }}"></i>
                     </span>
 
                     <div class="timeline-content">

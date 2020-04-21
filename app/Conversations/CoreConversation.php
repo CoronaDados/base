@@ -2,14 +2,15 @@
 
 namespace App\Conversations;
 
+use App\Enums\ApplicationType;
 use App\Enums\SymptomsType;
+use App\Model\Person\Person;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use Illuminate\Support\Facades\Log;
 
 class CoreConversation extends Conversation
 {
-    protected $userId;
     protected $firstFeelings;
     protected $confirmFeelings;
     protected $symptoms = [];
@@ -26,60 +27,132 @@ class CoreConversation extends Conversation
     protected $cellNumber;
     protected $acceptedTerms;
     protected $protocol;
-    protected $validSymptoms = [];
+    protected $personName;
 
     public function run()
     {
-        $this->userId = $this->bot->getUser()->getId();
-        $this->validSymptoms = SymptomsType::getValues();
+        //
     }
 
     public function finishConversation()
     {
-        $log = 'Informações respondidas pelo usuário|';
-        $log .= 'userID='.$this->userId.'|';
-        $log .= $this->protocol ? 'protocolo='.$this->protocol.'|' : '';
-        $log .= $this->firstFeelings ? 'como_esta_sentindo='.$this->firstFeelings.'|' : '';
-        $log .= $this->confirmFeelings ? 'confirma_sentindo_mal='.$this->confirmFeelings.'|' : '';
-        $log .= $this->symptoms ? 'sintomas='.$this->symptoms->implode(',').'|' : '';
-        $log .= $this->confirmSymptoms ? 'confirma_sintomas='.$this->confirmSymptoms.'|' : '';
-        $log .= $this->levelFever ? 'nivel_febre='.$this->levelFever.'|' : '';
-        $log .= $this->confirmStillHaveSymptoms ? 'confirma_ainda_tem_simtomas='.$this->confirmStillHaveSymptoms.'|' : '';
-        $log .= $this->haveHearOrLungProblem ? 'tem_problema_cardiaco_ou_pulmonar='.$this->haveHearOrLungProblem.'|' : '';
-        $log .= $this->haveDiabetes ? 'tem_diabetes='.$this->haveDiabetes.'|' : '';
-        $log .= $this->isPregnant ? 'gestante='.$this->isPregnant.'|' : '';
-        $log .= $this->name ? 'nome='.$this->name.'|' : '';
-        $log .= $this->age ? 'idade='.$this->age.'|' : '';
-        $log .= $this->cep ? 'cep='.$this->cep.'|' : '';
-        $log .= $this->cpf ? 'cpf='.$this->cpf.'|' : '';
-        $log .= $this->cellNumber ? 'celular='.$this->cellNumber.'|' : '';
-        $log .= $this->acceptedTerms ? 'aceite_termos='.$this->acceptedTerms.'|' : '';
+        // $log = 'Informações respondidas pelo usuário|';
+        // $log .= 'userID='.$this->userId.'|';
+        // $log .= $this->protocol ? 'protocolo='.$this->protocol.'|' : '';
+        // $log .= $this->firstFeelings ? 'como_esta_sentindo='.$this->firstFeelings.'|' : '';
+        // $log .= $this->confirmFeelings ? 'confirma_sentindo_mal='.$this->confirmFeelings.'|' : '';
+        // $log .= $this->symptoms ? 'sintomas='.$this->symptoms->implode(',').'|' : '';
+        // $log .= $this->confirmSymptoms ? 'confirma_sintomas='.$this->confirmSymptoms.'|' : '';
+        // $log .= $this->levelFever ? 'nivel_febre='.$this->levelFever.'|' : '';
+        // $log .= $this->confirmStillHaveSymptoms ? 'confirma_ainda_tem_simtomas='.$this->confirmStillHaveSymptoms.'|' : '';
+        // $log .= $this->haveHearOrLungProblem ? 'tem_problema_cardiaco_ou_pulmonar='.$this->haveHearOrLungProblem.'|' : '';
+        // $log .= $this->haveDiabetes ? 'tem_diabetes='.$this->haveDiabetes.'|' : '';
+        // $log .= $this->isPregnant ? 'gestante='.$this->isPregnant.'|' : '';
+        // $log .= $this->name ? 'nome='.$this->name.'|' : '';
+        // $log .= $this->age ? 'idade='.$this->age.'|' : '';
+        // $log .= $this->cep ? 'cep='.$this->cep.'|' : '';
+        // $log .= $this->cpf ? 'cpf='.$this->cpf.'|' : '';
+        // $log .= $this->cellNumber ? 'celular='.$this->cellNumber.'|' : '';
+        // $log .= $this->acceptedTerms ? 'aceite_termos='.$this->acceptedTerms.'|' : '';
 
-        Log::info($log);
+        // Log::info($log);
     }
 
-    public function translateSymptoms()
+    private function getPersonByPhone()
     {
-        // $translateSymptoms = [
-        //     ['id' => SymptomsType::FEBRE, 'slug' => 'febre'],
-        //     ['id' => SymptomsType::TOSSE_SECA, 'slug' => ''],
-        //     ['id' => SymptomsType::CANSACO, 'slug' => ''],
-        //     ['id' => SymptomsType::DOR_CORPO, 'slug' => ''],
-        //     ['id' => SymptomsType::DOR_GARGANTA, 'slug' => ''],
-        //     ['id' => SymptomsType::CONGESTAO_NASAL, 'slug' => ''],
-        //     ['id' => SymptomsType::CORIZA, 'slug' => ''],
-        //     ['id' => SymptomsType::DIARREIA, 'slug' => ''],
-        //     ['id' => SymptomsType::SEM_PALADAR, 'slug' => ''],
-        //     ['id' => SymptomsType::DIFICULDADE_RESPIRAR, 'slug' => ''],
+        $phone = $this->getFormattedPhone();
 
-            
-        // ];
-        return $this->symptoms;
+        // Como na base pode ter telefones com o 9 adicional
+        // adicionado um cláusula OR com o novo padrão
+        $phoneNewPattern = substr($phone, 0, 2) .'9'. substr($phone, 2);
+
+        // vai buscar por 4899887766 ou 48999887766
+        $person = Person::where('phone', $phone)->orWhere('phone', $phoneNewPattern)->first();
+
+        $this->personName = $person->name ?? null;
+
+        return $person;
+    }
+
+    private function getFormattedPhone()
+    {
+        $phone = str_replace('@c.us', '', $this->bot->getUser()->getId());
+        // TODO: está removendo os 2 primeiros numeros (codigo internacional)
+        // tem que salvar na base esse codigo, dai pode ser removido essa parte abaixo
+        $phone = substr($phone, 2);
+        
+        return $phone;
+    }
+
+    public function saveConfirmedSymptoms()
+    {
+        $person = $this->getPersonByPhone();        
+
+        if (!$person) {
+            return $this->sayPersonNotFound();
+        }
+
+        if ($person->monitoringPersonToday()) {
+            return $this->sayPersonHasMonitoredToday();
+        }
+
+        $person->monitoringsPerson()->create([
+            'application' => ApplicationType::WHATSAPP,
+            'notes' => 'Monitorado por robô',
+            'symptoms' => json_encode(['monitored' => $this->symptoms])
+        ]);
+
+        $this->checkConfirmedSymptomsRecommendation();
+    }
+
+    public function saveWithoutSymptoms()
+    {
+        $person = $this->getPersonByPhone();        
+
+        if (!$person) {
+            return $this->sayPersonNotFound();
+        }
+
+        if ($person->monitoringPersonToday()) {
+            return $this->sayPersonHasMonitoredToday();
+        }
+
+        $person->monitoringsPerson()->create([
+            'application' => ApplicationType::WHATSAPP,
+            'notes' => 'Monitorado por robô. Colaborador não apresenta sintomas.'
+        ]);
+
+        $this->sayAllGood();
+    }
+
+    public function checkPersonExists()
+    {
+        $person = $this->getPersonByPhone();
+
+        if (!$person) {
+            return $this->sayPersonNotFound();
+        }
+
+        if ($person->monitoringPersonToday()) {
+            return $this->sayPersonHasMonitoredToday();
+        }
+
+        return $this->askFeelings();
     }
 
     public function sayWrongAnswer()
     {
         $this->say('Resposta inválida! Por favor, responda corretamente.');
+    }
+
+    public function sayPersonHasMonitoredToday()
+    {
+        $this->say("Olá *{$this->personName}*! Verifiquei que você já foi monitorado hoje. Por favor, entre em contato com o seu superior imediado para verificar a sua situação.");
+    }
+
+    public function sayPersonNotFound()
+    {
+        $this->say('Olá! Não encontrei o seu número de telefone em nossa base de dados. Por favor, entre em contato com o seu superior imediato para atualização do seu cadastro.');
     }
 
     public function askInitialContact()
@@ -176,7 +249,7 @@ class CoreConversation extends Conversation
     {
         $question = 'A decisão de buscar ou não a ajuda médica, independente das informações obtidas aqui na ferramenta, é de conta e risco do usuário. 
 Favor ler os Termos e Condições de Uso acessando esse link: http://www.coronadados.com.br/termo
-Você aceita? Responda "Sim" ou "Não".';
+Você aceita? Responda *Sim* ou *Não*.';
 
         $this->ask($question, [
             [
@@ -204,7 +277,9 @@ Você aceita? Responda "Sim" ou "Não".';
 
     public function askFeelings()
     {
-        $question = 'Como você está se sentindo hoje? Responda somente "Bem" ou "Mal".';
+        $question = "Olá *{$this->personName}*! Eu sou o assistente virtual que monitora sua saúde diariamente para combatermos o Coronavírus.
+Como você está se sentindo hoje? 
+Responda somente *Bem* ou *Mal*.";
 
         $this->ask($question, [
             [
@@ -234,8 +309,8 @@ Você aceita? Responda "Sim" ou "Não".';
     public function askConfirmGoodFeelings()
     {
         $question = 'Então você não está sentindo nenhum desses sintomas: febre, tosse seca, dor no corpo, dificuldade para respirar ou dor de garganta, cansaço, falta de apetite, dor muscular, congestão nasal, coriza, dor abdominal, diarreia, náuseas, vômitos, ou mal estar geral?
-Se não está sentindo nenhum desses sintomas, responda com "Não". 
-Se estiver sentindo algum desses sintomas, responda com "Sim".';
+Se *não* está sentindo nenhum desses sintomas, responda com *Não*. 
+Se estiver sentindo algum desses sintomas, responda com *Sim*.';
 
         $this->ask($question, [
             [
@@ -249,7 +324,7 @@ Se estiver sentindo algum desses sintomas, responda com "Sim".';
                 'pattern' => 'nao|não',
                 'callback' => function () {
                     $this->confirmFeelings = 'nao';
-                    $this->sayAllGood();
+                    $this->saveWithoutSymptoms();
                 }
             ],
             [
@@ -265,16 +340,16 @@ Se estiver sentindo algum desses sintomas, responda com "Sim".';
     public function askConfirmBadFeelings()
     {
         $question = 'Quais desses sintomas vocês está sentindo?
-1- Febre
-2- Tosse seca
-3- Cansaço
-4- Dor no corpo
-5- Dor de Garganta
-6- Congestão nasal
-7- Coriza
-8- Diarreia
-9- Sem paladar
-10- Falta de ar/Dificuldade para respirar
+*1*  Febre
+*2*  Tosse seca
+*3*  Cansaço
+*4*  Dor no corpo
+*5*  Dor de Garganta
+*6*  Congestão nasal
+*7*  Coriza
+*8*  Diarreia
+*9*  Sem paladar
+*10* Falta de ar/Dificuldade para respirar
 
 Responda os números correspondentes ao seus sintomas. 
 (Por exemplo: 1, 3 e 7.)';
@@ -291,7 +366,7 @@ Responda os números correspondentes ao seus sintomas.
             $emptySymptoms = !count($this->symptoms);
 
             // se foi informado um número inválido
-            $invalidSymptoms = $this->symptoms->diff($this->validSymptoms);
+            $invalidSymptoms = $this->symptoms->diff(SymptomsType::getValues());
             
             if ($emptySymptoms || !$invalidSymptoms->isEmpty()) {
                 $this->sayWrongAnswer();
@@ -304,15 +379,16 @@ Responda os números correspondentes ao seus sintomas.
 
     public function askConfirmSymptoms()
     {
-        $question = 'Atenção, a falsa declarção de sintomas é crime e compromete a sua saúde e a da população. Você confirma o envio dessa informação? 
-Responda "Sim" ou "Não"';
+        $question = 'Atenção, a falsa declaração de sintomas é crime e compromete a sua saúde e a da população.
+Você confirma o envio dessa informação? 
+Responda *Sim* ou *Não*';
 
         $this->ask($question, [
             [
                 'pattern' => 'sim',
                 'callback' => function () {
                     $this->confirmSymptoms = 'sim';
-                    $this->checkConfirmedSymptomsRecommendation();
+                    $this->saveConfirmedSymptoms();                    
                 }
             ],
             [
@@ -364,8 +440,8 @@ Responda "Sim" ou "Não"';
     public function checkFeverRecommendation()
     {
         $question = 'Sobre a sua febre, responda:
-1. Faz pouco tempo que começou?
-2. A sua febre é persistente? (está tomando remédio e ela volta).
+*1* Faz pouco tempo que começou?
+*2* A sua febre é persistente? (está tomando remédio e ela volta).
 
 Responda com o número 1 ou 2 referente a sua febre.';
 
@@ -407,31 +483,27 @@ Responda com o número 1 ou 2 referente a sua febre.';
     {
         $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a recomendação é de ficar em casa. 
 Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, procure uma unidade de saúde próximo da sua casa.');
-        $this->finishConversation();
     }
 
     public function sayToStayHomeOrLookForEmergyCare()
     {
         $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a recomendação é de, por enquanto, ficar em casa.
 Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, procure uma unidade de pronto atendimento próximo da sua casa.');
-        $this->finishConversation();
     }
 
     public function sayToLookForEmergyCare()
     {
         $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a orientação é que você procure uma unidade de pronto atendimento para avaliação.');
-        $this->finishConversation();
     }
 
     public function sayAllGood()
     {
         $this->say('Que bom! Aparentemente, você está bem. Até amanhã!');
-        $this->finishConversation();
     }
 
     public function askSymptomatics()
     {
-        $question = 'Boa noite, você respondeu que estava com alguns sintomas. Você continua se sentindo mal? Responda com "Sim" ou "Não".';
+        $question = 'Boa noite, você respondeu que estava com alguns sintomas. Você continua se sentindo mal? Responda com *Sim* ou *Não*.';
 
         $this->ask($question, [
             [
@@ -465,7 +537,7 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
 
     public function askHeartOrLungProblems()
     {
-        $question = 'Você possui algum problema cardíaco (hipertensão) ou pulmonares? Responda com "Sim" ou "Não".';
+        $question = 'Você possui algum problema cardíaco (hipertensão) ou pulmonares? Responda com *Sim* ou *Não*.';
 
         $this->ask($question, [
             [
@@ -494,7 +566,7 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
 
     public function askDiabetes()
     {
-        $question = 'Você possui diabetes? Responda com "Sim" ou "Não".';
+        $question = 'Você possui diabetes? Responda com *Sim* ou *Não*.';
 
         $this->ask($question, [
             [
@@ -523,7 +595,7 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
 
     public function askPregnant()
     {
-        $question = 'Você é gestante? Responda com "Sim" ou "Não".';
+        $question = 'Você é gestante? Responda com *Sim* ou *Não*.';
 
         $this->ask($question, [
             [
@@ -553,6 +625,5 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
     public function sayThanks()
     {
         $this->say('Obrigado por responder!');
-        $this->finishConversation();
     }
 }

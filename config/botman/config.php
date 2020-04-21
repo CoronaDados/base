@@ -1,8 +1,6 @@
 <?php
   
 return [
-   
-    'conversation_cache_time' => 40,
-  
-    'user_cache_time' => 30,
+    'conversation_cache_time' => 3600,
+    'user_cache_time' => 3600,
 ];
