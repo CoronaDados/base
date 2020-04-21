@@ -9,8 +9,10 @@ use App\Enums\SymptomsType;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
+use App\Model\Person\CasePerson;
 use App\Model\Person\MonitoringPerson;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +36,8 @@ class CompaniesController extends Controller
         $totalCasesConfirmedToday = 0;
         $percentCasesConfirmedToday = 0;
 
+        $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
+
         return view('company.dashboard', compact([
             'totalPersonsInCompany',
             'totalPersonsInCompanyMonitoredToday',
@@ -43,7 +47,8 @@ class CompaniesController extends Controller
             'percentMyPersonsMonitoredToday',
             'totalCasesConfirmed',
             'totalCasesConfirmedToday',
-            'percentCasesConfirmedToday'
+            'percentCasesConfirmedToday',
+            'riskGroups'
         ]));
     }
 

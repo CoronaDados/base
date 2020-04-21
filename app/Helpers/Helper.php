@@ -45,6 +45,11 @@ class Helper
         return number_format($value, 2, ',', '.');
     }
 
+    public static function getPercentValueAndFormat($value, $total)
+    {
+        return self::getPercentFormatted(self::getPercentValueFromTotal($value, $total));
+    }
+
     public static function getSymptomsDescriptionByValues($symptoms)
     {
         $symptomsDescription = [];
