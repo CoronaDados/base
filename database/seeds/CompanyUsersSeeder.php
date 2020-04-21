@@ -13,11 +13,12 @@ class CompanyUsersSeeder extends Seeder
     {
         DB::table('company_users')->insert([
             'company_id' => 1,
-            'name' => 'Teste',
-            'email' => 'teste@empresa.com',
-            'email_verified_at' => now(),
+            'person_id' => 1,
+            'email' => 'usuario@empresa.com',
             'is_admin' => 1,
             'password' => Hash::make('secret'),
+            'force_new_password' => 0,
+            'email_verified_at' => now(),
             'created_at' => now(),
             'updated_at' => now()
         ]);
