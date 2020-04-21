@@ -334,12 +334,12 @@ Responda "Sim" ou "Não"';
 
     public function checkConfirmedSymptomsRecommendation()
     {
-        $hasDifficultyBreathing = $this->symptoms->has(SymptomsType::DIFICULDADE_RESPIRAR);
+        $hasDifficultyBreathing = $this->symptoms->contains(SymptomsType::DIFICULDADE_RESPIRAR);
         if ($hasDifficultyBreathing) {
             return $this->sayToLookForEmergyCare();
         }
 
-        $hasFever = $this->symptoms->has(SymptomsType::FEBRE);
+        $hasFever = $this->symptoms->contains(SymptomsType::FEBRE);
         if ($hasFever) {
             return $this->checkFeverRecommendation();
         }
@@ -354,6 +354,7 @@ Responda "Sim" ou "Não"';
             SymptomsType::DIARREIA,
             SymptomsType::SEM_PALADAR,
         ];
+        
         $countConfirmedMildSymptoms = $this->symptoms->intersect($mildSymptoms);
         if ($countConfirmedMildSymptoms) {
             return $this->checkMildSymptomRecommendation($countConfirmedMildSymptoms);
