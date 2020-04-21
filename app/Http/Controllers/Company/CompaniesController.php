@@ -2,125 +2,160 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Enums\RiskGroupType;
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
+use App\Enums\SymptomsType;
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UserController;
-use App\Imports\CompanyUsersImport;
-use App\Imports\PersonsImport;
 use App\Model\Company\Company;
-use App\Model\Company\CompanyUser;
-use App\Model\People\CasePeople;
-use App\Model\People\People;
+use App\Model\Person\MonitoringPerson;
+use App\Model\Person\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
 {
-
-
     public function dashboard()
     {
-        $peoplesCompany = auth('company')->user()->countPersons();
-        $peoplesUser =   auth('company')->user()->persons()->count();
+        $currentUser = auth('company')->user();
 
-        return view('company.dashboard',compact(['peoplesCompany','peoplesUser']));
+        $totalPersonsInCompany = $currentUser->countPersons();
+        $totalPersonsInCompanyMonitoredToday = $currentUser->countPersonsInCompanyMonitoredToday();
+        $percentPersonsInCompanyMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalPersonsInCompanyMonitoredToday, $totalPersonsInCompany));
+
+        $totalMyPersons = $currentUser->persons()->count();
+        $totalMyPersonsMonitoredToday = $currentUser->countMyPersonsMonitoredToday();
+        $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
+
+        $totalCasesConfirmed = 0;
+        $totalCasesConfirmedToday = 0;
+        $percentCasesConfirmedToday = 0;
+
+        return view('company.dashboard', compact([
+            'totalPersonsInCompany',
+            'totalPersonsInCompanyMonitoredToday',
+            'percentPersonsInCompanyMonitoredToday',
+            'totalMyPersons',
+            'totalMyPersonsMonitoredToday',
+            'percentMyPersonsMonitoredToday',
+            'totalCasesConfirmed',
+            'totalCasesConfirmedToday',
+            'percentCasesConfirmedToday'
+        ]));
     }
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
-     */
-
-    public function addPerson(Request $request)
+    public function tips()
     {
-        if ($request->ajax()) {
-            if(auth('company')->user()->can('Ver Usuários')){
-                $data =  auth('company')->user()->personsInCompany();
-            }else{
-                $data =  auth('company')->user()->persons()->get();
-            }
+        return view('company.tips');
+    }
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"data-original-title="Ver" class="edit btn btn-primary btn-sm editMonitoring">Ver / Editar</a>';
-                        return $btn;
-                            })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('company.person.create');
+    public function help()
+    {
+        return view('company.help');
     }
 
     public function monitoring(Request $request)
     {
+        $route = Route::currentRouteName();
+
         if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePeopleDay')->get();
-            foreach ($datas as $data){
-                if(!$data->casePeopleDay()->exists()){
-                    $person[] = $data;
-                }
+            if ($request->route()->getName() === 'company.monitoringAll') {
+                $options = ['byDay'];
+                $datas =  auth('company')->user()->monitoringsPerson($options);
+            } else {
+                $options = ['byLeader', 'byDay'];
+                $datas =  auth('company')->user()->monitoringsPerson($options);
             }
 
-            return DataTables::of($person)
+            return DataTables::of($datas)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="'.$row->name.' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>'. $row->code.'</strong>" data-status="'.$row->status.'"  data-id="'.$row->id.'" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
-                    //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whatsapp com esse código: <strong>' . Helper::getPersonCode($row->person_id) . '</strong>" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
+                })
+                ->editColumn('name', function ($person) {
+                    return Helper::getFirstAndLastName($person->name);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('company.monitoring');
+        
+        $validSymptoms = SymptomsType::getInstances();
+
+        return view('company.monitoring', compact('route', 'validSymptoms'));
+    }
+
+    public function monitoringHistory(Request $request)
+    {
+        if ($request->ajax()) {
+
+            if (auth()->user()->hasRole('Admin')) {
+                $options = ['getHistory'];
+            } else {
+                $options = ['getHistory', 'byLeader'];
+            }
+            
+            $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
+
+            return DataTables::of($monitoringsPersons)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $buttons = '<button type="button" rel="tooltip" class="table-action btn btn-info btn-icon btn-sm see-details" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Detalhes" data-original-title="Detalhes">
+                                    <i class="fas fa-address-card"></i>
+                                </button>';
+
+                    $buttons .= '<button type="button" rel="tooltip" class="table-action btn btn-success btn-icon btn-sm btn-simple set-diagnostic" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Diagnosticar" data-original-title="Diagnosticar">
+                                    <i class="fas fa-user-md"></i>
+                                </button>';
+
+                    return $buttons;
+                })
+                ->editColumn('name', function ($user) {
+                    return Helper::getFirstAndLastName($user->name);
+                })
+                ->editColumn('symptoms', function ($user) {
+
+                    $symptoms = json_decode($user->symptoms) ?? null;
+
+                    if (!isset($symptoms->monitored)) {
+                        return 'Sem sintomas';
+                    }
+
+                    $allSymptoms = '<ul class="mb-0 pl-1">';
+                    foreach ($symptoms->monitored as $symptom) {
+                        $allSymptoms .= '<li>' . SymptomsType::getDescription($symptom) . '</li>';
+                    }
+                    $allSymptoms .= '</ul>';
+
+                    return $allSymptoms;
+                })
+                ->editColumn('status_covid', function ($case) {
+                    return $case->status_covid ?? 'Não foi diagnosticado';
+                })
+                ->rawColumns(['symptoms', 'action'])
+                ->make(true);
+        }
+
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
+
+        return view('company.history', compact('tests', 'status'));
     }
 
     public function storeMonitoring($id, Request $request)
     {
-        if(!$person = auth('company')->user()->persons()->where('id','=',$id)->first()){
-            return response()->json('error',401);
-        };
-        $monitoring = new CasePeople(['status' => json_encode($request->all())]);
-
-        $person->createCasePeopleDay()->save($monitoring);
+        $person = Person::find($id);
+        $symptoms = json_encode(['monitored' => $request->symptoms]);
+        $person->monitoringsPerson()->create(['symptoms' => $symptoms, 'notes' => $request->notes]);
 
         return true;
-
     }
-
-    public function storePeople(Request $request)
-    {
-
-        $people = new People();
-        $people->name = $request->name;
-        $people->email = $request->email;
-        $people->cpf = $request->cpf;
-        $people->phone = $request->phone;
-        $people->sector = $request->sector;
-        $people->bithday = $request->bithday;
-        $people->gender = $request->gender;
-        $people->risk_group = $request->risk_group;
-        $people->status = $request->status;
-        $people->cep = $request->cep;
-        $people->ibge = $request->ibge;
-        $people->state = $request->state;
-        $people->city = $request->city;
-        $people->neighborhood = $request->neighborhood;
-        $people->street = $request->street;
-        $people->complement = $request->complement;
-        $people->more = $request->more;
-        //$people->save();
-        auth('company')->user()->persons()->save($people);
-        //$peoples = auth('company')->user()->persons()->get();
-        flash('Colaborador cadastrado com sucesso', 'info');
-        return view('company.person.create');
-    }
-
 
     /**
      * Show the form for creating a new resource.
@@ -136,32 +171,31 @@ class CompaniesController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function multiMonitoring(Request $request)
     {
+        if ($request->has('id')) {
+        
+            $persons = Person::whereIn('id', $request->id)->get();
 
-        if(!$persons = auth('company')->user()->persons()->whereIn('id',$request->id)->get()){
-            return response()->json('error',401);
-        };
-
-
-
-        foreach ($persons as $person) {
-            $monitoring = new CasePeople(['status' => 'ok']);
-            $person->createCasePeopleDay()->save($monitoring);
+            foreach ($persons as $person) {
+                $person->monitoringsPerson()->create(['symptoms' => null, 'notes' => 'Sem Sintomas']);
+            }
+            
+            flash('Atualizado com sucesso', 'info');
+    
+            return redirect(route('company.monitoring'));
         }
-       flash('Atualizado com sucesso','info');
-       return redirect(route('company.monitoring'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Model\Company\Company  $companies
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Company $companies)
+    public function show(Request $request, $id)
     {
         //
     }
@@ -198,41 +232,5 @@ class CompaniesController extends Controller
     public function destroy(Company $companies)
     {
         //
-    }
-
-    public function importView()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        return view('company.import');
-    }
-
-    public function import()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        Excel::queueImport(new PersonsImport(),request()->file('file'));
-
-        return back();
-    }
-
-    public function importView2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        return view('company.import2');
-    }
-
-    public function import2()
-    {
-        if(!auth()->user()->isAdmin){
-            return back();
-        }
-        Excel::queueImport(new CompanyUsersImport(),request()->file('file'));
-
-        return back();
     }
 }

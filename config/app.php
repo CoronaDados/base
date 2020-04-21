@@ -13,7 +13,18 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'CoronaDados'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOM VARIABLES
+    |--------------------------------------------------------------------------
+    */
+    'google_tag_manager_id' => env('GOOGLE_TAG_MANAGER_ID', ''),
+    'landing_page_url' => env('LANDING_PAGE_URL', ''),
+    'email_list_info' => env('EMAIL_LIST_INFOS', ''),
+    'email_list_error' => env('EMAIL_LIST_ERROR', ''),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +78,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Sao_Paulo',
 
     /*
     |--------------------------------------------------------------------------
@@ -226,6 +237,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Helper' => App\Helpers\Helper::class
 
     ],
 

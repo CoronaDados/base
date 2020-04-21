@@ -42,13 +42,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        $this->mapApiRoutes();
-
-        $this->mapWebRoutes();
-
         $this->mapCompanyRoutes();
-
-        //
+        $this->mapPersonRoutes();
+        $this->mapMonitoringPersonRoutes();
+        $this->mapCasesPersonRoutes();
+        $this->mapChatBotRoutes();
+        $this->mapWebRoutes();
     }
 
     /**
@@ -69,26 +68,43 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapCompanyRoutes()
     {
-        Route::domain(env('COMPANY_URL'))
+        Route::domain(env('APP_URL'))
             ->middleware('web')
             ->name('company.')
-            ->namespace($this->namespace.'\Company')
+            ->namespace($this->namespace . '\Company')
             ->group(base_path('routes/company.php'));
     }
 
-
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
-    protected function mapApiRoutes()
+    protected function mapPersonRoutes()
     {
-        Route::prefix('api')
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/person.php'));
+    }
+
+    protected function mapMonitoringPersonRoutes()
+    {
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/monitoringPerson.php'));
+    }
+
+
+    protected function mapCasesPersonRoutes()
+    {
+        Route::domain(env('APP_URL'))
+            ->middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/casesPerson.php'));
+    }
+    
+    protected function mapChatBotRoutes()
+    {
+        Route::domain(env('APP_URL'))
             ->middleware('api')
             ->namespace($this->namespace)
-            ->group(base_path('routes/api.php'));
+            ->group(base_path('routes/chatbot.php'));
     }
 }

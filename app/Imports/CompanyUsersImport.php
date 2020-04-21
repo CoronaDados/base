@@ -2,11 +2,13 @@
 
 namespace App\Imports;
 
+use App\Mail\ImportUsersErrorMail;
 use App\Model\Company\CompanyUser;
+use App\Model\Person\Person;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -21,11 +23,10 @@ use Maatwebsite\Excel\Row;
 class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading, ShouldQueue, WithEvents, WithBatchInserts, SkipsOnFailure
 {
 
-    use Importable ,SkipsFailures;
+    use Importable, SkipsFailures;
 
     public function __construct(CompanyUser $importedBy, $role)
     {
-//        set_time_limit(500000);
         $this->importedBy = $importedBy;
         $this->role = $role;
     }
@@ -33,9 +34,8 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     public function registerEvents(): array
     {
         return [
-            ImportFailed::class => function(ImportFailed $event) {
-            Log::error($event);
-             //   $this->importedBy->notify(new ImportHasFailedNotification);
+            ImportFailed::class => function (ImportFailed $event) {
+                Mail::to(config('app.email_list_error'))->send(new ImportUsersErrorMail($this->importedBy, $event));
             },
         ];
     }
@@ -43,23 +43,62 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     public function onRow(Row $row)
     {
         $rowIndex = $row->getIndex();
-        $row      = $row->toArray();
-        if(Str::length($row['name']) > 1 && Str::length($row['email']) > 1 && Str::length($row['cpf']) > 1) {
 
-            $password = preg_replace('/[^0-9]/', '', $row['cpf']);
+        $row = array_filter(
+            $row->toArray(),
+            function ($k) {
+                return $k != "";
+            },
+            ARRAY_FILTER_USE_KEY
+        );
 
-            $user = CompanyUser::firstOrCreate(
-                ['cpf' => $row['cpf'], 'company_id' => $this->importedBy->company_id],
-                [
-                    'name' => $row['name'],
-                    'email' => $row['email'],
-                    'cpf' => $row['cpf'],
-                    'phone' => $row['phone'],
-                    'is_admin' => false,
-                    'password' => Hash::make($password),
-                ]);
-            $user->assignRole($this->role);
+        $cpf = $this->removePunctuation($row['cpf']);
+        $cpf_lider = $this->removePunctuation($row['cpf_lider']);
+        $cep = $this->removePunctuation($row['cep']);
+        $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
+        $email = $row['email'];
+
+        if ($email == '' || $cpf == '') {
+            return;
         }
+
+        $person = Person::updateOrCreate(
+            ['cpf' => $cpf],
+            [
+                'name' => $row['name'],
+                'cpf' => $cpf,
+                'street' => $row['street'],
+                'neighborhood' => $row['neighborhood'],
+                'complement' => $row['complement'],
+                'cep' => $cep,
+                'phone' => $row['phone'],
+                'city' => $row['city'],
+                'sector' => null,
+                'ibge' => $row['ibge'],
+                'birthday' => $birthday,
+                'gender' => $row['gender'],
+                'status' => $row['status'],
+                'state' => $row['state'],
+                'number' => $row['number'],
+            ]
+        );
+        $person->riskGroups->syncWithoutDetaching([
+            'name' => $row['risk_group']
+        ]);
+
+        $user = CompanyUser::firstOrCreate(
+            ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],
+            [
+                'email' => $email,
+                'password' => Hash::make($cpf),
+                'email_verified_at' => now(),
+                'force_new_password' => true,
+            ]
+        );
+        $user->email = $email;
+        $user->save();
+
+        $user->assignRole($this->role);
     }
 
     public function chunkSize(): int
@@ -72,4 +111,8 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         return 1000;
     }
 
+    private function removePunctuation($string)
+    {
+        return preg_replace('/[^0-9]/', '', $string);
+    }
 }

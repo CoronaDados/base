@@ -21,23 +21,7 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-                    <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">{{ __('Olá!') }}</h6>
-                    </div>
-                    <a href="#" class="dropdown-item">
-                        <i class="ni ni-settings-gear-65"></i>
-                        <span>{{ __('Configurações') }}</span>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="ni ni-support-16"></i>
-                        <span>{{ __('Ajuda') }}</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ route('company.logout') }}" class="dropdown-item" onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                        <i class="ni ni-user-run"></i>
-                        <span>{{ __('Sair') }}</span>
-                    </a>
+                    @include('company.layouts.navbars.partials.user')
                 </div>
             </li>
         </ul>
@@ -69,63 +53,77 @@
                     </a>
                 </li>
                 @can('Cadastrar Colaborador')
-                    <li class="nav-item {{request()->is('person/add') ? 'active' : ''}}">
-                        <a class="nav-link" href="{{ route('company.person.create') }}">
-                            <i class="ni ni-single-02 text-blue"></i> {{ __('Cadastro de colaboradores') }}
-                        </a>
-                    </li>
-                @endcan
-                @can('Monitorar Colaborador')
-                    <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
-                        <a class="nav-link" href="{{ route('company.monitoring') }}">
-                            <i class="ni ni-pin-3 text-orange"></i> {{ __('Monitoramento diário') }}
-                        </a>
-                    </li>
-                @endcan
-                @canany('Ver Usuários','Ver Funções')
-                    <li class="nav-item {{request()->segment(1) === 'users' ? 'active' : ''}}">
-                        <a class="nav-link" href="#navbar-users" data-toggle="collapse" role="button"
-                           aria-expanded="false"
-                           aria-controls="navbar-users">
-                            <i class="fa fa-users"></i>
-                            <span class="nav-link-text">{{ __('Usuários') }}</span>
+                    <li class="nav-item {{( request()->is('person*') || request()->segment(1) === 'roles') ? 'active' : ''}}">
+                        <a class="nav-link" href="#navbar-colaboradores" data-toggle="collapse" role="button"
+                            aria-expanded="{{ request()->is('person*') || request()->segment(1) === 'roles' ? 'true' : 'false'}}"
+                            aria-controls="navbar-colaboradores">
+                            <i class="ni ni-single-02 text-blue"></i>
+                            <span class="nav-link-text">{{ __('Colaboradores') }}</span>
                         </a>
 
-                        <div class="collapse " id="navbar-users">
+                        <div class="collapse {{ request()->is('person*') || request()->segment(1) === 'roles' ? 'show' : ''}}" id="navbar-colaboradores">
                             <ul class="nav nav-sm flex-column">
-                                @can('Ver Usuários')
-                                    <li class="nav-item {{request()->is('users') ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.index') }}">
-                                            {{ __('Ver') }}
+
+                                <li class="nav-item {{request()->is('person') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('person.index') }}">
+                                        {{ __('Listar') }}
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{request()->is('person/create') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('person.create') }}">
+                                        {{ __('Cadastrar') }}
+                                    </a>
+                                </li>
+
+                                @if(auth('company')->user()->is_admin)
+                                    <li class="nav-item {{ request()->is('person/import') ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('person.import') }}">
+                                            {{ __('Importar') }}
                                         </a>
                                     </li>
-                                @endcan
-                                @can('Cadastrar Usuários')
-                                    <li class="nav-item {{request()->is('users/create') ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.create') }}">
-                                            {{ __('Novo') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Ver Funções')
-                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.roles.index') }}">
-                                            {{ __('Funções') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Cadastrar Usuários')
-                                    <li class="nav-item {{request()->segment(1) === 'roles' ? 'active' : ''}}">
-                                        <a class="nav-link" href="{{ route('company.users.import') }}">
-                                            {{ __('Importar Usuários') }}
-                                        </a>
-                                    </li>
-                                @endcan
+                                @endif
+
                             </ul>
                             <hr class="my-3">
                         </div>
                     </li>
-                @endcanany
+                @endcan
+                @can('Monitorar Colaborador')
+                    <li class="nav-item {{request()->is('companies/monitoring*') ? 'active' : ''}}">
+                        <a class="nav-link" href="#navbar-monitoring" data-toggle="collapse" role="button"
+                           aria-expanded="{{request()->is('companies/monitoring*') ? 'true' : 'false'}}"
+                           aria-controls="navbar-monitoring">
+                            <i class="ni ni-pin-3 text-orange"></i>
+                            <span class="nav-link-text">{{ __('Monitoramento diário') }}</span>
+                        </a>
+                        <div class="collapse {{request()->is('companies/monitoring*') ? 'show' : ''}}" id="navbar-monitoring">
+                            <ul class="nav nav-sm flex-column">
+
+                                <li class="nav-item {{request()->is('companies/monitoring') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.monitoring') }}">
+                                        {{ __('Monitorar') }}
+                                    </a>
+                                </li>
+
+                                @if(auth('company')->user()->hasRole('Admin'))
+                                    <li class="nav-item {{request()->is('companies/monitoringAll') ? 'active' : ''}}">
+                                        <a class="nav-link" href="{{ route('company.monitoringAll') }}">
+                                            {{ __('Monitorar Todos') }}
+                                        </a>
+                                    </li>
+                                @endif
+
+                                <li class="nav-item {{request()->is('companies/monitoring/history') ? 'active' : ''}}">
+                                    <a class="nav-link" href="{{ route('company.monitoring.history') }}">
+                                        {{ __('Histórico') }}
+                                    </a>
+                                </li>
+                            </ul>
+                            <hr class="my-3">
+                        </div>
+                    </li>
+                @endcan
                 <li class="nav-item">
                     <a href="{{ route('company.logout') }}" class="nav-link" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
@@ -137,8 +135,8 @@
             <hr class="my-3">
             <ul class="navbar-nav" style="position: absolute; bottom: 0;">
                 <li class="nav-item  bg-info">
-                    <a class="nav-link text-white" href="#" target="_blank">
-                        <i class="ni ni-cloud-download-95"></i>Big Data
+                    <a class="nav-link text-white" href="http://coronadados.dd4b.com.br/" target="_blank">
+                        <i class="ni ni-map-big"></i>Big Data
                     </a>
                 </li>
             </ul>
