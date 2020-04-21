@@ -2,6 +2,7 @@
 
 namespace App\Model\Person;
 
+use App\Enums\ApplicationType;
 use App\Model\Company\CompanyUser;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,8 @@ class MonitoringPerson extends Model
     protected $fillable = [
         'person_id',
         'symptoms',
+        'notes',
+        'application',
         'user_id',
         'type_user',
     ];
@@ -24,8 +27,8 @@ class MonitoringPerson extends Model
     {
         parent::boot();
         static::saving(function ($model) {
-            $model->user_id = auth()->id();
-            $model->user_type = get_class(auth()->user());
+            $model->user_id = auth()->id() ?? null;
+            $model->user_type = auth()->user() ? get_class(auth()->user()) : null;
         });
     }
 
@@ -36,6 +39,16 @@ class MonitoringPerson extends Model
 
     public function creator()
     {
-        return $this->belongsTo(CompanyUser::class, 'id', 'user_id');
+        return $this->belongsTo(CompanyUser::class, 'user_id');
+    }
+
+    public function getSymptomsAttribute()
+    {
+        return $this->attributes['symptoms'] ? json_decode($this->attributes['symptoms'])->monitored : [];
+    }
+
+    public function isWhatsApp()
+    {
+        return $this->application == ApplicationType::WHATSAPP;
     }
 }

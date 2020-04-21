@@ -7,7 +7,7 @@ class MorningConversation extends CoreConversation
     public function run()
     {
         parent::run();
-        $this->protocol = 'morning-protocol';
-        $this->askFeelings();
+        $this->protocol = 'morning-protocol';        
+        $this->checkPersonExists();
     }
 }

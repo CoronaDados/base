@@ -55,14 +55,13 @@ class MonitoringPersonController extends Controller
 
             $monitoringsPerson = $person->monitoringsPerson;
             foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();
-                $symptomsFormatted = Helper::formatSymptoms($monitoring->symptoms);
-                $object->symptoms = $symptomsFormatted[0];
+                $object = new \stdClass();                
+                $object->symptoms = Helper::getSymptomsDescriptionByValues($monitoring->symptoms);
                 $object->date = Helper::formatDateFromDB($monitoring->created_at);
-                $object->obs = $symptomsFormatted[1];
-
-                $user = CompanyUser::find($monitoring->user_id);
-                $object->monitoredBy = $user->person->name;
+                $object->notes = $monitoring->notes;
+                $object->monitoredBy = $monitoring->creator ? $monitoring->creator->person->name : $monitoring->application;
+                $object->icon = $monitoring->isWhatsApp() ? 'fab fa-whatsapp' : 'ni ni-calendar-grid-58';
+                $object->iconColor = $monitoring->isWhatsApp() ? 'bg-gradient-success' : 'bg-gradient-warning';
 
                 $monitorings[] = $object;
             }
@@ -74,9 +73,7 @@ class MonitoringPersonController extends Controller
                 $caseObject->status_test = $case->status_test;
                 $caseObject->date = Helper::formatDateFromDB($case->created_at);
                 $caseObject->notes = $case->notes;
-
-                $user = CompanyUser::find($case->user_id);
-                $caseObject->diagnosedBy = $user->person->name;
+                $caseObject->diagnosedBy = $case->creator ? $case->creator->person->name : '';
 
                 $cases[] = $caseObject;
             }

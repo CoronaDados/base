@@ -47,14 +47,9 @@ class Person extends Model
         return $this->hasMany(RiskGroupPerson::class, 'person_id');
     }
 
-    public function monitoringPersonDay()
+    public function monitoringPersonToday()
     {
-        return $this->hasOne(MonitoringPerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
-    }
-
-    public function createMonitoringPersonDay()
-    {
-        return $this->hasMany(MonitoringPerson::class, 'person_id');
+        return $this->monitoringsPerson()->whereDay('created_at', '=', Carbon::today())->first();
     }
 
     public function monitoringsPerson()
@@ -74,6 +69,6 @@ class Person extends Model
 
     public function casesPerson()
     {
-        return $this->hasMany(CasePerson::class, 'person_id');
+        return $this->hasMany(CasePerson::class, 'person_id')->orderBy('created_at', 'desc');
     }
 }

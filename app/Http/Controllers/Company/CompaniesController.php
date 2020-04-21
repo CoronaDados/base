@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Enums\RiskGroupType;
 use App\Enums\StatusCovidTestType;
 use App\Enums\StatusCovidType;
+use App\Enums\SymptomsType;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
@@ -82,7 +83,10 @@ class CompaniesController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('company.monitoring', compact('route'));
+        
+        $validSymptoms = SymptomsType::getInstances();
+
+        return view('company.monitoring', compact('route', 'validSymptoms'));
     }
 
     public function monitoringHistory(Request $request)
@@ -91,11 +95,11 @@ class CompaniesController extends Controller
 
             if (auth()->user()->hasRole('Admin')) {
                 $options = ['getHistory'];
-                $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
             } else {
                 $options = ['getHistory', 'byLeader'];
-                $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
             }
+            
+            $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
 
             return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
@@ -115,23 +119,21 @@ class CompaniesController extends Controller
                 ->editColumn('name', function ($user) {
                     return Helper::getFirstAndLastName($user->name);
                 })
-                ->editColumn('symptoms', function ($symptoms) {
+                ->editColumn('symptoms', function ($user) {
 
-                    $formattedSymptoms = Helper::formatSymptoms($symptoms->symptoms)[0];
+                    $symptoms = json_decode($user->symptoms) ?? null;
 
-                    if ($formattedSymptoms) {
-                        $allSymptoms = '<ul class="mb-0 pl-1">';
-                        foreach ($formattedSymptoms as $symptom) {
-                            $allSymptoms .= '<li>' . $symptom . '</li>';
-                        }
-                        $allSymptoms .= '</ul>';
-
-                        return $allSymptoms;
-                    } else {
-                        $obs = (array) json_decode($symptoms->symptoms);
-
-                        return $obs['obs'];
+                    if (!isset($symptoms->monitored)) {
+                        return 'Sem sintomas';
                     }
+
+                    $allSymptoms = '<ul class="mb-0 pl-1">';
+                    foreach ($symptoms->monitored as $symptom) {
+                        $allSymptoms .= '<li>' . SymptomsType::getDescription($symptom) . '</li>';
+                    }
+                    $allSymptoms .= '</ul>';
+
+                    return $allSymptoms;
                 })
                 ->editColumn('status_covid', function ($case) {
                     return $case->status_covid ?? 'Não foi diagnosticado';
@@ -149,8 +151,8 @@ class CompaniesController extends Controller
     public function storeMonitoring($id, Request $request)
     {
         $person = Person::find($id);
-        $monitoring = new MonitoringPerson(['symptoms' => json_encode($request->all())]);
-        $person->createMonitoringPersonDay()->save($monitoring);
+        $symptoms = json_encode(['monitored' => $request->symptoms]);
+        $person->monitoringsPerson()->create(['symptoms' => $symptoms, 'notes' => $request->notes]);
 
         return true;
     }
@@ -173,16 +175,18 @@ class CompaniesController extends Controller
      */
     public function multiMonitoring(Request $request)
     {
-        $persons = Person::whereIn('id', $request->id)->get();
+        if ($request->has('id')) {
+        
+            $persons = Person::whereIn('id', $request->id)->get();
 
-        foreach ($persons as $person) {
-            $monitoring = new MonitoringPerson(['symptoms' => '{"obs":"Sem Sintomas"}']);
-            $person->createMonitoringPersonDay()->save($monitoring);
+            foreach ($persons as $person) {
+                $person->monitoringsPerson()->create(['symptoms' => null, 'notes' => 'Sem Sintomas']);
+            }
+            
+            flash('Atualizado com sucesso', 'info');
+    
+            return redirect(route('company.monitoring'));
         }
-
-        flash('Atualizado com sucesso', 'info');
-
-        return redirect(route('company.monitoring'));
     }
 
     /**
