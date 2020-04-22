@@ -288,7 +288,7 @@
 
                                 Swal.fire({
                                     title: 'Ops!',
-                                    text: 'Erro ao atualizar os dados. Por favor tente novamente',
+                                    text: 'Erro ao atualizar os dados. Por favor tente novamente.',
                                     icon: 'error',
                                     confirmButtonText: 'Fechar'
                                 });

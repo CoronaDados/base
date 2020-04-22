@@ -5,12 +5,12 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h3>Teste</h3>
+            <h3>Teste *</h3>
 
             @foreach($tests as $test)
                 <div class="form-group">
                     <div class="custom-control custom-radio mb-3">
-                        <input name="status_test" class="custom-control-input status-test" id="test-{{$loop->index}}" value="{{ $test }}" type="radio">
+                        <input name="status_test" class="custom-control-input status-test" required id="test-{{$loop->index}}" value="{{ $test }}" type="radio">
                         <label class="custom-control-label" for="test-{{$loop->index}}">{{ $test }}</label>
                     </div>
                 </div>
@@ -18,12 +18,12 @@
         </div>
 
         <div class="col-md-6">
-            <h3>Situação atual</h3>
+            <h3>Situação atual *</h3>
 
             @foreach($status as $s)
                 <div class="form-group">
                     <div class="custom-control custom-radio mb-3">
-                        <input name="status_covid" class="custom-control-input status-covid" id="status-{{$loop->index}}" value={{ $s }} type="radio">
+                        <input name="status_covid" class="custom-control-input status-covid" required id="status-{{$loop->index}}" value={{ $s }} type="radio">
                         <label class="custom-control-label" for="status-{{$loop->index}}">{{ $s }}</label>
                     </div>
                 </div>
@@ -55,41 +55,46 @@
                 }
             });
 
+
+            const form = $('#diagnostic_form')[0];
             $('.btn-diagnostic').on('click', function (e) {
-                e.preventDefault();
 
-                $(this).html('Atualizando...').prop('disabled', true);
+                if(!form.checkValidity()) {
+                    form.reportValidity();
+                } else {
+                    $(this).html('Atualizando...').prop('disabled', true);
 
-                $.ajax({
-                    data: $('#diagnostic_form').serialize(),
-                    url: "{{ route('casesPerson.store') }}",
-                    type: "POST",
-                    dataType: 'json',
-                    success: function (data) {
-                        table.ajax.reload();
+                    $.ajax({
+                        data: $('#diagnostic_form').serialize(),
+                        url: "{{ route('casesPerson.store') }}",
+                        type: "POST",
+                        dataType: 'json',
+                        success: function (data) {
+                            table.ajax.reload();
 
-                        $('.btn-diagnostic').html('Salvar').prop('disabled', false);
-                        $('#ajaxModelDiagnostic').modal('hide');
+                            $('.btn-diagnostic').html('Salvar').prop('disabled', false);
+                            // $('#ajaxModelDiagnostic').modal('hide');
 
-                        Swal.fire({
-                            title: 'Sucesso!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'Fechar'
-                        });
-                    },
-                    error: function (e) {
-                        $('#ajaxModelDiagnostic').modal('hide');
-                        $('.btn-diagnostic').html('Salvar').prop('disabled', false);
+                            Swal.fire({
+                                title: 'Sucesso!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'Fechar'
+                            });
+                        },
+                        error: function (e) {
+                            // $('#ajaxModelDiagnostic').modal('hide');
+                            $('.btn-diagnostic').html('Salvar').prop('disabled', false);
 
-                        Swal.fire({
-                            title: 'Erro!',
-                            text: 'Erro ao atualizar os dados.',
-                            icon: 'error',
-                            confirmButtonText: 'Fechar'
-                        });
-                    }
-                });
+                            Swal.fire({
+                                title: 'Erro!',
+                                text: 'Erro ao atualizar os dados. Por favor tente novamente.',
+                                icon: 'error',
+                                confirmButtonText: 'Fechar'
+                            });
+                        }
+                    });
+                }
             });
         });
 
