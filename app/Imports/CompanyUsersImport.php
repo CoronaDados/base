@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Mail\ImportUsersErrorMail;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Hash;
@@ -57,6 +58,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
         $email = $row['email'];
+        $riskGroup = ($row['risk_group']) ? 'Acima de 60 anos' : 'Não';
 
         if ($email == '' || $cpf == '') {
             return;
@@ -82,9 +84,10 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'number' => $row['number'],
             ]
         );
-        $person->riskGroups->syncWithoutDetaching([
-            'name' => $row['risk_group']
-        ]);
+
+        $person->riskGroups()->save(new RiskGroupPerson([
+            'name' => $riskGroup
+        ]));
 
         $user = CompanyUser::firstOrCreate(
             ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],

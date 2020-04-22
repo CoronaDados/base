@@ -58,3 +58,8 @@
     margin-left: 60px;
     padding-top: .5rem;
 }
+
+/* custom .has-danger */
+#person_form .has-danger:after {
+    top: 36px;
+}

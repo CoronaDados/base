@@ -1,8 +1,9 @@
 <?php
 
+use App\Model\Company\CompanyUser;
 use Illuminate\Database\Seeder;
 
-class CompaniesSeeder extends Seeder
+class PersonablesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,9 +12,10 @@ class CompaniesSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('companies')->insert([
-            'razao' => 'Empresa',
-            'cnpj' => '45.828.138/0001-11',
+        DB::table('personables')->insert([
+            'person_id' => 1,
+            'personable_id' => 1,
+            'personable_type' => CompanyUser::class,
             'created_at' => now(),
             'updated_at' => now()
         ]);

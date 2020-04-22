@@ -60,4 +60,21 @@ class Helper
 
         return $symptomsDescription;
     }
+
+    public static function formatPhone($number) {
+        if(!isset($number)) {
+            return 'Sem número cadastrado';
+        }
+
+        $formatedPhone = preg_replace('/[^0-9]/', '', $number);
+
+        $matches = [];
+
+        preg_match('/^([0-9]{2})([0-9]{4,5})([0-9]{4})$/', $formatedPhone, $matches);
+        if ($matches) {
+            return '('.$matches[1].') '.$matches[2].'-'.$matches[3];
+        }
+
+        return $number; // return number without format
+    }
 }

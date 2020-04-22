@@ -2,6 +2,7 @@
 
 namespace App\Model\Company;
 
+use App\Enums\StatusCovidType;
 use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
 use App\Notifications\Company\ResetPasswordNotification;
@@ -84,7 +85,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     {
         $companyUserId = $this->id;
 
-        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
+        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.phone, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
 
         if (in_array('getHistory', $options, true)) {
             $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id';
@@ -155,6 +156,27 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->select(DB::raw('count(*) as total'))
             ->where('mp.user_id', $this->id)
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
+            ->first()->total;
+    }
+
+    public function countConfirmedCasesToday()
+    {
+        return DB::table('cases_person', 'cp')
+            ->select(DB::raw('count(*) as total'))
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::POSITIVO)
+            ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->first()->total;
+    }
+
+    public function countAllConfirmedCases()
+    {
+        return DB::table('cases_person', 'cp')
+            ->select(DB::raw('count(*) as total'))
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->first()->total;
     }
 

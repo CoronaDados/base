@@ -135,7 +135,11 @@
                 e.preventDefault();
 
                 person_id = $(this).data('id');
+
                 $('.historic-container').empty();
+                $('.form-group').removeClass('has-danger');
+                $('.form-group').children('.invalid-feedback').remove();
+                $('.form-control').removeClass('is-invalid');
 
                 const navItem =  $('#ajaxModel .nav .nav-item'),
                         navItemFirst = navItem.first();
@@ -246,44 +250,55 @@
 
                 let person_id = $('.person_id').val();
 
-                if(isValid()) {
-                    $(this).html('Atualizando...').prop('disabled', true);
+                $(this).html('Atualizando...').prop('disabled', true);
 
-                    $.ajax({
-                        data: $('#person_form').serialize(),
-                        url: "person/" + person_id,
-                        type: "PUT",
-                        dataType: 'json',
-                        success: function (data) {
-                            table.ajax.reload();
+                $.ajax({
+                    data: $('#person_form').serialize(),
+                    url: "person/" + person_id,
+                    type: "PUT",
+                    dataType: 'json',
+                    success: function (data) {
+                        table.ajax.reload();
 
-                            $('.save').html('Salvar').prop('disabled', false);
-                            $('#ajaxModel').modal('hide');
+                        $('.save').html('Salvar').prop('disabled', false);
+                        $('#ajaxModel').modal('hide');
 
-                            Swal.fire({
-                                title: 'Sucesso!',
-                                text: data.message,
-                                icon: 'success',
-                                confirmButtonText: 'Fechar'
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'Fechar'
+                        });
+                    },
+                    error: function (data) {
+                        if( data.status === 422 ) {
+                            const errors = data.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+                                let parent = $('#' + key).parent().addClass('has-danger'),
+                                    input = $('#' + key).addClass('is-invalid'),
+                                    div = $('<div>').addClass('invalid-feedback').attr('role', 'alert');
+
+                                parent.children('.invalid-feedback').remove();
+
+                                div.text(value.pop()).appendTo(parent);
                             });
-                        },
-                        error: function (e) {
+                        } else {
                             $('#ajaxModel').modal('hide');
-                            $('.save').html('Salvar').prop('disabled', false);
 
                             Swal.fire({
-                                title: 'Erro!',
-                                text: 'Erro ao atualizar os dados.',
+                                title: 'Ops!',
+                                text: 'Erro ao atualizar os dados. Por favor tente novamente.',
                                 icon: 'error',
                                 confirmButtonText: 'Fechar'
                             });
+
                         }
-                    });
-                }
+
+                        $('.save').html('Salvar').prop('disabled', false);
+                    }
+                });
             });
-
-
         });
-
     </script>
 @endpush
