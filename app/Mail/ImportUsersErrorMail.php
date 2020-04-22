@@ -23,7 +23,7 @@ class ImportUsersErrorMail extends Mailable
     public function build()
     {
         return $this->subject('Ocorreu um erro na importação - ' . config('app.name'))
-            ->markdown('emails.imports_error')
+            ->markdown('emails.import_error')
             ->with([
                 'company' => $this->user->company->razao,
                 'name' => $this->user->person->name,
