@@ -32,7 +32,7 @@ class ErrorMail extends Mailable
         $line = $exception->getLine();
         $message = $exception->getMessage();
 
-        return $this->subject('Ocorreu um erro no sistema - ' . config('app.name'))
+        return $this->subject('Ocorreu um erro no sistema - ' . config('app.url'))
             ->markdown('emails.error')
             ->with([
                 'name' => $user->person->name ?? 'Não autenticado',
