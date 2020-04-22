@@ -25,8 +25,6 @@ class AlterTablePersonsModifyColumnCpf extends Migration
      */
     public function down()
     {
-        Schema::table('persons', function (Blueprint $table) {
-            $table->dropUnique('persons_cpf_unique');
-        });
+        
     }
 }
