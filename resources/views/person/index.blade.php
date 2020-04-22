@@ -136,6 +136,9 @@
 
                 person_id = $(this).data('id');
                 $('.historic-container').empty();
+                $('.form-group').removeClass('has-danger');
+                $('.form-group').children('.invalid-feedback').remove();
+                $('.form-control').removeClass('is-invalid');
 
                 const navItem =  $('#ajaxModel .nav .nav-item'),
                         navItemFirst = navItem.first();
@@ -259,10 +262,6 @@
 
                             $('.save').html('Salvar').prop('disabled', false);
                             $('#ajaxModel').modal('hide');
-
-                            $('.form-group').removeClass('has-danger');
-                            $('.form-group').children('.invalid-feedback').remove();
-                            $('.form-control').removeClass('is-invalid');
 
                             Swal.fire({
                                 title: 'Sucesso!',
