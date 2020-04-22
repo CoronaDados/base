@@ -117,19 +117,13 @@
         @if(!isset($companyUser))
             <div class={{ $col }}>
                 <div class="form-group">
-                    <label for="risk_group">Grupo de Risco {{ $isRequired ? '*' : '' }}</label>
+                    <label for="risk_group">Grupo de Risco</label>
 
                     @foreach($riskGroupsType as $k => $v)
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}"
                                    {{ (is_array(old('risk_groups')) and in_array($v, old('risk_groups'))) ? ' checked' : '' }} class="custom-control-input risk-groups">
                             <label class="custom-control-label" for="risk_group-{{ $loop->index }}">{{ $v }}</label>
-
-                            @if($loop->last)
-                                <div class="invalid-feedback">
-                                    Selecione ao menos um grupo de risco.
-                                </div>
-                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -277,20 +271,5 @@
                 $('#show_type_transport').hide()
             }
         });
-
-        let riskGroups = $('.risk-groups');
-
-        riskGroups.on('change', function () {
-            riskGroups.removeClass('is-invalid');
-        });
-
-        function isValid() {
-            if(!riskGroups.is(':checked')) {
-                riskGroups.addClass('is-invalid');
-                return false;
-            } else {
-                return true;
-            }
-        }
     </script>
 @endpush

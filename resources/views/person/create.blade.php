@@ -14,17 +14,3 @@
         </div>
     </div>
 @endsection
-
-@push('js')
-    <script>
-        $(function () {
-            $('#person_form').on('submit', function (e) {
-                if(isValid()) {
-                    return;
-                }
-
-                e.preventDefault();
-            });
-        });
-    </script>
-@endpush
