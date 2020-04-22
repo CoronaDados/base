@@ -84,7 +84,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     {
         $companyUserId = $this->id;
 
-        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
+        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.phone, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
 
         if (in_array('getHistory', $options, true)) {
             $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id';

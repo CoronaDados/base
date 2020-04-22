@@ -135,6 +135,7 @@
                 e.preventDefault();
 
                 person_id = $(this).data('id');
+
                 $('.historic-container').empty();
                 $('.form-group').removeClass('has-danger');
                 $('.form-group').children('.invalid-feedback').remove();

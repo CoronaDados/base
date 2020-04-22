@@ -51,6 +51,7 @@
                                         <th width="20px">No</th>
                                         <th>Nome</th>
                                         <th>Email</th>
+                                        <th>Telefone</th>
                                         <th>Setor</th>
                                         <th width="100px">
                                             <Ações></Ações>
@@ -203,6 +204,7 @@
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
+                    {data: 'phone', name: 'phone'},
                     {data: 'sector', name: 'sector'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
@@ -263,7 +265,7 @@
 
                 let form = $('#multi-monitoring'),
                     rows_selected = table.column(0).checkboxes.selected();
-                    
+
                 // Iterate over all selected checkboxes
                 $.each(rows_selected, function(index, rowId){
 
