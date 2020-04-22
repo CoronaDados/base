@@ -132,7 +132,6 @@ class PersonController extends Controller
             $person->riskGroups()->save($riskGroup);
         }
 
-
         $user = CompanyUser::create(
             [
                 'person_id' => $person->id,

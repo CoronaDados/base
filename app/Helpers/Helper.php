@@ -35,7 +35,7 @@ class Helper
 
     public static function getPercentValueFromTotal($value, $total)
     {
-        if (!$value) return 0;
+        if (!$value || !$total) return 0;
 
         return $value / $total * 100;
     }

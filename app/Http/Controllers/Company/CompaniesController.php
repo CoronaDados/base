@@ -33,8 +33,13 @@ class CompaniesController extends Controller
         $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
 
         $totalCasesConfirmed = $currentUser->countAllConfirmedCases();
+        $totalCasesActivedConfirmed = $currentUser->countActivedConfirmedCases();
         $totalCasesConfirmedToday =  $currentUser->countConfirmedCasesToday();
-        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmed));;
+        $totalCasesConfirmedYesterday =  $currentUser->countConfirmedCasesYesterday();
+        $totalSuspiciousCases =  $currentUser->countSuspiciousCases();
+        $totalAllRecoveredCases =  $currentUser->countAllRecoveredCases();
+        $totalDeathCases = $currentUser->countDeathCases();
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmedYesterday));
 
         $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
 
@@ -46,8 +51,13 @@ class CompaniesController extends Controller
             'totalMyPersonsMonitoredToday',
             'percentMyPersonsMonitoredToday',
             'totalCasesConfirmed',
+            'totalCasesActivedConfirmed',
             'totalCasesConfirmedToday',
+            'totalCasesConfirmedYesterday',
             'percentCasesConfirmedToday',
+            'totalAllRecoveredCases',
+            'totalSuspiciousCases',
+            'totalDeathCases',
             'riskGroups'
         ]));
     }

@@ -4,18 +4,28 @@
             <!-- Card stats -->
 
             <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
+                <div class="col-md-6">
                     <div class="card card-stats col-sm-12">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Monitoramento</h3>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-success text-white rounded-circle shadow">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">TODOS COLABORADORES</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ $totalPersonsInCompany ?? 0 }}</span>
+
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-success text-white rounded-circle shadow">
-                                        <i class="fas fa-user-friends"></i>
-                                    </div>
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalPersonsInCompany ?? 0 }}</span>
                                 </div>
                             </div>
                             <p class="mt-3 mb-0 text-sm">
@@ -27,20 +37,14 @@
                                     <strong>{{ $totalPersonsInCompanyMonitoredToday ?? 0 }}/{{ $totalPersonsInCompany ?? 0 }}</strong></span>
                             </p>
                         </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
-                    <div class="card card-stats col-sm-12">
+
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">MEUS COLABORADORES</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ $totalMyPersons ?? 0 }}</span>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                                        <i class="fas fa-user-friends"></i>
-                                    </div>
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalMyPersons ?? 0 }}</span>
                                 </div>
                             </div>
                             <p class="mt-3 mb-0 text-sm">
@@ -54,13 +58,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
+                <div class="col-md-6">
                     <div class="card card-stats col-sm-12">
-                        <div class="card-body">
-                            <div class="row">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">CONFIRMADOS</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ $totalCasesConfirmed ?? 0 }}</span>
+                                    <h3 class="mb-0">COVID-19</h3>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
@@ -68,14 +71,117 @@
                                     </div>
                                 </div>
                             </div>
-                            <p class="mt-3 mb-0 text-sm">
-                                @if($totalCasesConfirmedToday)
-                                <span class="text-success mr-2"><i
-                                        class="fa fa-arrow-up"></i>{{ $percentCasesConfirmedToday ?? '0,00' }}%</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">TOTAL DE CONFIRMADOS</h5>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalCasesConfirmed ?? 0 }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">CONFIRMADOS ATIVOS</h5>
+
+                                </div>
+                                <div class="col-auto">
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalCasesActivedConfirmed ?? 0 }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">RECUPERADOS</h5>
+
+                                </div>
+                                <div class="col-auto">
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalAllRecoveredCases ?? 0 }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">SUSPEITOS</h5>
+
+                                </div>
+                                <div class="col-auto">
+                                    <span class="h2 font-weight-bold mb-0">{{ $totalSuspiciousCases ?? 0 }}</span>
+                                </div>
+                            </div>
+{{--                            <div class="row">--}}
+{{--                                <div class="col">--}}
+{{--                                    <h5 class="card-title text-uppercase text-muted mb-0">ÓBITOS</h5>--}}
+
+{{--                                </div>--}}
+{{--                                <div class="col-auto">--}}
+{{--                                    <span class="h2 font-weight-bold mb-0">{{ $totalDeathCases ?? 0 }}</span>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+                            <p class="my-3 text-sm d-flex justify-content-between">
+                                <span class="text-nowrap">Casos Confirmados Hoje:
+                                    <strong>{{ $totalCasesConfirmedToday ?? 0 }}</strong>
+                                </span>
+                                @if($percentCasesConfirmedToday)
+                                    <span class="text-success mr-2">
+                                        <i class="fa fa-arrow-up"></i>{{ $percentCasesConfirmedToday ?? '0,00' }}% desde ontem
+                                    </span>
                                 @endif
-                                <span class="text-nowrap">Casos Hoje:
-                                    <strong>{{ $totalCasesConfirmedToday ?? 0 }}</strong></span>
                             </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-xl-6 mb-5 mb-xl-0">
+                    <div class="card shadow">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Colaboradores Com COVID-19</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Grupo de Risco</th>
+                                    <th scope="col">Data</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 mb-5 mb-xl-0">
+                    <div class="card shadow">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Colaboradores Com Suspeita</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Grupo de Risco</th>
+                                    <th scope="col">Data</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -92,7 +198,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table align-items-center table-flush">
+                            <table class="table align-items-center table-risk-group">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">Grupo</th>
@@ -110,16 +216,16 @@
                                         <th scope="row">
                                             {{$riskGroup->name}}
                                         </th>
-                                        <td>
+                                        <td class="text-center">
                                             {{$riskGroup->total_group}}
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">
+                                            <div>
+                                                <span>
                                                     {{ Helper::getPercentValueAndFormat($riskGroup->total_suspect, $riskGroup->total_group) }}%
                                                 </span>
                                                 <div>
-                                                    <div class="progress">
+                                                    <div class="progress w-100">
                                                         <div class="progress-bar bg-gradient-warning" role="progressbar"
                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_suspect, $riskGroup->total_group) }}"
                                                             aria-valuemin="0" aria-valuemax="100"
@@ -130,12 +236,12 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">
+                                            <div>
+                                                <span>
                                                     {{ Helper::getPercentValueAndFormat($riskGroup->total_negative, $riskGroup->total_group) }}%
                                                 </span>
                                                 <div>
-                                                    <div class="progress">
+                                                    <div class="progress w-100">
                                                         <div class="progress-bar bg-gradient-primary" role="progressbar"
                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_negative, $riskGroup->total_group) }}"
                                                             aria-valuemin="0" aria-valuemax="100"
@@ -146,12 +252,12 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">
+                                            <div>
+                                                <span>
                                                     {{ Helper::getPercentValueAndFormat($riskGroup->total_positive, $riskGroup->total_group) }}%
                                                 </span>
                                                 <div>
-                                                    <div class="progress">
+                                                    <div class="progress w-100">
                                                         <div class="progress-bar bg-gradient-danger" role="progressbar"
                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_positive, $riskGroup->total_group) }}"
                                                             aria-valuemin="0" aria-valuemax="100"
@@ -162,12 +268,12 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">
+                                            <div>
+                                                <span>
                                                     {{ Helper::getPercentValueAndFormat($riskGroup->total_recover, $riskGroup->total_group) }}%
                                                 </span>
                                                 <div>
-                                                    <div class="progress">
+                                                    <div class="progress w-100">
                                                         <div class="progress-bar bg-gradient-success" role="progressbar"
                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_recover, $riskGroup->total_group) }}"
                                                             aria-valuemin="0" aria-valuemax="100"
@@ -178,12 +284,12 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">
+                                            <div>
+                                                <span>
                                                     {{ Helper::getPercentValueAndFormat($riskGroup->total_death, $riskGroup->total_group) }}%
                                                 </span>
                                                 <div>
-                                                    <div class="progress">
+                                                    <div class="progress w-100">
                                                         <div class="progress-bar bg-dark" role="progressbar"
                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_death, $riskGroup->total_group) }}"
                                                             aria-valuemin="0" aria-valuemax="100"

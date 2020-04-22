@@ -161,12 +161,27 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function countConfirmedCasesToday()
     {
-        return DB::table('cases_person', 'cp')
-            ->select(DB::raw('count(*) as total'))
+        return DB::table('persons', 'p')
+            ->select(DB::raw('count(status_covid) as total'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
             ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
+            ->first()->total;
+    }
+
+    public function countConfirmedCasesYesterday()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('count(status_covid) as total'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::POSITIVO)
+            ->whereRaw('DATE(cp.created_at) = DATE(NOW() - INTERVAL 1 DAY)')
             ->first()->total;
     }
 
@@ -177,6 +192,53 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
+            ->first()->total;
+    }
+
+    public function countActivedConfirmedCases()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('count(status_covid) as total'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::POSITIVO)
+            ->first()->total;
+    }
+
+    public function countAllRecoveredCases()
+    {
+        return DB::table('cases_person', 'cp')
+            ->select(DB::raw('count(*) as total'))
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::RECUPERADO)
+            ->first()->total;
+    }
+
+    public function countSuspiciousCases()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('count(status_covid) as total'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::SUSPEITO)
+            ->first()->total;
+    }
+
+
+    public function countDeathCases()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('count(status_covid) as total'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::OBITO)
             ->first()->total;
     }
 

@@ -15,6 +15,7 @@ use BenSampo\Enum\Enum;
  */
 final class RiskGroupType extends Enum
 {
+    const NAO = 'Não';
     const GESTANTE = 'Gestante';
     const ACIMA_60ANOS = 'Acima de 60 anos';
     const DIABETES = 'Diabetes';
