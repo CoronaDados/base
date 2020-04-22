@@ -80,10 +80,13 @@ class CompaniesController extends Controller
                 ->editColumn('name', function ($person) {
                     return Helper::getFirstAndLastName($person->name);
                 })
+                ->editColumn('phone', function ($person) {
+                    return Helper::formatPhone($person->phone);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        
+
         $validSymptoms = SymptomsType::getInstances();
 
         return view('company.monitoring', compact('route', 'validSymptoms'));
@@ -98,7 +101,7 @@ class CompaniesController extends Controller
             } else {
                 $options = ['getHistory', 'byLeader'];
             }
-            
+
             $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
 
             return DataTables::of($monitoringsPersons)
@@ -176,15 +179,15 @@ class CompaniesController extends Controller
     public function multiMonitoring(Request $request)
     {
         if ($request->has('id')) {
-        
+
             $persons = Person::whereIn('id', $request->id)->get();
 
             foreach ($persons as $person) {
                 $person->monitoringsPerson()->create(['symptoms' => null, 'notes' => 'Sem Sintomas']);
             }
-            
+
             flash('Atualizado com sucesso', 'info');
-    
+
             return redirect(route('company.monitoring'));
         }
     }

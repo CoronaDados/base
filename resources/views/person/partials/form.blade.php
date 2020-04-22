@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
                 <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ old('phone') ?? $companyUser->person->phone ?? '' }}"
-                       data-mask="+00 (00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                       data-mask="(00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
 
@@ -71,7 +71,7 @@
             <div class="form-group">
                 <label for="cep">CEP {{ $isRequired ? '*' : '' }}</label>
                 <input type="text" class="form-control form-control-alternative cep-person" {{ $isRequired ? 'required' : '' }} name="cep" value="{{ old('cep') ?? $companyUser->person->cep ?? '' }}"
-                       data-mask="000000-00" id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+                       data-mask="00000-000" id="cep" placeholder="CEP {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
             </div>
         </div>
     </div>

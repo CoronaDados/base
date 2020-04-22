@@ -89,7 +89,7 @@ class CasesPersonController extends Controller
     {
         if ($request->ajax()) {
             $person = Person::with('casesPerson')->find($id);
-            $casesPerson = $person->casesPerson->last();
+            $casesPerson = $person->casesPerson->first();
 
             $cases = new \stdClass();
             $cases->status_covid = $casesPerson->status_covid ?? null;
