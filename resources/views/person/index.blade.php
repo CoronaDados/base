@@ -136,6 +136,9 @@
 
                 person_id = $(this).data('id');
                 $('.historic-container').empty();
+                $('.form-group').removeClass('has-danger');
+                $('.form-group').children('.invalid-feedback').remove();
+                $('.form-control').removeClass('is-invalid');
 
                 const navItem =  $('#ajaxModel .nav .nav-item'),
                         navItemFirst = navItem.first();
@@ -267,16 +270,32 @@
                                 confirmButtonText: 'Fechar'
                             });
                         },
-                        error: function (e) {
-                            $('#ajaxModel').modal('hide');
-                            $('.save').html('Salvar').prop('disabled', false);
+                        error: function (data) {
+                            if( data.status === 422 ) {
+                                const errors = data.responseJSON.errors;
 
-                            Swal.fire({
-                                title: 'Erro!',
-                                text: 'Erro ao atualizar os dados.',
-                                icon: 'error',
-                                confirmButtonText: 'Fechar'
-                            });
+                                $.each(errors, function (key, value) {
+                                    let parent = $('#' + key).parent().addClass('has-danger'),
+                                        input = $('#' + key).addClass('is-invalid'),
+                                        div = $('<div>').addClass('invalid-feedback').attr('role', 'alert');
+
+                                    parent.children('.invalid-feedback').remove();
+
+                                    div.text(value.pop()).appendTo(parent);
+                                });
+                            } else {
+                                $('#ajaxModel').modal('hide');
+
+                                Swal.fire({
+                                    title: 'Ops!',
+                                    text: 'Erro ao atualizar os dados. Por favor tente novamente',
+                                    icon: 'error',
+                                    confirmButtonText: 'Fechar'
+                                });
+
+                            }
+
+                            $('.save').html('Salvar').prop('disabled', false);
                         }
                     });
                 }

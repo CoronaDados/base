@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\StatusCovidTestType;
 use App\Enums\StatusCovidType;
 use App\Helpers\Helper;
+use App\Http\Requests\StorePerson;
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
 use App\Enums\RiskGroupType;
@@ -13,10 +14,14 @@ use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
 use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
@@ -26,7 +31,9 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Factory|View
+     * @throws Exception
      */
     public function index(Request $request)
     {
@@ -85,21 +92,14 @@ class PersonController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return Factory|View
+     * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(StorePerson $request)
     {
-        // $rules = [
-        //     'cpf'  => 'required|cpf',
-        //     'birthday' => 'required|date|regex:/\d{1,2}\/\d{1,2}\/\d{4}/|before:today'
-        // ];
 
-        // $messages = [
-        //     'before' => 'O campo :attribute deve ser uma data anterior a hoje.',
-        // ];
-
-        // $validator = $this->validate($request, $rules, $messages);
+        $request->validated();
 
         $companyUser = auth('company')->user();
 
@@ -186,10 +186,11 @@ class PersonController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return void
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $id): void
     {
         //
     }
@@ -197,13 +198,14 @@ class PersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(StorePerson $request, $id): ?JsonResponse
     {
         if ($request->ajax()) {
+
             $companyUser = CompanyUser::find($id);
 
             if ($companyUser) {
@@ -263,9 +265,9 @@ class PersonController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy($id)
+    public function destroy($id): ?Response
     {
         //
     }
@@ -301,7 +303,7 @@ class PersonController extends Controller
         return view('person.profile', compact('riskGroups', 'sectors', 'roles', 'leaders', 'companyUser', 'leader'));
     }
 
-    public function profileUpdate(Request $request)
+    public function profileUpdate(StorePerson $request)
     {
         $companyUser = auth('company')->user();
 
