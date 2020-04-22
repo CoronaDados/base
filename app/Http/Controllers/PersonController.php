@@ -118,11 +118,20 @@ class PersonController extends Controller
             ]
         );
 
-        $riskGroups = array_map(function($riskGroup) {
-           return new RiskGroupPerson(['name' => $riskGroup]);
-        }, $request->risk_groups);
+        if($request->risk_groups) {
+            $riskGroups = array_map(function($riskGroup) {
+               return new RiskGroupPerson(['name' => $riskGroup]);
+            }, $request->risk_groups);
 
-        $person->riskGroups()->saveMany($riskGroups);
+            $person->riskGroups()->saveMany($riskGroups);
+        } else {
+            $riskGroup = new RiskGroupPerson([
+                'name' => 'Não'
+            ]);
+
+            $person->riskGroups()->save($riskGroup);
+        }
+
 
         $user = CompanyUser::create(
             [
@@ -225,12 +234,21 @@ class PersonController extends Controller
                 $person->sector = $request->sector;
                 $person->save();
 
-                $riskGroups = array_map(function($riskGroup) {
-                    return new RiskGroupPerson(['name' => $riskGroup]);
-                }, $request->risk_groups);
-
                 $person->riskGroups()->delete();
-                $person->riskGroups()->saveMany($riskGroups);
+
+                if($request->risk_groups) {
+                    $riskGroups = array_map(function($riskGroup) {
+                        return new RiskGroupPerson(['name' => $riskGroup]);
+                    }, $request->risk_groups);
+
+                    $person->riskGroups()->saveMany($riskGroups);
+                } else {
+                    $riskGroup = new RiskGroupPerson([
+                        'name' => 'Não'
+                    ]);
+
+                    $person->riskGroups()->save($riskGroup);
+                }
 
                 $companyUser->email = $request->email;
 

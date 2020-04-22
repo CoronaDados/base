@@ -30,9 +30,9 @@ class CompaniesController extends Controller
         $totalMyPersonsMonitoredToday = $currentUser->countMyPersonsMonitoredToday();
         $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
 
-        $totalCasesConfirmed = 0;
-        $totalCasesConfirmedToday = 0;
-        $percentCasesConfirmedToday = 0;
+        $totalCasesConfirmed = $currentUser->countAllConfirmedCases();
+        $totalCasesConfirmedToday =  $currentUser->countConfirmedCasesToday();
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmed));;
 
         return view('company.dashboard', compact([
             'totalPersonsInCompany',
