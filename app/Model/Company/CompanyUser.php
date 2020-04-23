@@ -280,6 +280,16 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->get();
     }
 
+    public function checkPersonsRobot() {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('p.name, p.phone'))
+            ->join('monitoring_person AS mp', 'p.id', '=', 'mp.person_id')
+            ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
+            personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->company_id .' ) )')
+            ->whereRaw('p.id NOT IN ( SELECT mp.person_id FROM monitoring_person mp WHERE DATE(mp.created_at) >= CURDATE() )')
+            ->where('mp.application', '=', '"Whatsapp"')->get();
+    }
+
     public function casesPersonCreator()
     {
         return $this->hasMany(CasePerson::class, 'user_id');
