@@ -21,7 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>Colaborador</th>
-                                        <th>Monitorando em</th>
+                                        <th>Monitorado em</th>
                                         <th>Sintomas</th>
                                         <th>Diagnóstico</th>
                                         <th>Ação</th>
