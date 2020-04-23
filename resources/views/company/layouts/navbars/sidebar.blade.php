@@ -6,8 +6,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <!-- Brand -->
-        <a class="navbar-brand pt-0" href="{{ route('company.home') }}">
-            <img src="/argon/img/brand/blue.png" class="navbar-brand-img" alt="...">
+        <a class="img-fluid pt-0" href="{{ route('company.home') }}">
+            <img src="/img/logo.png" class="img-fluid" alt="CoronaDados" title="CoronaDados">
         </a>
         <!-- User -->
         <ul class="nav align-items-center d-md-none">
