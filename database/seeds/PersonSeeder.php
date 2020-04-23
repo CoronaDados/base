@@ -13,7 +13,7 @@ class PersonSeeder extends Seeder
     {
         DB::table('persons')->insert([
             'name' => 'Usuário',
-            'phone' => '+5548995906549',
+            'phone' => '48995906549',
             'cpf' => '87511937950',
             'sector' => 'Administrativo',
             'birthday' => '1992-07-19',

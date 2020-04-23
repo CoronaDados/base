@@ -90,7 +90,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
             ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
             ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
-                personable_id IN ( SELECT id FROM company_users WHERE company_id = 1 ) )')
+                personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->company_id .' ) )')
             ->whereRaw('p.id NOT IN ( SELECT mp.person_id FROM monitoring_person mp WHERE DATE(mp.created_at) >= CURDATE() )');
 
         if (in_array("byLeader", $options, true)) {
@@ -113,7 +113,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
             ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
             ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
-                personable_id IN ( SELECT id FROM company_users WHERE company_id = 1 ) )');
+                personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->company_id .' ) )');
 
         if (in_array("byLeader", $options, true)) {
             $query->where('c.id', $companyUserId);

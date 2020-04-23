@@ -12,7 +12,7 @@
                 <h5 class="mb-0">Monitoramento diário</h5>
                 <i class="ni ni-bold-down"></i>
             </div>
-            <div id="collapseMonitoring" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div id="collapseMonitoring" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body">
                     <p><img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" /></p>
                 </div>

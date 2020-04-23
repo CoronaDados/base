@@ -1,10 +1,10 @@
-<div class="pb-8 pt-5 pt-md-8">
+<div class="pb-8 pt-3 pt-md-7">
     <div class="container-fluid">
         <div class="header-body">
             <!-- Card stats -->
 
             <div class="row justify-content-around">
-                <div class="card-deck col-md-12 p-0">
+                <div class="card-deck col-md-12">
 
                     <div class="card card-stats col-md-6 ml-0">
                         <div class="card-header">
@@ -93,12 +93,12 @@
                                 </div>
                             </div>
 
-{{--                            <div class="row">--}}
-{{--                                <div class="col-sm-12 d-flex justify-content-between">--}}
-{{--                                    <h5 class="card-title text-uppercase text-muted mb-0">ÓBITOS</h5>--}}
-{{--                                    <span class="font-weight-bold">{{ $totalDeathCases ?? 0 }}</span>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            <div class="row">
+                                <div class="col-sm-12 d-flex justify-content-between">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">ÓBITOS</h5>
+                                    <span class="font-weight-bold">{{ $totalDeathCases ?? 0 }}</span>
+                                </div>
+                            </div>
 
                             <p class="my-3 text-sm d-flex justify-content-between">
                                 <span class="text-nowrap">Casos Confirmados Hoje:
@@ -118,7 +118,7 @@
 
             <div class="row mt-4">
 
-                <div class="col-md-6 pl-0">
+                <div class="col-md-6 ">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -151,7 +151,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 pr-0">
+                <div class="col-md-6 ">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -186,7 +186,7 @@
             </div>
 
             <div class="row mt-4">
-                <div class="col-12 p-0">
+                <div class="col-12">
                     <div class="card">
                     <div class="card-header border-0">
                         <div class="row align-items-center">
