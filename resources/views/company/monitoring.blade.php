@@ -4,21 +4,9 @@
 {{--    @include('layouts.headers.cards')--}}
 <div class="container-fluid pb-8 pt-3 pt-md-7">
 
-    <div class="accordion" id="accordionExample">
-        <div class="card">
-            <div class="align-items-center card-header d-flex justify-content-between collapsed monitoramento-titulo"
-                id="headingOne" data-toggle="collapse" data-target="#collapseMonitoring" aria-expanded="false"
-                aria-controls="collapseMonitoring">
-                <h5 class="mb-0">Monitoramento diário</h5>
-                <i class="ni ni-bold-down"></i>
-            </div>
-            <div id="collapseMonitoring" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                <div class="card-body">
-                    <p><img width="100%" src="{{asset('img').'/informativo-01.jpeg'}}" /></p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p>
+        <img width="100%" src="{{asset('img').'/informativo.jpg'}}" />
+    </p>
 
     <div class="row mt-5">
         <div class="col-xl-12 mb-5 mb-xl-0">
@@ -28,7 +16,7 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="mb-0">Colaboradores</h3>
+                                <h3 class="mb-0">Monitoramento Diário</h3>
                             </div>
                         </div>
                     </div>
@@ -52,9 +40,7 @@
                                         <th>Nome</th>
                                         <th>Email</th>
                                         <th>Telefone</th>
-                                        <th width="100px">
-                                            <Ações></Ações>
-                                        </th>
+                                        <th width="100px">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody>
