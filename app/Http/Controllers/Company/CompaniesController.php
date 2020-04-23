@@ -9,8 +9,10 @@ use App\Enums\SymptomsType;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
+use App\Model\Person\CasePerson;
 use App\Model\Person\MonitoringPerson;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,8 +33,19 @@ class CompaniesController extends Controller
         $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
 
         $totalCasesConfirmed = $currentUser->countAllConfirmedCases();
+        $totalCasesActivedConfirmed = $currentUser->countActivedConfirmedCases();
+
         $totalCasesConfirmedToday =  $currentUser->countConfirmedCasesToday();
-        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmed));;
+        $totalCasesConfirmedYesterday =  $currentUser->countConfirmedCasesYesterday();
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmedYesterday));
+
+        $totalSuspiciousCases =  $currentUser->countSuspiciousCases();
+        $totalAllRecoveredCases =  $currentUser->countAllRecoveredCases();
+        $totalDeathCases = $currentUser->countDeathCases();
+
+        $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
+        $personsActivedConfirmedCases = $currentUser->personsActivedConfirmedCases();
+        $personsSuspiciousCases = $currentUser->personsSuspiciousCases();
 
         return view('company.dashboard', compact([
             'totalPersonsInCompany',
@@ -42,8 +55,16 @@ class CompaniesController extends Controller
             'totalMyPersonsMonitoredToday',
             'percentMyPersonsMonitoredToday',
             'totalCasesConfirmed',
+            'totalCasesActivedConfirmed',
             'totalCasesConfirmedToday',
-            'percentCasesConfirmedToday'
+            'totalCasesConfirmedYesterday',
+            'percentCasesConfirmedToday',
+            'totalAllRecoveredCases',
+            'totalSuspiciousCases',
+            'totalDeathCases',
+            'personsActivedConfirmedCases',
+            'personsSuspiciousCases',
+            'riskGroups'
         ]));
     }
 
@@ -63,17 +84,17 @@ class CompaniesController extends Controller
 
         if ($request->ajax()) {
             if ($request->route()->getName() === 'company.monitoringAll') {
-                $options = ['byDay'];
-                $datas =  auth('company')->user()->monitoringsPerson($options);
+                $options = [];
             } else {
-                $options = ['byLeader', 'byDay'];
-                $datas =  auth('company')->user()->monitoringsPerson($options);
+                $options = ['byLeader'];
             }
+
+            $datas =  auth('company')->user()->monitoringPersons($options);
 
             return DataTables::of($datas)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whatsapp com esse código: <strong>' . Helper::getPersonCode($row->person_id) . '</strong>" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br/>Peça para enviar um <strong>Oi</strong> pelo Whatsapp ao número (48) 99802-3637" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
                 })
@@ -97,12 +118,12 @@ class CompaniesController extends Controller
         if ($request->ajax()) {
 
             if (auth()->user()->hasRole('Admin')) {
-                $options = ['getHistory'];
+                $options = [];
             } else {
-                $options = ['getHistory', 'byLeader'];
+                $options = ['byLeader'];
             }
 
-            $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
+            $monitoringsPersons = auth('company')->user()->monitoringsHistoryPerson($options);
 
             return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
@@ -121,6 +142,9 @@ class CompaniesController extends Controller
                 })
                 ->editColumn('name', function ($user) {
                     return Helper::getFirstAndLastName($user->name);
+                })
+                ->editColumn('dateMonitoring', function ($date) {
+                    return Helper::formatDateFromDB($date->dateMonitoring);
                 })
                 ->editColumn('symptoms', function ($user) {
 

@@ -52,7 +52,6 @@
                                         <th>Nome</th>
                                         <th>Email</th>
                                         <th>Telefone</th>
-                                        <th>Setor</th>
                                         <th width="100px">
                                             <Ações></Ações>
                                         </th>
@@ -198,14 +197,13 @@
                 select: {
                     style: 'multi',
                 },
-                order: [[1, 'asc']],
+                order: [[2, 'asc']],
                 columns: [
                     {data: 'person_id', name: 'person_id'},
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
                     {data: 'phone', name: 'phone'},
-                    {data: 'sector', name: 'sector'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });

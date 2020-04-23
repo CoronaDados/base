@@ -73,7 +73,7 @@
                             table.ajax.reload();
 
                             $('.btn-diagnostic').html('Salvar').prop('disabled', false);
-                            // $('#ajaxModelDiagnostic').modal('hide');
+                            $('#ajaxModelDiagnostic').modal('hide');
 
                             Swal.fire({
                                 title: 'Sucesso!',
@@ -83,7 +83,7 @@
                             });
                         },
                         error: function (e) {
-                            // $('#ajaxModelDiagnostic').modal('hide');
+                            $('#ajaxModelDiagnostic').modal('hide');
                             $('.btn-diagnostic').html('Salvar').prop('disabled', false);
 
                             Swal.fire({

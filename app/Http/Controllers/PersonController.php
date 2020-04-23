@@ -126,12 +126,11 @@ class PersonController extends Controller
             $person->riskGroups()->saveMany($riskGroups);
         } else {
             $riskGroup = new RiskGroupPerson([
-                'name' => 'Não'
+                'name' => RiskGroupType::NAO
             ]);
 
             $person->riskGroups()->save($riskGroup);
         }
-
 
         $user = CompanyUser::create(
             [
@@ -244,7 +243,7 @@ class PersonController extends Controller
                     $person->riskGroups()->saveMany($riskGroups);
                 } else {
                     $riskGroup = new RiskGroupPerson([
-                        'name' => 'Não'
+                        'name' => RiskGroupType::NAO
                     ]);
 
                     $person->riskGroups()->save($riskGroup);

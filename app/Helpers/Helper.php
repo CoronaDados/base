@@ -36,6 +36,7 @@ class Helper
     public static function getPercentValueFromTotal($value, $total)
     {
         if (!$value) return 0;
+        if (!$total) $total = 1;
 
         return $value / $total * 100;
     }
@@ -43,6 +44,11 @@ class Helper
     public static function getPercentFormatted($value)
     {
         return number_format($value, 2, ',', '.');
+    }
+
+    public static function getPercentValueAndFormat($value, $total)
+    {
+        return self::getPercentFormatted(self::getPercentValueFromTotal($value, $total));
     }
 
     public static function getSymptomsDescriptionByValues($symptoms)

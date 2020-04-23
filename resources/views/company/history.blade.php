@@ -21,6 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>Colaborador</th>
+                                        <th>Monitorando em</th>
                                         <th>Sintomas</th>
                                         <th>Diagnóstico</th>
                                         <th>Ação</th>
@@ -123,9 +124,10 @@
         select: {
             style: 'multi',
         },
-        order: [[1, 'asc']],
+        order: [[1, 'desc']],
         columns: [
             {data: 'name', name: 'name'},
+            {data: 'dateMonitoring', name: 'dateMonitoring'},
             {data: 'symptoms', name: 'symptoms'},
             {data: 'status_covid', name: 'status_covid'},
             {data: 'action', name: 'action'}

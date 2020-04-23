@@ -120,11 +120,13 @@
                     <label for="risk_group">Grupo de Risco</label>
 
                     @foreach($riskGroupsType as $k => $v)
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}"
-                                   {{ (is_array(old('risk_groups')) and in_array($v, old('risk_groups'))) ? ' checked' : '' }} class="custom-control-input risk-groups">
-                            <label class="custom-control-label" for="risk_group-{{ $loop->index }}">{{ $v }}</label>
-                        </div>
+                        @if($v !== "Não")
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" id="risk_group-{{ $loop->index }}" name="risk_groups[]" value="{{ $v }}"
+                                       {{ (is_array(old('risk_groups')) and in_array($v, old('risk_groups'))) ? ' checked' : '' }} class="custom-control-input risk-groups">
+                                <label class="custom-control-label" for="risk_group-{{ $loop->index }}">{{ $v }}</label>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             </div>
