@@ -115,42 +115,7 @@
                 </div>
             </div>
 
-
             <div class="row mt-4">
-
-                <div class="col-md-6 ">
-                    <div class="card shadow">
-                        <div class="card-header border-0">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h3 class="mb-0">Colaboradores Com COVID-19</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <!-- Projects table -->
-                            <table class="table align-items-center table-fixed">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th scope="col">Nome</th>
-                                    <th scope="col">Grupo de Risco</th>
-                                    <th scope="col">Data</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($personsActivedConfirmedCases as $person)
-                                        <tr>
-                                            <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
-                                            <td>{{ $person->riskGroup }}</td>
-                                            <td>{{ Helper::formatDateFromDB($person->date) }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="col-md-6 ">
                     <div class="card shadow">
                         <div class="card-header border-0">
@@ -162,7 +127,45 @@
                         </div>
                         <div class="table-responsive">
                             <!-- Projects table -->
-                            <table class="table align-items-center table-fixed">
+                            <table class="table align-items-center table-persons table-fixed">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Líder</th>
+                                    <th scope="col">Data</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if(count($personsSuspiciousCases) > 0)
+                                        @foreach($personsSuspiciousCases as $person)
+                                            <tr>
+                                                <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
+                                                <td>{{ Helper::getFirstAndLastName($person->leader)  }}</td>
+                                                <td>{{ Helper::formatDateFromDB($person->date) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 ">
+                    <div class="card shadow">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Colaboradores Com COVID-19</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table class="table align-items-center table-persons table-fixed">
                                 <thead class="thead-light">
                                 <tr>
                                     <th scope="col">Nome</th>
@@ -171,13 +174,25 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($personsSuspiciousCases as $person)
+                                @if(count($personsActivedConfirmedCases) > 0)
+                                    @foreach($personsActivedConfirmedCases as $person)
                                         <tr>
                                             <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
-                                            <td>{{ $person->riskGroup }}</td>
+                                            <td>
+                                                <ul class="p-0">
+                                                    @foreach(json_decode($person->riskGroups) as $riskGroup)
+                                                        <li>{{ $riskGroup }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
                                             <td>{{ Helper::formatDateFromDB($person->date) }}</td>
                                         </tr>
                                     @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                    </tr>
+                                @endif
                                 </tbody>
                             </table>
                         </div>
