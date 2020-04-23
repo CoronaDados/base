@@ -127,7 +127,7 @@
                         </div>
                         <div class="table-responsive">
                             <!-- Projects table -->
-                            <table class="table align-items-center table-persons table-fixed">
+                            <table class="table align-items-center table-persons table-fixed table-suspicious">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">Nome</th>
@@ -167,34 +167,37 @@
                             <!-- Projects table -->
                             <table class="table align-items-center table-persons table-fixed">
                                 <thead class="thead-light">
-                                <tr>
-                                    <th scope="col">Nome</th>
-                                    <th scope="col">Grupo de Risco</th>
-                                    <th scope="col">Data</th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Grupo de Risco</th>
+                                        <th scope="col">Data</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 @if(count($personsActivedConfirmedCases) > 0)
                                     @foreach($personsActivedConfirmedCases as $person)
                                         <tr>
                                             <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
-                <td>
-                    <ul class="p-0">
-                        @foreach(json_decode($person->riskGroups) as $riskGroup)
-                        <li>{{ $riskGroup }}</li>
-                        @endforeach
-                    </ul>
-                </td>
-                <td>{{ Helper::formatDateFromDB($person->date) }}</td>
-                </tr>
-                @endforeach
-                @else
-                <tr>
-                    <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
-                </tr>
-                @endif
-                </tbody>
-                </table>
+                                            <td>
+                                                <ul class="p-0 m-0">
+                                                    @foreach(json_decode($person->riskGroups) as $riskGroup)
+                                                        <li>{{ $riskGroup }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td>{{ Helper::formatDateFromDB($person->date) }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div> --}}
@@ -319,7 +322,4 @@
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
 </div>

@@ -253,7 +253,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function personsActivedConfirmedCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('p.name, json_arrayagg(rgp.name) AS riskGroups, cp.created_at AS date'))
+            ->select(DB::raw('p.name, json_arrayagg(rgp.name) AS riskGroups, DATE(cp.created_at) AS date'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
             ->join('risk_group_person AS rgp', 'rgp.person_id', '=', 'p.id')
@@ -261,6 +261,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->groupBy('p.name', 'cp.created_at')
+            ->orderByDesc('cp.created_at')
             ->get();
     }
 
@@ -268,7 +269,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function personsSuspiciousCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('p.name, l.name AS leader, cp.created_at AS date'))
+            ->select(DB::raw('p.name, l.name AS leader, DATE(cp.created_at) AS date'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
             ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
@@ -277,6 +278,8 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->join('persons AS l', 'l.id', '=','c_leader.person_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::SUSPEITO)
+            ->orderByDesc('cp.created_at')
+            ->orderBy('p.name')
             ->get();
     }
 

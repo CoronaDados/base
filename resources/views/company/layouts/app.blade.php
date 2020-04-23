@@ -12,7 +12,7 @@
 
     <title>Empresas contra o COVID-19</title>
     <!-- Favicon -->
-    <link href="/icon.png" rel="icon" type="image/png">
+    <link href="/favicon.png?v=2" rel="icon" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <!-- Icons -->

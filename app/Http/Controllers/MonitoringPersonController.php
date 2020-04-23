@@ -55,9 +55,9 @@ class MonitoringPersonController extends Controller
 
             $monitoringsPerson = $person->monitoringsPerson;
             foreach ($monitoringsPerson as $monitoring) {
-                $object = new \stdClass();                
+                $object = new \stdClass();
                 $object->symptoms = Helper::getSymptomsDescriptionByValues($monitoring->symptoms);
-                $object->date = Helper::formatDateFromDB($monitoring->created_at);
+                $object->date = Helper::formatDateTimeFromDB($monitoring->created_at);
                 $object->notes = $monitoring->notes;
                 $object->monitoredBy = $monitoring->creator ? $monitoring->creator->person->name : $monitoring->application;
                 $object->icon = $monitoring->isWhatsApp() ? 'fab fa-whatsapp' : 'ni ni-calendar-grid-58';
@@ -71,7 +71,7 @@ class MonitoringPersonController extends Controller
                 $caseObject = new \stdClass();
                 $caseObject->status_covid = $case->status_covid;
                 $caseObject->status_test = $case->status_test;
-                $caseObject->date = Helper::formatDateFromDB($case->created_at);
+                $caseObject->date = Helper::formatDateTimeFromDB($case->created_at);
                 $caseObject->notes = $case->notes;
                 $caseObject->diagnosedBy = $case->creator ? $case->creator->person->name : '';
 
