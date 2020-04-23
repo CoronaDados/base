@@ -127,13 +127,13 @@
                         </div>
                         <div class="table-responsive">
                             <!-- Projects table -->
-                            <table class="table align-items-center table-persons table-fixed">
+                            <table class="table align-items-center table-persons table-fixed table-suspicious">
                                 <thead class="thead-light">
-                                <tr>
-                                    <th scope="col">Nome</th>
-                                    <th scope="col">Líder</th>
-                                    <th scope="col">Data</th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Líder</th>
+                                        <th scope="col">Data</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 @if(count($personsSuspiciousCases) > 0)
@@ -154,6 +154,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 ">
                     <div class="card shadow">
                         <div class="card-header border-0">
@@ -167,11 +168,11 @@
                             <!-- Projects table -->
                             <table class="table align-items-center table-persons table-fixed">
                                 <thead class="thead-light">
-                                <tr>
-                                    <th scope="col">Nome</th>
-                                    <th scope="col">Grupo de Risco</th>
-                                    <th scope="col">Data</th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Grupo de Risco</th>
+                                        <th scope="col">Data</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 @if(count($personsActivedConfirmedCases) > 0)
@@ -179,7 +180,7 @@
                                         <tr>
                                             <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
                                             <td>
-                                                <ul class="p-0">
+                                                <ul class="p-0 m-0">
                                                     @foreach(json_decode($person->riskGroups) as $riskGroup)
                                                         <li>{{ $riskGroup }}</li>
                                                     @endforeach
@@ -323,3 +324,9 @@
         </div>
     </div>
 </div>
+
+@push('js')
+    <script>
+        $('.table-suspicious tbody').perfectScrollbar();
+    </script>
+@endpush
