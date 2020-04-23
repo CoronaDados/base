@@ -64,22 +64,34 @@
     top: 36px;
 }
 
+/* Cards Dashboard */
+.card-header .icon {
+    width: 2.5em;
+    height: 2.5em;
+}
+
+.card-header .icon i {
+    font-size: 1em;
+}
+
 /* Table Grupo de Risco Dashboard */
-.table-risk-group {
+.table-fixed {
     table-layout: fixed;
+}
+
+.table-fixed th,
+.table-fixed td
+{
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .table-risk-group th:first-child {
     width: 200px;
 }
 
+
 .table-risk-group th:nth-child(2) {
     width: 95px;
 }
 
-.table-risk-group th,
-.table-risk-group td
-{
-    white-space: normal;
-    word-wrap: break-word;
-}

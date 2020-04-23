@@ -34,14 +34,17 @@ class CompaniesController extends Controller
 
         $totalCasesConfirmed = $currentUser->countAllConfirmedCases();
         $totalCasesActivedConfirmed = $currentUser->countActivedConfirmedCases();
+
         $totalCasesConfirmedToday =  $currentUser->countConfirmedCasesToday();
         $totalCasesConfirmedYesterday =  $currentUser->countConfirmedCasesYesterday();
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmedYesterday));
+
         $totalSuspiciousCases =  $currentUser->countSuspiciousCases();
         $totalAllRecoveredCases =  $currentUser->countAllRecoveredCases();
         $totalDeathCases = $currentUser->countDeathCases();
-        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedYesterday, $totalCasesConfirmedToday));
 
         $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
+        $personsActivedConfirmedCases = $currentUser->personsActivedConfirmedCases();
 
         return view('company.dashboard', compact([
             'totalPersonsInCompany',
@@ -58,6 +61,7 @@ class CompaniesController extends Controller
             'totalAllRecoveredCases',
             'totalSuspiciousCases',
             'totalDeathCases',
+            'personsActivedConfirmedCases',
             'riskGroups'
         ]));
     }

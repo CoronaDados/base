@@ -9,7 +9,7 @@ use App\Notifications\Company\ResetPasswordNotification;
 use App\Notifications\Company\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User AS Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -46,7 +46,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function countPersons()
     {
-        return DB::select(DB::raw("select count(*) as total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"))[0]->total;
+        return DB::select(DB::raw("select count(*) AS total from persons where id IN ( select person_id from personables where personable_id in ( select id from company_users where company_id = " . $this->company()->first()->id . " ) )"))[0]->total;
     }
 
     public function personsInCompany($options = [])
@@ -150,8 +150,8 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countPersonsInCompanyMonitoredToday()
     {
         return DB::table('monitoring_person', 'mp')
-            ->select(DB::raw('count(*) as total'))
-            ->join('company_users as cu', 'cu.id', '=', 'mp.user_id')
+            ->select(DB::raw('count(*) AS total'))
+            ->join('company_users AS cu', 'cu.id', '=', 'mp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
@@ -160,7 +160,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countMyPersonsMonitoredToday()
     {
         return DB::table('monitoring_person', 'mp')
-            ->select(DB::raw('count(*) as total'))
+            ->select(DB::raw('count(*) AS total'))
             ->where('mp.user_id', $this->id)
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
@@ -169,10 +169,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countConfirmedCasesToday()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('count(status_covid) as total'))
+            ->select(DB::raw('count(status_covid) AS total'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
-            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->whereRaw('DATE(cp.created_at) = CURRENT_DATE()')
@@ -182,10 +182,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countConfirmedCasesYesterday()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('count(status_covid) as total'))
+            ->select(DB::raw('count(status_covid) AS total'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
-            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->whereRaw('DATE(cp.created_at) = DATE(NOW() - INTERVAL 1 DAY)')
@@ -195,8 +195,8 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countAllConfirmedCases()
     {
         return DB::table('cases_person', 'cp')
-            ->select(DB::raw('count(*) as total'))
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->select(DB::raw('count(*) AS total'))
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->first()->total;
@@ -205,20 +205,33 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countActivedConfirmedCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('count(status_covid) as total'))
+            ->select(DB::raw('count(status_covid) AS total'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
-            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::POSITIVO)
             ->first()->total;
     }
 
+    public function personsActivedConfirmedCases()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('p.name, rgp.name AS riskGroup, cp.created_at AS date'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('risk_group_person AS rgp', 'rgp.person_id', '=', 'p.id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::POSITIVO)
+            ->get();
+    }
+
     public function countAllRecoveredCases()
     {
         return DB::table('cases_person', 'cp')
-            ->select(DB::raw('count(*) as total'))
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->select(DB::raw('count(*) AS total'))
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::RECUPERADO)
             ->first()->total;
@@ -227,10 +240,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countSuspiciousCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('count(status_covid) as total'))
+            ->select(DB::raw('count(status_covid) AS total'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
-            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::SUSPEITO)
             ->first()->total;
@@ -240,10 +253,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function countDeathCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('count(status_covid) as total'))
+            ->select(DB::raw('count(status_covid) AS total'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
-            ->join('cases_person as cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users as cu', 'cu.id', '=', 'cp.user_id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
             ->where('cu.company_id', $this->company_id)
             ->where('cp.status_covid', StatusCovidType::OBITO)
             ->first()->total;
