@@ -5,7 +5,6 @@ namespace App\Enums;
 use BenSampo\Enum\Enum;
 
 /**
- * @method static static NAO()
  * @method static static GESTANTE()
  * @method static static ACIMA_60ANOS()
  * @method static static DIABETES()
@@ -15,6 +14,7 @@ use BenSampo\Enum\Enum;
  */
 final class RiskGroupType extends Enum
 {
+    const NAO = 'Não';
     const GESTANTE = 'Gestante';
     const ACIMA_60ANOS = 'Acima de 60 anos';
     const DIABETES = 'Diabetes';
