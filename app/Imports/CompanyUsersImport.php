@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Enums\RiskGroupType;
 use App\Mail\ImportUsersErrorMail;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
@@ -58,7 +59,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
         $email = $row['email'];
-        $riskGroup = ($row['risk_group']) ? 'Acima de 60 anos' : 'Não';
+        $riskGroup = ($row['risk_group']) ? RiskGroupType::ACIMA_60ANOS : RiskGroupType::NAO;
 
         if ($email == '' || $cpf == '') {
             return;

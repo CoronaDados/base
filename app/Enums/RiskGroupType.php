@@ -5,7 +5,6 @@ namespace App\Enums;
 use BenSampo\Enum\Enum;
 
 /**
- * @method static static NAO()
  * @method static static GESTANTE()
  * @method static static ACIMA_60ANOS()
  * @method static static DIABETES()
