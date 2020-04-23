@@ -45,6 +45,7 @@ class CompaniesController extends Controller
 
         $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
         $personsActivedConfirmedCases = $currentUser->personsActivedConfirmedCases();
+        $personsSuspiciousCases = $currentUser->personsSuspiciousCases();
 
         return view('company.dashboard', compact([
             'totalPersonsInCompany',
@@ -62,6 +63,7 @@ class CompaniesController extends Controller
             'totalSuspiciousCases',
             'totalDeathCases',
             'personsActivedConfirmedCases',
+            'personsSuspiciousCases',
             'riskGroups'
         ]));
     }

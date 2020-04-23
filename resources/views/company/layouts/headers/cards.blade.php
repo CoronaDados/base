@@ -3,9 +3,10 @@
         <div class="header-body">
             <!-- Card stats -->
 
-            <div class="row">
-                <div class="card-deck col-md-12">
-                    <div class="card card-stats">
+            <div class="row justify-content-around">
+                <div class="card-deck col-md-12 p-0">
+
+                    <div class="card card-stats col-md-6 ml-0">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col">
@@ -52,7 +53,8 @@
                             </p>
                         </div>
                     </div>
-                    <div class="card card-stats">
+
+                    <div class="card card-stats col-md-6 mr-0">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col">
@@ -116,7 +118,7 @@
 
             <div class="row mt-4">
 
-                <div class="col-md-6">
+                <div class="col-md-6 pl-0">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -149,7 +151,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 pr-0">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -160,7 +162,7 @@
                         </div>
                         <div class="table-responsive">
                             <!-- Projects table -->
-                            <table class="table align-items-center table-flush">
+                            <table class="table align-items-center table-fixed">
                                 <thead class="thead-light">
                                 <tr>
                                     <th scope="col">Nome</th>
@@ -169,7 +171,13 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach($personsSuspiciousCases as $person)
+                                        <tr>
+                                            <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
+                                            <td>{{ $person->riskGroup }}</td>
+                                            <td>{{ Helper::formatDateFromDB($person->date) }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -178,7 +186,7 @@
             </div>
 
             <div class="row mt-4">
-                <div class="col-12">
+                <div class="col-12 p-0">
                     <div class="card">
                     <div class="card-header border-0">
                         <div class="row align-items-center">

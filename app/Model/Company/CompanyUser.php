@@ -227,6 +227,20 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->get();
     }
 
+
+    public function personsSuspiciousCases()
+    {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('p.name, rgp.name AS riskGroup, cp.created_at AS date'))
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('risk_group_person AS rgp', 'rgp.person_id', '=', 'p.id')
+            ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
+            ->where('cu.company_id', $this->company_id)
+            ->where('cp.status_covid', StatusCovidType::SUSPEITO)
+            ->get();
+    }
+
     public function countAllRecoveredCases()
     {
         return DB::table('cases_person', 'cp')
@@ -248,7 +262,6 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->where('cp.status_covid', StatusCovidType::SUSPEITO)
             ->first()->total;
     }
-
 
     public function countDeathCases()
     {
