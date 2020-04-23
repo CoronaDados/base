@@ -39,7 +39,7 @@ class CompaniesController extends Controller
         $totalSuspiciousCases =  $currentUser->countSuspiciousCases();
         $totalAllRecoveredCases =  $currentUser->countAllRecoveredCases();
         $totalDeathCases = $currentUser->countDeathCases();
-        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmedYesterday));
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedYesterday, $totalCasesConfirmedToday));
 
         $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
 
@@ -78,17 +78,17 @@ class CompaniesController extends Controller
 
         if ($request->ajax()) {
             if ($request->route()->getName() === 'company.monitoringAll') {
-                $options = ['byDay'];
-                $datas =  auth('company')->user()->monitoringsPerson($options);
+                $options = [];
             } else {
-                $options = ['byLeader', 'byDay'];
-                $datas =  auth('company')->user()->monitoringsPerson($options);
+                $options = ['byLeader'];
             }
+
+            $datas =  auth('company')->user()->monitoringPersons($options);
 
             return DataTables::of($datas)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whatsapp com esse código: <strong>' . Helper::getPersonCode($row->person_id) . '</strong>" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br/>Peça para enviar um <strong>Oi</strong> pelo Whatsapp ao número (48) 99802-3637" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
                 })
@@ -112,12 +112,12 @@ class CompaniesController extends Controller
         if ($request->ajax()) {
 
             if (auth()->user()->hasRole('Admin')) {
-                $options = ['getHistory'];
+                $options = [];
             } else {
-                $options = ['getHistory', 'byLeader'];
+                $options = ['byLeader'];
             }
 
-            $monitoringsPersons = auth('company')->user()->monitoringsPerson($options);
+            $monitoringsPersons = auth('company')->user()->monitoringsHistoryPerson($options);
 
             return DataTables::of($monitoringsPersons)
                 ->addIndexColumn()
@@ -136,6 +136,9 @@ class CompaniesController extends Controller
                 })
                 ->editColumn('name', function ($user) {
                     return Helper::getFirstAndLastName($user->name);
+                })
+                ->editColumn('dateMonitoring', function ($date) {
+                    return Helper::formatDateFromDB($date->dateMonitoring);
                 })
                 ->editColumn('symptoms', function ($user) {
 

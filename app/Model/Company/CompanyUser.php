@@ -81,40 +81,47 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         return DB::select(DB::raw($query));
     }
 
-    public function monitoringsPerson($options = [])
+    public function monitoringPersons($options = []) {
+        $companyUserId = $this->id;
+
+        $query = DB::table('persons', 'p')
+            ->select(DB::raw(' c_person.id AS person_id, p.name,c_person.email, p.phone'))
+            ->join('company_users AS c_person', 'c_person.person_id', '=', 'p.id')
+            ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
+            ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
+            ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
+                personable_id IN ( SELECT id FROM company_users WHERE company_id = 1 ) )')
+            ->whereRaw('p.id NOT IN ( SELECT mp.person_id FROM monitoring_person mp WHERE DATE(mp.created_at) >= CURDATE() )');
+
+        if (in_array("byLeader", $options, true)) {
+            $query->where('c.id', $companyUserId);
+        }
+
+        return $query->get();
+    }
+
+    public function monitoringsHistoryPerson($options = [])
     {
         $companyUserId = $this->id;
 
-        $query = 'SELECT c_person.id AS person_id, p.name, c_person.email, p.phone, p.sector, mp.symptoms, cp.status_covid FROM persons p ';
-
-        if (in_array('getHistory', $options, true)) {
-            $query .= ' INNER JOIN monitoring_person mp ON p.id = mp.person_id';
-        } else {
-            $query .= ' LEFT JOIN monitoring_person mp ON p.id = mp.person_id';
-        }
-
-        $query .= ' LEFT JOIN (SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max ON (cp_max.person_id = p.id)
-            LEFT JOIN cases_person cp ON cp.id = cp_max.max_id
-            INNER JOIN company_users c_person ON c_person.person_id = p.id
-            INNER JOIN personables pp ON p.id = pp.person_id
-            INNER JOIN company_users c ON pp.personable_id = c.id
-            WHERE p.id IN
-            (
-                SELECT pp.person_id FROM personables pp WHERE personable_id IN
-                (
-                    SELECT id FROM company_users WHERE company_id = ' . $this->company()->first()->id . '
-                )
-            )';
+        $query = DB::table('persons', 'p')
+            ->select(DB::raw(' c_person.id AS person_id, p.name, mp.created_at AS dateMonitoring, mp.symptoms, cp.status_covid'))
+            ->join('monitoring_person AS mp', 'p.id', '=', 'mp.person_id')
+            ->leftJoin(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
+            ->leftJoin('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
+            ->join('company_users AS c_person', 'c_person.person_id', '=', 'p.id')
+            ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
+            ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
+            ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
+                personable_id IN ( SELECT id FROM company_users WHERE company_id = 1 ) )');
 
         if (in_array("byLeader", $options, true)) {
-            $query .= ' AND c.id = ' . $companyUserId;
+            $query->where('c.id', $companyUserId);
         }
 
-        if (in_array('byDay', $options, true)) {
-            $query .= ' AND (DATE(mp.created_at) != CURDATE() OR mp.created_at IS NULL)';
-        }
+        $query->orderBy('mp.created_at', 'desc');
 
-        return DB::select(DB::raw($query));
+        return $query->get();
     }
 
     public function sendEmailVerificationNotification()

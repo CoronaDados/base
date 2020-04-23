@@ -111,6 +111,7 @@
             processing: true,
             serverSide: false,
             ajax: "{{ route('person.index') }}",
+            order: [[1, 'asc']],
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'name', name: 'name'},
