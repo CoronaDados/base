@@ -308,23 +308,24 @@ Responda somente *Bem* ou *Mal*.";
 
     public function askConfirmGoodFeelings()
     {
-        $question = 'Então você não está sentindo nenhum desses sintomas: febre, tosse seca, dor no corpo, dificuldade para respirar ou dor de garganta, cansaço, falta de apetite, dor muscular, congestão nasal, coriza, dor abdominal, diarreia, náuseas, vômitos, ou mal estar geral?
-Se *não* está sentindo nenhum desses sintomas, responda com *Não*. 
-Se estiver sentindo algum desses sintomas, responda com *Sim*.';
+        $question = 'Você está sem nenhum desses sintomas: 
+febre, tosse seca, dor no corpo, dificuldade para respirar, dor de garganta, cansaço, falta de paladar, congestão nasal, coriza, diarreia, ou mal estar geral.
+
+-Se *está se sentindo BEM* e sem esses sintomas, responda com *SIM*. Se você estiver sentindo algum desses sintomas e então NÃO está BEM responda com *NÃO*.';
 
         $this->ask($question, [
             [
                 'pattern' => 'sim',
                 'callback' => function () {
                     $this->confirmFeelings = 'sim';
-                    $this->askConfirmBadFeelings();
+                    $this->saveWithoutSymptoms();
                 }
             ],
             [
                 'pattern' => 'nao|não',
                 'callback' => function () {
                     $this->confirmFeelings = 'nao';
-                    $this->saveWithoutSymptoms();
+                    $this->askConfirmBadFeelings();
                 }
             ],
             [
