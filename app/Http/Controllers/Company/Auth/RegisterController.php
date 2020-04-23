@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Company\Auth;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Mail\NewCompanyMail;
 use App\Model\Company\Company;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
@@ -11,6 +13,7 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -58,8 +61,8 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:company_users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'razao' => ['required', 'string', 'min:8'],
-            'cnpj' => ['required', 'string', 'min:8',  'unique:companies'],
-            'cpf' => ['required', 'string', 'min:11',  'unique:persons'],
+            'cnpj' => ['required', 'cnpj', 'string',  'unique:companies'],
+            'cpf' => ['required', 'cpf', 'string', 'unique:persons'],
         ]);
     }
 
@@ -71,23 +74,36 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $company = Company::create([
-            'razao' => $data['razao'],
-            'cnpj' => $data['cnpj'],
-        ]);
-        $person = Person::create([
-            'name' => $data['name'],
-            'cpf' => $this->removePunctuation($data['cpf']),
-        ]);
-        $user = CompanyUser::create([
-            'company_id' => $company->id,
-            'person_id' => $person->id,
-            'email' => $data['email'],
-            'is_admin' => true,
-            'password' => Hash::make($data['password']),
-            'force_new_password' => false,
-        ]);
+        $company = Company::create(
+            [
+                'razao' => $data['razao'],
+                'cnpj' => $data['cnpj'],
+            ]
+        );
+
+        $person = Person::create(
+            [
+                'name' => $data['name'],
+                'cpf' => Helper::removePunctuation($data['cpf']),
+            ]
+        );
+
+        $user = CompanyUser::create(
+            [
+                'company_id' => $company->id,
+                'person_id' => $person->id,
+                'email' => $data['email'],
+                'is_admin' => true,
+                'password' => Hash::make($data['password']),
+                'force_new_password' => false,
+            ]
+        );
+
+        $user->person->companyUsers()->sync($user);
         $user->assignRole('Admin');
+
+        Mail::to(config('app.email_list_info'))->send(new NewCompanyMail($user));
+
         return $user;
     }
 
@@ -99,10 +115,5 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         return view('company.auth.register', ['url' => 'company']);
-    }
-
-    private function removePunctuation($string)
-    {
-        return preg_replace('/[^0-9]/', '', $string);
     }
 }

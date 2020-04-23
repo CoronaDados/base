@@ -21,7 +21,6 @@ class Person extends Model
         'sector',
         'birthday',
         'gender',
-        'risk_group',
         'status',
         'cep',
         'ibge',
@@ -38,29 +37,24 @@ class Person extends Model
         'birthday' => 'date'
     ];
 
-    public function getCodeAttribute()
-    {
-        return Hashids::encode($this->id);
-    }
-
     public function companyUsers()
     {
         return $this->morphedByMany(CompanyUser::class, 'personable');
     }
 
-    public function casePersonDay()
+    public function riskGroups()
     {
-        return $this->hasOne(CasePerson::class, 'person_id')->whereDay('created_at', '=', Carbon::today())->latest();
+        return $this->hasMany(RiskGroupPerson::class, 'person_id');
     }
 
-    public function createCasePersonDay()
+    public function monitoringPersonToday()
     {
-        return $this->hasMany(CasePerson::class, 'person_id');
+        return $this->monitoringsPerson()->whereDay('created_at', '=', Carbon::today())->first();
     }
 
-    public function casesPerson()
+    public function monitoringsPerson()
     {
-        return $this->hasMany(CasePerson::class, 'person_id');
+        return $this->hasMany(MonitoringPerson::class, 'person_id');
     }
 
     public function contacts()
@@ -71,5 +65,10 @@ class Person extends Model
     public function getBirthdayFormattedAttribute()
     {
         return $this->birthday ? $this->birthday->format('d/m/Y') : null;
+    }
+
+    public function casesPerson()
+    {
+        return $this->hasMany(CasePerson::class, 'person_id')->orderBy('created_at', 'desc');
     }
 }

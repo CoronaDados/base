@@ -18,13 +18,12 @@
                                 </div>
                             @endif
 
-                            {{-- {{ __('Before proceeding, please check your email for a verification link.') }} --}}
                             {!! __('Para usar sua conta no ' . config('app.name') . ', confirme o endereço de e-mail no link que foi enviado para <strong>' . Auth::user()->email . '</strong>.') !!}
-                            @if (Route::has('verification.resend'))
+                            @if (Route::has('company.verification.resend'))
                                 {{ __('Se você não recebeu o e-mail') }},
                                 <form class="d-inline" method="POST" action="{{ route('company.verification.resend') }}">
                                     @csrf
-                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Clique aqui para enviar novamente.') }}</button>.
+                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Clique aqui para enviar novamente') }}</button>.
                                 </form>
                             @endif
                         </div>

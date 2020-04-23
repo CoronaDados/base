@@ -14,23 +14,13 @@ Route::group(['middleware' => ['auth:company']], function () {
     Route::get('/help', 'CompaniesController@help')->name('help');
 
     Route::get('companies/monitoring', 'CompaniesController@monitoring')->name('monitoring');
+    Route::get('companies/monitoringAll', 'CompaniesController@monitoring')->name('monitoringAll');
     Route::post('companies/monitoring/{id}', 'CompaniesController@storeMonitoring');
 
     Route::get('companies/monitoring/history', 'CompaniesController@monitoringHistory')->name('monitoring.history');
+    Route::post('companies/multi/monitoring', 'CompaniesController@multiMonitoring')->name('multi.monitoring');
 
     Route::get('files/{file}', function ($file) {
         return response()->download(storage_path('files/' . $file));
     })->name('files');
-
-    /*
-    Route::get('test', function (){
-
-        $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
-        foreach ($datas as $data){
-            if($data->casePersonDay()->exists()){
-                $person[] = $data;
-            }
-        }
-        dd($person);
-    });*/
 });

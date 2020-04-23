@@ -2,21 +2,70 @@
 
 namespace App\Http\Controllers\Company;
 
+use App\Enums\RiskGroupType;
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
+use App\Enums\SymptomsType;
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Model\Company\Company;
 use App\Model\Person\CasePerson;
+use App\Model\Person\MonitoringPerson;
+use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Facades\DataTables;
 
 class CompaniesController extends Controller
 {
     public function dashboard()
     {
-        $personsCompany = auth('company')->user()->countPersons();
-        $personsUser =   auth('company')->user()->persons()->count();
+        $currentUser = auth('company')->user();
 
-        return view('company.dashboard', compact(['personsCompany', 'personsUser']));
+        $totalPersonsInCompany = $currentUser->countPersons();
+        $totalPersonsInCompanyMonitoredToday = $currentUser->countPersonsInCompanyMonitoredToday();
+        $percentPersonsInCompanyMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalPersonsInCompanyMonitoredToday, $totalPersonsInCompany));
+
+        $totalMyPersons = $currentUser->persons()->count();
+        $totalMyPersonsMonitoredToday = $currentUser->countMyPersonsMonitoredToday();
+        $percentMyPersonsMonitoredToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalMyPersonsMonitoredToday, $totalMyPersons));
+
+        $totalCasesConfirmed = $currentUser->countAllConfirmedCases();
+        $totalCasesActivedConfirmed = $currentUser->countActivedConfirmedCases();
+
+        $totalCasesConfirmedToday =  $currentUser->countConfirmedCasesToday();
+        $totalCasesConfirmedYesterday =  $currentUser->countConfirmedCasesYesterday();
+        $percentCasesConfirmedToday = Helper::getPercentFormatted(Helper::getPercentValueFromTotal($totalCasesConfirmedToday, $totalCasesConfirmedYesterday));
+
+        $totalSuspiciousCases =  $currentUser->countSuspiciousCases();
+        $totalAllRecoveredCases =  $currentUser->countAllRecoveredCases();
+        $totalDeathCases = $currentUser->countDeathCases();
+
+        $riskGroups = $currentUser->company->getCountsDashboardRiskGroups();
+        $personsActivedConfirmedCases = $currentUser->personsActivedConfirmedCases();
+        $personsSuspiciousCases = $currentUser->personsSuspiciousCases();
+
+        return view('company.dashboard', compact([
+            'totalPersonsInCompany',
+            'totalPersonsInCompanyMonitoredToday',
+            'percentPersonsInCompanyMonitoredToday',
+            'totalMyPersons',
+            'totalMyPersonsMonitoredToday',
+            'percentMyPersonsMonitoredToday',
+            'totalCasesConfirmed',
+            'totalCasesActivedConfirmed',
+            'totalCasesConfirmedToday',
+            'totalCasesConfirmedYesterday',
+            'percentCasesConfirmedToday',
+            'totalAllRecoveredCases',
+            'totalSuspiciousCases',
+            'totalDeathCases',
+            'personsActivedConfirmedCases',
+            'personsSuspiciousCases',
+            'riskGroups'
+        ]));
     }
 
     public function tips()
@@ -31,27 +80,37 @@ class CompaniesController extends Controller
 
     public function monitoring(Request $request)
     {
-        if ($request->ajax()) {
-            $datas =  auth('company')->user()->persons()->with('casePersonDay')->get();
+        $route = Route::currentRouteName();
 
-            foreach ($datas as $data) {
-                if (!$data->casePersonDay()->exists()) {
-                    $person[] = $data;
-                }
+        if ($request->ajax()) {
+            if ($request->route()->getName() === 'company.monitoringAll') {
+                $options = [];
+            } else {
+                $options = ['byLeader'];
             }
 
-            return DataTables::of($person)
+            $datas =  auth('company')->user()->monitoringPersons($options);
+
+            return DataTables::of($datas)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br>Peça para enviar uma mensagem no whats com esse codigo: <strong>' . $row->code . '</strong>" data-status="' . $row->status . '"  data-id="' . $row->id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
-                    //$btn = '<a href="javascript:void(0)" class="editMonitoring btn btn-primary btn-sm">Ver</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br/>Peça para enviar um <strong>Oi</strong> pelo Whatsapp ao número (48) 99802-3637" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
+                })
+                ->editColumn('name', function ($person) {
+                    return Helper::getFirstAndLastName($person->name);
+                })
+                ->editColumn('phone', function ($person) {
+                    return Helper::formatPhone($person->phone);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('company.monitoring');
+
+        $validSymptoms = SymptomsType::getInstances();
+
+        return view('company.monitoring', compact('route', 'validSymptoms'));
     }
 
     public function monitoringHistory(Request $request)
@@ -59,74 +118,70 @@ class CompaniesController extends Controller
         if ($request->ajax()) {
 
             if (auth()->user()->hasRole('Admin')) {
-                $casesPersons = auth('company')->user()->casesPerson();
+                $options = [];
             } else {
-                $casesPersons = auth('company')->user()->casesPersonByLeader();
+                $options = ['byLeader'];
             }
 
-            return DataTables::of($casesPersons)
-                    ->addIndexColumn()
-                    ->editColumn('status', function ($status) {
+            $monitoringsPersons = auth('company')->user()->monitoringsHistoryPerson($options);
 
-                        $formattedStatus = $this->formatStatus($status->status);
+            return DataTables::of($monitoringsPersons)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $buttons = '<button type="button" rel="tooltip" class="table-action btn btn-info btn-icon btn-sm see-details" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Detalhes" data-original-title="Detalhes">
+                                    <i class="fas fa-address-card"></i>
+                                </button>';
 
-                        $allSymptoms = '<ul class="mb-0">';
-                        foreach ($formattedStatus as $symptom) {
-                            $allSymptoms .= '<li>' . $symptom . '</li>';
-                        }
-                        $allSymptoms .= '</ul>';
+                    $buttons .= '<button type="button" rel="tooltip" class="table-action btn btn-success btn-icon btn-sm btn-simple set-diagnostic" data-name="' . $row->name . '" data-id="' . $row->person_id . '"
+                                    data-toggle="tooltip" data-placement="top" title="Diagnosticar" data-original-title="Diagnosticar">
+                                    <i class="fas fa-user-md"></i>
+                                </button>';
 
-                        return $allSymptoms;
+                    return $buttons;
+                })
+                ->editColumn('name', function ($user) {
+                    return Helper::getFirstAndLastName($user->name);
+                })
+                ->editColumn('dateMonitoring', function ($date) {
+                    return Helper::formatDateFromDB($date->dateMonitoring);
+                })
+                ->editColumn('symptoms', function ($user) {
 
-                    })
-                    ->editColumn('created_at', function ($date) {
-                        return Carbon::parse($date->created_at)->format('d/m/Y H:i:s');
-                    })
-                    ->rawColumns(['status'])
-                    ->make(true);
+                    $symptoms = json_decode($user->symptoms) ?? null;
+
+                    if (!isset($symptoms->monitored)) {
+                        return 'Sem sintomas';
+                    }
+
+                    $allSymptoms = '<ul class="mb-0 pl-1">';
+                    foreach ($symptoms->monitored as $symptom) {
+                        $allSymptoms .= '<li>' . SymptomsType::getDescription($symptom) . '</li>';
+                    }
+                    $allSymptoms .= '</ul>';
+
+                    return $allSymptoms;
+                })
+                ->editColumn('status_covid', function ($case) {
+                    return $case->status_covid ?? 'Não foi diagnosticado';
+                })
+                ->rawColumns(['symptoms', 'action'])
+                ->make(true);
         }
 
-        return view('company.history');
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
+
+        return view('company.history', compact('tests', 'status'));
     }
 
     public function storeMonitoring($id, Request $request)
     {
-        if (!$person = auth('company')->user()->persons()->where('id', '=', $id)->first()) {
-            return response()->json('error', 401);
-        };
-        $monitoring = new CasePerson(['status' => json_encode($request->all())]);
-        $person->createCasePersonDay()->save($monitoring);
+        $person = Person::find($id);
+        $symptoms = json_encode(['monitored' => $request->symptoms]);
+        $person->monitoringsPerson()->create(['symptoms' => $symptoms, 'notes' => $request->notes]);
 
         return true;
-    }
-
-    public function formatStatus($status)
-    {
-        $allSymptoms = [
-            "febre" => "Febre",
-            "tosse-seca" => "Tosse seca",
-            "cansaco" => "Cansaço",
-            "dor-corpo" => "Dor no corpo",
-            "dor-garganta" => "Dor de Garganta",
-            "congestao-nasal" => "Congestão Nasal",
-            "diarreia" => "Diarreia",
-            "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
-        ];
-
-        $status = (array) json_decode($status);
-        unset($status["person_id"], $status['obs']);
-
-        $allSymptomsFiltered = array_values(
-            array_filter(
-                $allSymptoms,
-                function ($key) use ($status) {
-                    return array_key_exists($key, $status);
-                },
-                ARRAY_FILTER_USE_KEY
-            )
-        );
-
-        return $allSymptomsFiltered;
     }
 
     /**
@@ -143,22 +198,22 @@ class CompaniesController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function multiMonitoring(Request $request)
     {
+        if ($request->has('id')) {
 
-        if (!$persons = auth('company')->user()->persons()->whereIn('id', $request->id)->get()) {
-            return response()->json('error', 401);
-        };
+            $persons = Person::whereIn('id', $request->id)->get();
 
+            foreach ($persons as $person) {
+                $person->monitoringsPerson()->create(['symptoms' => null, 'notes' => 'Sem Sintomas']);
+            }
 
-        foreach ($persons as $person) {
-            $monitoring = new CasePerson(['status' => 'ok']);
-            $person->createCasePersonDay()->save($monitoring);
+            flash('Atualizado com sucesso', 'info');
+
+            return redirect(route('company.monitoring'));
         }
-        flash('Atualizado com sucesso', 'info');
-        return redirect(route('company.monitoring'));
     }
 
     /**

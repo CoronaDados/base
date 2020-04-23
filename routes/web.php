@@ -12,5 +12,4 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::view('/termos-de-privacidade', 'general.termos-de-privacidade')->name('termos-de-privacidade');;
+Route::get('status', 'StatusController@healthCheck');

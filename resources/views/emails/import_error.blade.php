@@ -3,6 +3,7 @@
 
 Ocorreu erro na importação realizada por:<br>
 
+<strong>Empresa</strong>: {{ $company }}<br>
 <strong>Nome do usuário</strong>: {{ $name }}<br>
 <strong>E-mail do usuário</strong>: {{ $email }}<br>
 <strong>Mensagem de erro</strong>: {!! $message !!}

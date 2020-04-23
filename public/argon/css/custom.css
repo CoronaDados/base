@@ -1,15 +1,100 @@
-.accordion .card-header:after {
-    font: normal normal normal 14px/1 NucleoIcons;
-    line-height: 0;
-    position: absolute;            
-    right: 1.5rem;
-    content: '\ea0f';
-    transition: all .15s cubic-bezier(.68,-.55,.265,1.55);
-    transform: translateY(-50%);
+/* Actions Buttons company/history.blade */
+.table-action {
+    font-size: 20px;
+    width: 40px;
 }
-.accordion .card-header[aria-expanded=true]:after {
-    transform: rotate(180deg);
+
+/* Details Timeline (details.blade) */
+.timeline {
+    position: relative;
 }
-.accordion .card-header[aria-expanded=false]:after {
-    transform: rotate(360deg);
+
+.timeline:before {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    height: 100%;
+    content: '';
+    border-right: 2px dashed #e9ecef;
+}
+
+.timeline-block:first-child {
+    margin-top: 0;
+}
+
+.timeline-block {
+    position: relative;
+    margin: 2em 0;
+}
+
+.timeline-one-side .timeline-step {
+    left: 1.1rem;
+}
+
+.timeline-step {
+    font-size: 1rem;
+    font-weight: 600;
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    display: inline-flex;
+    width: 33px;
+    height: 33px;
+    transform: translateX(-50%);
+    text-align: center;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+}
+
+.timeline-one-side .timeline-content {
+    width: auto;
+}
+
+.timeline-content {
+    position: relative;
+    position: relative;
+    top: -6px;
+    margin-left: 60px;
+    padding-top: .5rem;
+}
+
+/* custom .has-danger */
+#person_form .has-danger:after {
+    top: 36px;
+}
+
+/* Cards Dashboard */
+.card-header .icon {
+    width: 2.5em;
+    height: 2.5em;
+}
+
+.card-header .icon i {
+    font-size: 1em;
+}
+
+/* Table Grupo de Risco Dashboard */
+.table-fixed {
+    table-layout: fixed;
+}
+
+.table-fixed th,
+.table-fixed td
+{
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.table-risk-group th:first-child {
+    width: 200px;
+}
+
+
+.table-risk-group th:nth-child(2) {
+    width: 95px;
+}
+
+.table-persons th:nth-child(3) {
+    width: 120px;
 }

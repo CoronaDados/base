@@ -2,9 +2,11 @@
 
 namespace App\Imports;
 
-use App\Mail\Imports\importUsersErrorMail;
+use App\Enums\RiskGroupType;
+use App\Mail\ImportUsersErrorMail;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Hash;
@@ -35,9 +37,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
     {
         return [
             ImportFailed::class => function (ImportFailed $event) {
-                Mail::to('willian.maria@sc.senai.br')
-                    ->cc('douglas.baptista@sc.senai.br')
-                    ->send(new importUsersErrorMail($this->importedBy, $event));
+                Mail::to(config('app.email_list_error'))->send(new ImportUsersErrorMail($this->importedBy, $event));
             },
         ];
     }
@@ -59,6 +59,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cep = $this->removePunctuation($row['cep']);
         $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
         $email = $row['email'];
+        $riskGroup = ($row['risk_group']) ? RiskGroupType::ACIMA_60ANOS : RiskGroupType::NAO;
 
         if ($email == '' || $cpf == '') {
             return;
@@ -79,12 +80,15 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
                 'ibge' => $row['ibge'],
                 'birthday' => $birthday,
                 'gender' => $row['gender'],
-                'risk_group' => $row['risk_group'],
                 'status' => $row['status'],
                 'state' => $row['state'],
                 'number' => $row['number'],
             ]
         );
+
+        $person->riskGroups()->save(new RiskGroupPerson([
+            'name' => $riskGroup
+        ]));
 
         $user = CompanyUser::firstOrCreate(
             ['person_id' => $person->id, 'company_id' => $this->importedBy->company_id],

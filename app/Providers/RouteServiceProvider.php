@@ -44,6 +44,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapCompanyRoutes();
         $this->mapPersonRoutes();
+        $this->mapMonitoringPersonRoutes();
+        $this->mapCasesPersonRoutes();
+        $this->mapChatBotRoutes();
         $this->mapWebRoutes();
     }
 
@@ -56,8 +59,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::domain(env('APP_URL'))
-            ->middleware('web')
+        Route::middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/web.php'));
     }
@@ -65,8 +67,7 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapCompanyRoutes()
     {
-        Route::domain(env('APP_URL'))
-            ->middleware('web')
+        Route::middleware('web')
             ->name('company.')
             ->namespace($this->namespace . '\Company')
             ->group(base_path('routes/company.php'));
@@ -74,9 +75,30 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapPersonRoutes()
     {
-        Route::domain(env('APP_URL'))
-            ->middleware('web')
+        Route::middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/person.php'));
+    }
+
+    protected function mapMonitoringPersonRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/monitoringPerson.php'));
+    }
+
+
+    protected function mapCasesPersonRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/casesPerson.php'));
+    }
+    
+    protected function mapChatBotRoutes()
+    {
+        Route::middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/chatbot.php'));
     }
 }

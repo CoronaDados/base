@@ -5,7 +5,7 @@
     <div class="container-fluid pb-8 pt-3 pt-md-7">
         <div class="card">
             <div class="card-header">
-                <h3>Editar meus dados</h3>
+                <h3 class="m-0">Editar meus dados</h3>
             </div>
 
             <div class="card-body">

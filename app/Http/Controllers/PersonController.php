@@ -2,15 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusCovidTestType;
+use App\Enums\StatusCovidType;
+use App\Helpers\Helper;
+use App\Http\Requests\StorePerson;
 use App\Imports\CompanyUsersImport;
 use App\Imports\PersonablesImport;
 use App\Enums\RiskGroupType;
 use App\Enums\SectorType;
 use App\Model\Company\CompanyUser;
 use App\Model\Person\Person;
+use App\Model\Person\RiskGroupPerson;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -19,7 +31,9 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return Factory|View
+     * @throws Exception
      */
     public function index(Request $request)
     {
@@ -28,75 +42,95 @@ class PersonController extends Controller
                 if (auth()->user()->hasRole('Admin')) {
                     $data =  auth('company')->user()->personsInCompany();
                 } else {
-                    $data =  auth('company')->user()->personsInCompanyByLeader();
+                    $options = ['byLeader'];
+                    $data =  auth('company')->user()->personsInCompany($options);
                 }
             }
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . '" data-id="' . $row->id . '" data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" title="Ver / Editar" data-name="' . $row->name . '" data-id="' . $row->id . '"
+                                data-original-title="Ver / Editar" class="edit btn btn-primary btn-sm editPerson">Ver / Editar</a>';
                     return $btn;
                 })
                 ->editColumn('name', function ($user) {
-                    return $this->getFirstAndLastName($user->name);
+                    return Helper::getFirstAndLastName($user->name);
                 })
                 ->editColumn('lider', function ($user) {
-                    return $this->getFirstAndLastName($user->lider);
+                    return Helper::getFirstAndLastName($user->lider);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
+        $tests = StatusCovidTestType::getValues();
+        $status = StatusCovidType::getValues();
 
-        return view('person.index', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.index', compact('riskGroupsType', 'sectors', 'roles', 'leaders', 'tests', 'status'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function create()
     {
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return Factory|View
+     * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(StorePerson $request)
     {
+
+        $request->validated();
 
         $companyUser = auth('company')->user();
 
-        $cpf = $this->removePunctuation($request->cpf);
+        $cpf = Helper::removePunctuation($request->cpf);
 
         $person = Person::create(
             [
                 'name' => $request->name,
                 'cpf' => $cpf,
-                'cep' => $this->removePunctuation($request->cep),
-                'phone' => $this->removePunctuation($request->phone),
+                'cep' => Helper::removePunctuation($request->cep),
+                'phone' => Helper::removePunctuation($request->phone),
                 'sector' => $request->sector,
                 'birthday' => Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d'),
                 'gender' => $request->gender,
-                'risk_group' => $request->risk_group,
                 'status' => true
             ]
         );
+
+        if($request->risk_groups) {
+            $riskGroups = array_map(function($riskGroup) {
+               return new RiskGroupPerson(['name' => $riskGroup]);
+            }, $request->risk_groups);
+
+            $person->riskGroups()->saveMany($riskGroups);
+        } else {
+            $riskGroup = new RiskGroupPerson([
+                'name' => RiskGroupType::NAO
+            ]);
+
+            $person->riskGroups()->save($riskGroup);
+        }
 
         $user = CompanyUser::create(
             [
@@ -130,89 +164,41 @@ class PersonController extends Controller
 
         flash('Colaborador cadastrado com sucesso!', 'info');
 
-        $riskGroups = RiskGroupType::getValues();
+        $riskGroupsType = RiskGroupType::getValues();
         $sectors = SectorType::getValues();
         $roles = Role::query()->where('guard_name', '=', 'company')->get();
         $leaders = auth('company')->user()->leadersInCompany();
 
-        return view('person.create', compact('riskGroups', 'sectors', 'roles', 'leaders'));
-    }
-
-    private function removePunctuation($string)
-    {
-        return preg_replace('/[^0-9]/', '', $string);
-    }
-
-    private function getFirstAndLastName($name): string
-    {
-        $explodedName = explode(" ", $name);
-        $maxLength = count($explodedName) - 1;
-        $firstName = $explodedName[0];
-        $lastName = $explodedName[$maxLength];
-
-        return $firstName . ' ' . $lastName;
+        return view('person.create', compact('riskGroupsType', 'sectors', 'roles', 'leaders'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
      */
     public function show(Request $request, $id)
     {
         if ($request->ajax()) {
-            $companyUser = CompanyUser::with('person', 'roles')->find($id);
+            $companyUser = CompanyUser::with('person', 'person.riskGroups', 'roles')->find($id);
             $leader = $companyUser->leader()->id;
-            $casesPerson = $companyUser->person->casesPerson()->get();
+            $countMonitoringsPerson = $companyUser->person->monitoringsPerson()->count();
+            $cases = $companyUser->person->casesPerson()->get()->last();
 
-            $allSymptoms = [
-                "febre" => "Febre",
-                "tosse-seca" => "Tosse seca",
-                "cansaco" => "Cansaço",
-                "dor-corpo" => "Dor no corpo",
-                "dor-garganta" => "Dor de Garganta",
-                "congestao-nasal" => "Congestão Nasal",
-                "diarreia" => "Diarreia",
-                "dificuldade-respirar" => "Falta de ar/Dificuldade para respirar"
-            ];
-
-            foreach ($casesPerson as $case) {
-                $object = new \stdClass();
-
-                $status = (array) json_decode($case['status']);
-                unset($status["person_id"]);
-
-                $allSymptomsFiltered = array_values(
-                    array_filter(
-                        $allSymptoms,
-                        function ($key) use ($status) {
-                            return array_key_exists($key, $status);
-                        },
-                        ARRAY_FILTER_USE_KEY
-                    )
-                );
-
-                $object->symptoms = $allSymptomsFiltered;
-
-                $object->leader = CompanyUser::with('person')->find($case['user_id'])->person->name;
-                $object->date = Carbon::parse($case['created_at'])->format('d/m/Y H:i:s');
-                $object->obs = $status['obs'];
-
-                $cases[] = $object;
-            }
-
-            return response()->json(compact('companyUser', 'leader', 'cases'));
+            return response()->json(compact('companyUser', 'leader', 'countMonitoringsPerson', 'cases'));
         }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return void
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $id): void
     {
         //
     }
@@ -220,28 +206,48 @@ class PersonController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(StorePerson $request, $id): ?JsonResponse
     {
         if ($request->ajax()) {
+
             $companyUser = CompanyUser::find($id);
 
             if ($companyUser) {
-                $cpf = $this->removePunctuation($request->cpf);
+                $cpf = Helper::removePunctuation($request->cpf);
 
                 $person = $companyUser->person;
                 $person->name = $request->name;
                 $person->cpf = $cpf;
-                $person->cep = $this->removePunctuation($request->cep);
-                $person->phone = $this->removePunctuation($request->phone);
-                $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+                $person->cep = Helper::removePunctuation($request->cep);
+                $person->phone = Helper::removePunctuation($request->phone);
+
+                if ($request->birthday) {
+                    $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+                }
+
                 $person->gender = $request->gender;
                 $person->sector = $request->sector;
-                $person->risk_group = $request->risk_group;
                 $person->save();
+
+                $person->riskGroups()->delete();
+
+                if($request->risk_groups) {
+                    $riskGroups = array_map(function($riskGroup) {
+                        return new RiskGroupPerson(['name' => $riskGroup]);
+                    }, $request->risk_groups);
+
+                    $person->riskGroups()->saveMany($riskGroups);
+                } else {
+                    $riskGroup = new RiskGroupPerson([
+                        'name' => RiskGroupType::NAO
+                    ]);
+
+                    $person->riskGroups()->save($riskGroup);
+                }
 
                 $companyUser->email = $request->email;
 
@@ -276,9 +282,9 @@ class PersonController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy($id)
+    public function destroy($id): ?Response
     {
         //
     }
@@ -314,17 +320,17 @@ class PersonController extends Controller
         return view('person.profile', compact('riskGroups', 'sectors', 'roles', 'leaders', 'companyUser', 'leader'));
     }
 
-    public function profileUpdate(Request $request)
+    public function profileUpdate(StorePerson $request)
     {
         $companyUser = auth('company')->user();
 
-        $cpf = $this->removePunctuation($request->cpf);
+        $cpf = Helper::removePunctuation($request->cpf);
 
         $person = $companyUser->person;
         $person->name = $request->name;
         $person->cpf = $cpf;
-        $person->cep = $this->removePunctuation($request->cep);
-        $person->phone = $this->removePunctuation($request->phone);
+        $person->cep = Helper::removePunctuation($request->cep);
+        $person->phone = Helper::removePunctuation($request->phone);
         $person->birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
         $person->gender = $request->gender;
         $person->sector = $request->sector;

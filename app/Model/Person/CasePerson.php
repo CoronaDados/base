@@ -2,6 +2,7 @@
 
 namespace App\Model\Person;
 
+use App\Model\Company\CompanyUser;
 use Illuminate\Database\Eloquent\Model;
 
 class CasePerson extends Model
@@ -9,14 +10,12 @@ class CasePerson extends Model
     protected $table = 'cases_person';
 
     protected $fillable = [
-        'status',
+        'person_id',
+        'status_covid',
+        'status_test',
+        'notes',
         'user_id',
         'type_user',
-        'created_at'
-    ];
-
-    protected $casts = [
-        'created_at' => 'datetime:d/m/Y',
     ];
 
     protected static function boot()
@@ -30,11 +29,11 @@ class CasePerson extends Model
 
     public function person()
     {
-        return $this->hasOne(Person::class, 'id', 'person_id');
+        return $this->belongsTo(Person::class, 'person_id');
     }
 
-    public function leader()
+    public function creator()
     {
-        return $this->hasOne(Person::class, 'id', 'user_id');
+        return $this->belongsTo(CompanyUser::class, 'user_id');
     }
 }
