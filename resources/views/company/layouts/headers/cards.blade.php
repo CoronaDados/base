@@ -105,9 +105,9 @@
                                     <strong>{{ $totalCasesConfirmedToday ?? 0 }}</strong>
                                 </span>
                                 @if($percentCasesConfirmedToday !== '0,00')
-                                    <span class="text-success">
-                                        <i class="fa fa-arrow-up"></i>{{ $percentCasesConfirmedToday }}% desde ontem
-                                    </span>
+                                <span class="text-success">
+                                    <i class="fa fa-arrow-up"></i>{{ $percentCasesConfirmedToday }}% desde ontem
+                                </span>
                                 @endif
                             </p>
                         </div>
@@ -136,18 +136,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @if(count($personsSuspiciousCases) > 0)
-                                        @foreach($personsSuspiciousCases as $person)
-                                            <tr>
-                                                <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
-                                                <td>{{ Helper::getFirstAndLastName($person->leader)  }}</td>
-                                                <td>{{ Helper::formatDateFromDB($person->date) }}</td>
-                                            </tr>
-                                        @endforeach
+                                    @if(count($personsSuspiciousCases) > 0)
+                                    @foreach($personsSuspiciousCases as $person)
+                                    <tr>
+                                        <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
+                                        <td>{{ Helper::getFirstAndLastName($person->leader)  }}</td>
+                                        <td>{{ Helper::formatDateFromDB($person->date) }}</td>
+                                    </tr>
+                                    @endforeach
                                     @else
-                                        <tr>
-                                            <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
-                                        </tr>
+                                    <tr>
+                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                    </tr>
                                     @endif
                                 </tbody>
                             </table>
@@ -155,65 +155,65 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 ">
-                    <div class="card shadow">
-                        <div class="card-header border-0">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h3 class="mb-0">Colaboradores Com COVID-19</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <!-- Projects table -->
-                            <table class="table align-items-center table-persons table-fixed">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Grupo de Risco</th>
-                                        <th scope="col">Data</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @if(count($personsActivedConfirmedCases) > 0)
-                                    @foreach($personsActivedConfirmedCases as $person)
-                                        <tr>
-                                            <td>{{ Helper::getFirstAndLastName($person->name) }}</td>
-                                            <td>
-                                                <ul class="p-0 m-0">
-                                                    @foreach(json_decode($person->riskGroups) as $riskGroup)
-                                                        <li>{{ $riskGroup }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            </td>
-                                            <td>{{ Helper::formatDateFromDB($person->date) }}</td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
-                                    </tr>
-                                @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+{{--                <div class="col-md-6 ">--}}
+{{--                    <div class="card shadow">--}}
+{{--                        <div class="card-header border-0">--}}
+{{--                            <div class="row align-items-center">--}}
+{{--                                <div class="col">--}}
+{{--                                    <h3 class="mb-0">Colaboradores Com COVID-19</h3>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="table-responsive">--}}
+{{--                            <!-- Projects table -->--}}
+{{--                            <table class="table align-items-center table-persons table-fixed">--}}
+{{--                                <thead class="thead-light">--}}
+{{--                                    <tr>--}}
+{{--                                        <th scope="col">Nome</th>--}}
+{{--                                        <th scope="col">Grupo de Risco</th>--}}
+{{--                                        <th scope="col">Data</th>--}}
+{{--                                    </tr>--}}
+{{--                                </thead>--}}
+{{--                                <tbody>--}}
+{{--                                @if(count($personsActivedConfirmedCases) > 0)--}}
+{{--                                    @foreach($personsActivedConfirmedCases as $person)--}}
+{{--                                        <tr>--}}
+{{--                                            <td>{{ Helper::getFirstAndLastName($person->name) }}</td>--}}
+{{--                                            <td>--}}
+{{--                                                <ul class="p-0 m-0">--}}
+{{--                                                    @foreach(json_decode($person->riskGroups) as $riskGroup)--}}
+{{--                                                        <li>{{ $riskGroup }}</li>--}}
+{{--                                                    @endforeach--}}
+{{--                                                </ul>--}}
+{{--                                            </td>--}}
+{{--                                            <td>{{ Helper::formatDateFromDB($person->date) }}</td>--}}
+{{--                                        </tr>--}}
+{{--                                    @endforeach--}}
+{{--                                @else--}}
+{{--                                    <tr>--}}
+{{--                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>--}}
+{{--                                    </tr>--}}
+{{--                                @endif--}}
+{{--                                </tbody>--}}
+{{--                            </table>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </div>
 
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card">
-                    <div class="card-header border-0">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="mb-0">Grupos de Risco</h3>
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Grupos de Risco</h3>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-items-center table-fixed table-risk-group">
-                            <thead class="thead-light">
+                        <div class="table-responsive">
+                            <table class="table align-items-center table-fixed table-risk-group">
+                                <thead class="thead-light">
                                 <tr>
                                     <th scope="col">Grupo</th>
                                     <th scope="col">Total</th>
@@ -223,110 +223,106 @@
                                     <th scope="col">Recuperados</th>
                                     <th scope="col">Óbitos</th>
                                 </tr>
-                            </thead>
-                            <tbody>
+                                </thead>
+                                <tbody>
                                 @foreach($riskGroups as $riskGroup)
-                                <tr>
-                                    <th scope="row">
-                                        {{$riskGroup->name}}
-                                    </th>
-                                    <td class="text-center">
-                                        {{$riskGroup->total_group}}
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span>
-                                                {{ Helper::getPercentValueAndFormat($riskGroup->total_suspect, $riskGroup->total_group) }}%
-                                            </span>
+                                    <tr>
+                                        <th scope="row">
+                                            {{$riskGroup->name}}
+                                        </th>
+                                        <td class="text-center">
+                                            {{$riskGroup->total_group}}
+                                        </td>
+                                        <td>
                                             <div>
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar bg-gradient-warning" role="progressbar"
-                                                        aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_suspect, $riskGroup->total_group) }}"
-                                                        aria-valuemin="0" aria-valuemax="100"
-                                                        style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_suspect, $riskGroup->total_group) }}%;">
+                                    <span>
+                                        {{ Helper::getPercentValueAndFormat($riskGroup->total_suspect, $riskGroup->total_group) }}%
+                                    </span>
+                                                <div>
+                                                    <div class="progress w-100">
+                                                        <div class="progress-bar bg-gradient-warning" role="progressbar"
+                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_suspect, $riskGroup->total_group) }}"
+                                                             aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_suspect, $riskGroup->total_group) }}%;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span>
-                                                {{ Helper::getPercentValueAndFormat($riskGroup->total_negative, $riskGroup->total_group) }}%
-                                            </span>
+                                        </td>
+                                        <td>
                                             <div>
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar bg-gradient-primary" role="progressbar"
-                                                        aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_negative, $riskGroup->total_group) }}"
-                                                        aria-valuemin="0" aria-valuemax="100"
-                                                        style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_negative, $riskGroup->total_group) }}%;">
+                                    <span>
+                                        {{ Helper::getPercentValueAndFormat($riskGroup->total_negative, $riskGroup->total_group) }}%
+                                    </span>
+                                                <div>
+                                                    <div class="progress w-100">
+                                                        <div class="progress-bar bg-gradient-primary" role="progressbar"
+                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_negative, $riskGroup->total_group) }}"
+                                                             aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_negative, $riskGroup->total_group) }}%;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span>
-                                                {{ Helper::getPercentValueAndFormat($riskGroup->total_positive, $riskGroup->total_group) }}%
-                                            </span>
+                                        </td>
+                                        <td>
                                             <div>
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar bg-gradient-danger" role="progressbar"
-                                                        aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_positive, $riskGroup->total_group) }}"
-                                                        aria-valuemin="0" aria-valuemax="100"
-                                                        style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_positive, $riskGroup->total_group) }}%;">
+                                    <span>
+                                        {{ Helper::getPercentValueAndFormat($riskGroup->total_positive, $riskGroup->total_group) }}%
+                                    </span>
+                                                <div>
+                                                    <div class="progress w-100">
+                                                        <div class="progress-bar bg-gradient-danger" role="progressbar"
+                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_positive, $riskGroup->total_group) }}"
+                                                             aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_positive, $riskGroup->total_group) }}%;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span>
-                                                {{ Helper::getPercentValueAndFormat($riskGroup->total_recover, $riskGroup->total_group) }}%
-                                            </span>
+                                        </td>
+                                        <td>
                                             <div>
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar bg-gradient-success" role="progressbar"
-                                                        aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_recover, $riskGroup->total_group) }}"
-                                                        aria-valuemin="0" aria-valuemax="100"
-                                                        style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_recover, $riskGroup->total_group) }}%;">
+                                    <span>
+                                        {{ Helper::getPercentValueAndFormat($riskGroup->total_recover, $riskGroup->total_group) }}%
+                                    </span>
+                                                <div>
+                                                    <div class="progress w-100">
+                                                        <div class="progress-bar bg-gradient-success" role="progressbar"
+                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_recover, $riskGroup->total_group) }}"
+                                                             aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_recover, $riskGroup->total_group) }}%;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span>
-                                                {{ Helper::getPercentValueAndFormat($riskGroup->total_death, $riskGroup->total_group) }}%
-                                            </span>
+                                        </td>
+                                        <td>
                                             <div>
-                                                <div class="progress w-100">
-                                                    <div class="progress-bar bg-dark" role="progressbar"
-                                                        aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_death, $riskGroup->total_group) }}"
-                                                        aria-valuemin="0" aria-valuemax="100"
-                                                        style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_death, $riskGroup->total_group) }}%;">
+                                    <span>
+                                        {{ Helper::getPercentValueAndFormat($riskGroup->total_death, $riskGroup->total_group) }}%
+                                    </span>
+                                                <div>
+                                                    <div class="progress w-100">
+                                                        <div class="progress-bar bg-dark" role="progressbar"
+                                                             aria-valuenow="{{ Helper::getPercentValueFromTotal($riskGroup->total_death, $riskGroup->total_group) }}"
+                                                             aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ Helper::getPercentValueFromTotal($riskGroup->total_death, $riskGroup->total_group) }}%;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 @endforeach
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@push('js')
-    <script>
-        $('.table-suspicious tbody').perfectScrollbar();
-    </script>
-@endpush
+
