@@ -41,7 +41,7 @@ final class SymptomsType extends Enum
             return 'Coriza';
         }
         if ($value === self::DIARREIA) {
-            return 'Diarréia';
+            return 'Diarreia';
         }
         if ($value === self::SEM_PALADAR) {
             return 'Sem paladar';
@@ -88,7 +88,7 @@ final class SymptomsType extends Enum
     public static function getValueById($value)
     {
         $value = (int) $value;
-        
+
         if ($value === 1) {
             return self::FEBRE;
         }
