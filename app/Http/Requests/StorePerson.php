@@ -36,6 +36,10 @@ class StorePerson extends FormRequest
                 'required_without:person_id',
                 'email',
                 Rule::unique('company_users')->ignore($this->person_id)
+            ],
+            'phone' => [
+                'required_without:person_id',
+                Rule::unique('persons')->ignore($this->person_id)
             ]
         ];
     }
@@ -49,6 +53,7 @@ class StorePerson extends FormRequest
     {
         $this->merge([
             'cpf' => Helper::removePunctuation($this->cpf),
+            'phone' => Helper::removePunctuation($this->phone)
         ]);
     }
 
@@ -75,7 +80,8 @@ class StorePerson extends FormRequest
     {
         return [
             'email' => 'e-mail',
-            'cpf' => 'CPF'
+            'cpf' => 'CPF',
+            'phone' => 'Telefone'
         ];
     }
 }

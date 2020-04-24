@@ -23,9 +23,14 @@ class Helper
         return $firstName . ' ' . $lastName;
     }
 
-    public static function formatDateFromDB($date): string
+    public static function formatDateTimeFromDB($date): string
     {
         return Carbon::parse($date)->format('d/m/Y \à\s H:i:s');
+    }
+
+    public static function formatDateFromDB($date): string
+    {
+        return Carbon::parse($date)->format('d/m/Y');
     }
 
     public static function getPersonCode($id)

@@ -30,10 +30,16 @@
     </div>
     <div class="row">
         <div class="col-md-3">
-            <div class="form-group">
+            <div class="form-group @error('phone') has-danger @enderror" >
                 <label for="phone">Telefone (WhatsApp) {{ $isRequired ? '*' : '' }}</label>
-                <input type="tel" class="form-control form-control-alternative phone" required name="phone" id="phone" value="{{ old('phone') ?? $companyUser->person->phone ?? '' }}"
+                <input type="tel" class="form-control form-control-alternative phone @error('phone') is-invalid @enderror" name="phone" id="phone" value="{{ old('phone') ?? $companyUser->person->phone ?? '' }}"
                        data-mask="(00) 0000-00009" placeholder="Telefone (WhatsApp) {{ $isRequired ? '(obrigatório)' : '' }}" {{ $isRequired ? 'required' : '' }}/>
+
+                @error('phone')
+                    <div class="invalid-feedback" role="alert">
+                        {{ $errors->first('phone') }}
+                    </div>
+                @enderror
             </div>
         </div>
 
