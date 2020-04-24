@@ -137,6 +137,8 @@
 
                 person_id = $(this).data('id');
 
+                $('#person_form').trigger("reset");
+
                 $('.historic-container').empty();
                 $('.form-group').removeClass('has-danger');
                 $('.form-group').children('.invalid-feedback').remove();
@@ -159,10 +161,7 @@
                     success: function (data) {
 
                         let person = data.companyUser.person,
-                            role = data.companyUser.roles[0].name,
-                            historyTable = $('.history-table tbody');
-
-                        historyTable.empty();
+                            role = data.companyUser.roles[0].name
 
                         $('#modelHeading').html("Colaborador " + person.name);
                         $('#saveBtn').val("edit-user");
@@ -184,7 +183,7 @@
                         const $radios = $('input:radio[name=gender]');
                         $radios.filter('[value=' + person.gender + ']').prop('checked', true);
 
-                        const $checkboxes = $('.risk-groups').prop('checked', false);
+                        const $checkboxes = $('.risk-groups');
 
                         if(person.risk_groups) {
                             for(risk_group of person.risk_groups) {
