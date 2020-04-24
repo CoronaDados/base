@@ -144,7 +144,7 @@ class CompaniesController extends Controller
                     return Helper::getFirstAndLastName($user->name);
                 })
                 ->editColumn('dateMonitoring', function ($date) {
-                    return Helper::formatDateFromDB($date->dateMonitoring);
+                    return Helper::formatDateTimeFromDB($date->dateMonitoring);
                 })
                 ->editColumn('symptoms', function ($user) {
 
