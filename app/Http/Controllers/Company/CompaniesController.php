@@ -99,12 +99,18 @@ class CompaniesController extends Controller
                     return $btn;
                 })
                 ->editColumn('name', function ($person) {
-                    return Helper::getFirstAndLastName($person->name);
+
+                    $nameFormatted = Helper::getFirstAndLastName($person->name);
+
+                    $existWhatsapp = '';
+                    if(!$person->existWhatsapp) $existWhatsapp = '<span data-toggle="tooltip" data-placement="top" title="Não respondeu o Whatsapp!" data-original-title="Não respondeu o Whatsapp!"><img class="ml-2 w-25" src="/img/whatsapp-blocked.png"></span>';
+
+                    return $nameFormatted . $existWhatsapp;
                 })
                 ->editColumn('phone', function ($person) {
                     return Helper::formatPhone($person->phone);
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'name'])
                 ->make(true);
         }
 
