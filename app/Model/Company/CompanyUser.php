@@ -106,10 +106,10 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
         $query = DB::table('persons', 'p')
             ->select(DB::raw(' p.id AS person_id, p.name, mp.created_at AS dateMonitoring, mp.symptoms, cp.status_covid'))
-            ->join('monitoring_person AS mp', 'p.id', '=', 'mp.person_id')
+            ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM monitoring_person GROUP BY person_id) mp_max'),'mp_max.person_id','=','p.id')
+            ->join('monitoring_person AS mp', 'mp.id', '=', 'mp_max.max_id')
             ->leftJoin(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->leftJoin('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
-            ->join('company_users AS c_person', 'c_person.person_id', '=', 'p.id')
             ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
             ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
             ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
@@ -254,23 +254,32 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
 
     public function personsActivedConfirmedCases()
     {
-        return DB::table('persons', 'p')
+        $query = DB::table('persons', 'p')
             ->select(DB::raw('p.name, CONCAT(\'[\', GROUP_CONCAT(\'"\', rgp.name, \'"\'), \']\') AS riskGroups, cp.created_at AS date'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
             ->join('risk_group_person AS rgp', 'rgp.person_id', '=', 'p.id')
             ->join('company_users AS cu', 'cu.id', '=', 'cp.user_id')
+            ->join('personables AS pp', 'p.id', '=','pp.person_id')
+            ->join('company_users AS c_leader', 'pp.personable_id', '=','c_leader.id')
+            ->join('persons AS l', 'l.id', '=','c_leader.person_id')
             ->where('cu.company_id', $this->company_id)
-            ->where('cp.status_covid', StatusCovidType::POSITIVO)
-            ->groupBy('p.name', 'cp.created_at')
-            ->orderByDesc('cp.created_at')
-            ->get();
+            ->where('cp.status_covid', StatusCovidType::POSITIVO);
+
+        if(!$this->hasRole('Admin')) {
+            $query->where('c_leader.id','=', $this->id);
+        }
+
+        $query->groupBy('p.name', 'cp.created_at')
+            ->orderByDesc('cp.created_at');
+
+        return $query->get();
     }
 
 
     public function personsSuspiciousCases()
     {
-        return DB::table('persons', 'p')
+        $query = DB::table('persons', 'p')
             ->select(DB::raw('p.name, l.name AS leader, DATE(cp.created_at) AS date'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
@@ -279,10 +288,17 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
             ->join('company_users AS c_leader', 'pp.personable_id', '=','c_leader.id')
             ->join('persons AS l', 'l.id', '=','c_leader.person_id')
             ->where('cu.company_id', $this->company_id)
-            ->where('cp.status_covid', StatusCovidType::SUSPEITO)
-            ->orderByDesc('cp.created_at')
-            ->orderBy('p.name')
-            ->get();
+            ->where('cp.status_covid', StatusCovidType::SUSPEITO);
+
+
+        if(!$this->hasRole('Admin')) {
+            $query->where('c_leader.id','=', $this->id);
+        }
+
+        $query->orderByDesc('cp.created_at')
+            ->orderBy('p.name');
+
+        return $query->get();
     }
 
     public function casesPersonCreator()
