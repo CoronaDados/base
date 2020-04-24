@@ -57,7 +57,7 @@ class CompanyUsersImport implements OnEachRow, WithHeadingRow, WithChunkReading,
         $cpf = $this->removePunctuation($row['cpf']);
         $cpf_lider = $this->removePunctuation($row['cpf_lider']);
         $cep = $this->removePunctuation($row['cep']);
-        $birthday = ($row['birthday'] !== null) ? Carbon::parse($row['birthday'])->format('Y-m-d') : null;
+        $birthday = ($row['birthday'] !== null) ? Carbon::createFromFormat('d/m/Y', $row['birthday'])->toDateString() : null;
         $email = $row['email'];
         $riskGroup = ($row['risk_group']) ? RiskGroupType::ACIMA_60ANOS : RiskGroupType::NAO;
 
