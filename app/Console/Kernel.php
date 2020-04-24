@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Jobs\WhatsAppMonitoringJob;
+use App\Jobs\CheckPersonsToMonitoring;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,8 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->job(new WhatsAppMonitoringJob)->everyMinute();
+        $schedule->job(new CheckPersonsToMonitoring)->dailyAt('08:00');
     }
 
     /**

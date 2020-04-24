@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Model\Company\Company;
-use App\Model\Person\Person;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -11,10 +9,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class WhatsAppMonitoringJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $person;
 
     /**
      * The number of times the job may be attempted.
@@ -35,9 +36,9 @@ class WhatsAppMonitoringJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(stdClass $person)
     {
-        //
+        $this->person = $person;
     }
 
     /**
@@ -47,36 +48,27 @@ class WhatsAppMonitoringJob implements ShouldQueue
      */
     public function handle()
     {
-        $companies = Company::all();
+        $number = str_replace('+', '', $this->person->phone);
 
-        foreach ($companies as $company) {
-
-            $personsCompany = $company->getPersonsBotWhatsApp();       
-            dd($personsCompany);
-            $personsCompany = Person::where('cpf', '07805698902')->get();
-
-            foreach ($personsCompany as $person) {
-
-                $number = str_replace('+', '', $person->phone);
-
-                if (substr($number, 0, 2) != '55') {
-                    $number = '55' . $number;
-                }
-
-                $message = 'Olá *'.$person->name.'*, bom dia! Aqui é do CoronaDados, podemos fazer seu monitoramento de hoje?';
-
-                $response = Http::asJson()
-                    ->retry(3, 500)
-                    ->withBasicAuth('admin', 'qrc0d32020')
-                    ->post('http://192.168.192.1:8081/send-message', [
-                        'number' => $number,
-                        'message' => $message
-                    ]);
-
-                Log::info($response);
-
-                continue;
-            }
+        if (substr($number, 0, 2) != '55') {
+            $number = '55' . $number;
         }
+        if (strlen($number) > 12) {
+            $number = substr($number, 0, 4) . substr($number, 5);
+        }
+
+        $number = $number . '@c.us';
+
+        $message = 'Olá *'.$this->person->name.'*, bom dia! Aqui é do CoronaDados, podemos fazer seu monitoramento de hoje?';
+
+        $response = Http::asJson()
+            ->retry(3, 500)
+            ->withBasicAuth(config('app.coronadados_bot_user'), config('app.coronadados_bot_password'))
+            ->post(config('app.coronadados_bot_url_send_message'), [
+                'number' => $number,
+                'message' => $message
+            ])->throw();
+
+        Log::info('Monitoramento WhatsApp: ' . $response);
     }
 }
