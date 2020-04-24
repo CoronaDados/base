@@ -85,7 +85,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         $companyUserId = $this->id;
 
         $query = DB::table('persons', 'p')
-            ->select(DB::raw(' c_person.id AS person_id, p.name,c_person.email, p.phone'))
+            ->select(DB::raw(' p.id AS person_id, p.name,c_person.email, p.phone'))
             ->join('company_users AS c_person', 'c_person.person_id', '=', 'p.id')
             ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
             ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
@@ -105,7 +105,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
         $companyUserId = $this->id;
 
         $query = DB::table('persons', 'p')
-            ->select(DB::raw(' c_person.id AS person_id, p.name, mp.created_at AS dateMonitoring, mp.symptoms, cp.status_covid'))
+            ->select(DB::raw(' p.id AS person_id, p.name, mp.created_at AS dateMonitoring, mp.symptoms, cp.status_covid'))
             ->join('monitoring_person AS mp', 'p.id', '=', 'mp.person_id')
             ->leftJoin(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->leftJoin('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
