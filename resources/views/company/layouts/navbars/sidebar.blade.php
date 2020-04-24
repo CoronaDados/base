@@ -136,13 +136,6 @@
                 </li>
             </ul>
             <hr class="my-3">
-            <ul class="navbar-nav" style="position: absolute; bottom: 0;">
-                <li class="nav-item  bg-info">
-                    <a class="nav-link text-white" href="http://coronadados.dd4b.com.br/" target="_blank">
-                        <i class="ni ni-map-big"></i>Big Data
-                    </a>
-                </li>
-            </ul>
         </div>
     </div>
 </nav>
