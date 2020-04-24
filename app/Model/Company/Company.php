@@ -2,7 +2,9 @@
 
 namespace App\Model\Company;
 
+use App\Enums\ApplicationType;
 use App\Model\Person\Person;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -42,6 +44,24 @@ class Company extends Model
 
         return DB::select(DB::raw($query));
     }
+
+    public function getPersonsBotWhatsApp() 
+    {
+
+        $latestWhatsappMonitorings = DB::table('monitoring_person')
+                   ->select('person_id', DB::raw('MAX(created_at) as last_date'))
+                   ->where('application', ApplicationType::WHATSAPP)
+                   ->groupBy('person_id');
+
+        return DB::table('persons', 'p')
+            ->select(DB::raw('p.name, p.phone, lm.last_date'))
+            ->join('company_users AS cu', 'p.id', '=', 'cu.person_id')
+            ->joinSub($latestWhatsappMonitorings, 'lm', function($join) {
+                $join->on('p.id', '=', 'lm.person_id');
+            })
+            ->where('cu.company_id', $this->id)
+            ->whereDate('lm.last_date', '<', Carbon::now()->format('Y-m-d'))
+            ->whereNotNull('p.phone')
+            ->get();
+    }
 }
-
-

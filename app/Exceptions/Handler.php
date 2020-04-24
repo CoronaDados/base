@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -41,7 +42,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-        if ($this->shouldReport($exception) && config('app.env') == 'production') {
+        if ($this->shouldReport($exception) && App::environment(['production', 'staging'])) {
             Mail::to(config('app.email_list_error'))->send(new ErrorMail($exception));
         }
 
