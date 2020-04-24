@@ -253,7 +253,7 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function personsActivedConfirmedCases()
     {
         return DB::table('persons', 'p')
-            ->select(DB::raw('p.name, json_arrayagg(rgp.name) AS riskGroups, DATE(cp.created_at) AS date'))
+            ->select(DB::raw('p.name, CONCAT(\'[\', GROUP_CONCAT(\'"\', rgp.name, \'"\'), \']\') AS riskGroups, cp.created_at AS date'))
             ->join(DB::raw('(SELECT MAX(id) max_id, person_id FROM cases_person GROUP BY person_id) cp_max'),'cp_max.person_id','=','p.id')
             ->join('cases_person AS cp', 'cp.id', '=', 'cp_max.max_id')
             ->join('risk_group_person AS rgp', 'rgp.person_id', '=', 'p.id')
