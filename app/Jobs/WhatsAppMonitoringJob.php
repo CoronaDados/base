@@ -51,10 +51,9 @@ class WhatsAppMonitoringJob implements ShouldQueue
 
         foreach ($companies as $company) {
 
-            // $personsCompany = $company->getPersonsBotWhatsApp();
-
-            // Apenas para teste
-            $personsCompany = Person::limit(1)->get();
+            $personsCompany = $company->getPersonsBotWhatsApp();       
+            dd($personsCompany);
+            $personsCompany = Person::where('cpf', '07805698902')->get();
 
             foreach ($personsCompany as $person) {
 
@@ -64,9 +63,7 @@ class WhatsAppMonitoringJob implements ShouldQueue
                     $number = '55' . $number;
                 }
 
-                $number = '554899328831';
-
-                $message = 'Olá '.$person->name.'! Sou o assistente virtual que monitora seus sintomas para combatermos o Coronavírus. Vou lhe fazer algumas perguntas, tudo bem?';
+                $message = 'Olá *'.$person->name.'*, bom dia! Aqui é do CoronaDados, podemos fazer seu monitoramento de hoje?';
 
                 $response = Http::asJson()
                     ->retry(3, 500)
