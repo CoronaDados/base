@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Jobs\CheckPersonsToMonitoring;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\App;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,7 +26,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new CheckPersonsToMonitoring)->dailyAt('08:00');
+        if (App::environment(['production'])) {
+            $schedule->job(new CheckPersonsToMonitoring)->dailyAt('08:00');
+        }
     }
 
     /**
