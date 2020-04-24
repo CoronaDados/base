@@ -146,7 +146,7 @@
                                     @endforeach
                                     @else
                                     <tr>
-                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                        <td colspan="3" class="p-4 d-flex w-100">Nenhuma informação cadastrada.</td>
                                     </tr>
                                     @endif
                                 </tbody>
