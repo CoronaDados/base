@@ -303,7 +303,7 @@ class PersonController extends Controller
         (new CompanyUsersImport(auth('company')->user(), $role_name))->queue($file);
         (new PersonablesImport(auth('company')->user()))->queue($file);
 
-        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde alguns minutos para ver os colaboradores.<br>Lembre-se que a senha dos usuários é o CPF sem pontos ou traços', 'Importação de colaboradores');
+        flash()->overlay('Importação iniciada com sucesso!<br>Aguarde alguns minutos para ver os colaboradores.<br>Lembre-se que apenas Líderes e Admin tem acesso ao sistema e a senha é o CPF sem pontos ou traços', 'Importação de colaboradores');
 
         return back();
     }
