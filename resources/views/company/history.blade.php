@@ -11,7 +11,7 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="mb-0">Histórico de Sintomas</h3>
+                                <h3 class="mb-0">Histórico de Monitoramento</h3>
                             </div>
                         </div>
                     </div>
