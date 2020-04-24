@@ -2,6 +2,7 @@
 
 namespace App\Model\Company;
 
+use App\Enums\ApplicationType;
 use App\Enums\StatusCovidType;
 use App\Model\Person\CasePerson;
 use App\Model\Person\Person;
@@ -84,11 +85,19 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     public function monitoringPersons($options = []) {
         $companyUserId = $this->id;
 
+        $latestWhatsappMonitorings = DB::table('monitoring_person')
+            ->select('person_id', DB::raw('MAX(created_at) as last_date'))
+            ->where('application', ApplicationType::WHATSAPP)
+            ->groupBy('person_id');
+
         $query = DB::table('persons', 'p')
-            ->select(DB::raw(' p.id AS person_id, p.name,c_person.email, p.phone'))
+            ->select(DB::raw(' p.id AS person_id, p.name,c_person.email, p.phone, lm.person_id AS existWhatsapp'))
             ->join('company_users AS c_person', 'c_person.person_id', '=', 'p.id')
             ->join('personables AS pp', 'p.id', '=', 'pp.person_id')
             ->join('company_users AS c', 'pp.personable_id', '=', 'c.id')
+            ->leftJoinSub($latestWhatsappMonitorings, 'lm', function($join) {
+                $join->on('p.id', '=', 'lm.person_id');
+            })
             ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
                 personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->company_id .' ) )')
             ->whereRaw('p.id NOT IN ( SELECT mp.person_id FROM monitoring_person mp WHERE DATE(mp.created_at) >= CURDATE() )');
