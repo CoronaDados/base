@@ -1,1 +1,2 @@
-'name','email','phone','cpf','sector','birthday','gender','risk_group','status','cep','ibge','state','city','neighborhood','street','complement','number','cpf_lider'
+name,email,phone,cpf,sector,birthday,gender,risk_group,status,cep,ibge,state,city,neighborhood,street,complement,number,cpf_lider
+Nome completo,email@pessoa.com.br,48999999999,88888888888,Setor atuação,01/01/2020,M,0,1,88888888,123456,SC,Cidade,Bairro,Rua/Avenida,Complemento,000,88888888888
