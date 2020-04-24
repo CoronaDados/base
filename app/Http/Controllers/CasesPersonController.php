@@ -43,7 +43,7 @@ class CasesPersonController extends Controller
         $notes = $request->notes;
 
         $person = Person::find($personId);
-        $oldCases = $person->casesPerson->last();
+        $oldCases = $person->casesPerson->first();
 
         if($oldCases) {
             if($statusTest !== $oldCases->status_test || $statusCovid !== $oldCases->status_covid) {

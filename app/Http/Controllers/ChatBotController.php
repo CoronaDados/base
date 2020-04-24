@@ -11,7 +11,7 @@ class ChatBotController extends Controller
     {
         $botman = app('botman');
         
-        $botman->hears('', function ($bot) {
+        $botman->hears('oi', function ($bot) {
             $bot->startConversation(new MorningConversation);
         });        
         $botman->listen();

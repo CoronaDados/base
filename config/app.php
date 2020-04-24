@@ -24,7 +24,9 @@ return [
     'landing_page_url' => env('LANDING_PAGE_URL', ''),
     'email_list_info' => env('EMAIL_LIST_INFOS', ''),
     'email_list_error' => env('EMAIL_LIST_ERROR', ''),
-
+    'coronadados_bot_user' => env('CORONADADOS_BOT_USER', ''),
+    'coronadados_bot_password' => env('CORONADADOS_BOT_PASSWORD', ''),
+    'coronadados_bot_url_send_message' => env('CORONADADOS_BOT_URL_SEND_MESSAGE', ''),
 
     /*
     |--------------------------------------------------------------------------
