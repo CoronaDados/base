@@ -2,6 +2,7 @@
 
 namespace App\Model\Company;
 
+use App\Enums\ApplicationType;
 use App\Model\Person\Person;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,14 @@ class Company extends Model
 
         return DB::select(DB::raw($query));
     }
+
+    public function getPersonsBotWhatsApp() {
+        return DB::table('persons', 'p')
+            ->select(DB::raw('p.name, p.phone'))
+            ->join('monitoring_person AS mp', 'p.id', '=', 'mp.person_id')
+            ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->id .' ) )')
+            ->whereRaw('p.id NOT IN ( SELECT mp.person_id FROM monitoring_person mp WHERE DATE(mp.created_at) >= CURDATE() )')
+            ->where('mp.application', '=', ApplicationType::WHATSAPP)
+            ->get();
+    }
 }
-
-
