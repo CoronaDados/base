@@ -151,8 +151,9 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     {
         return DB::table('monitoring_person', 'mp')
             ->select(DB::raw('count(*) AS total'))
-            ->join('company_users AS cu', 'cu.id', '=', 'mp.user_id')
-            ->where('cu.company_id', $this->company_id)
+            ->join('persons AS p', 'mp.person_id', '=', 'p.id')
+            ->whereRaw('p.id IN ( SELECT pp.person_id FROM personables pp WHERE
+                personable_id IN ( SELECT id FROM company_users WHERE company_id = '. $this->company_id .' ) )')
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
     }
@@ -161,7 +162,8 @@ class CompanyUser  extends Authenticatable implements MustVerifyEmail
     {
         return DB::table('monitoring_person', 'mp')
             ->select(DB::raw('count(*) AS total'))
-            ->where('mp.user_id', $this->id)
+            ->join(DB::raw('(SELECT pp.person_id, pp.personable_id AS user_id FROM personables pp WHERE personable_id IN (SELECT id FROM company_users WHERE company_id = 1)) company_user'), 'company_user.person_id', '=', 'mp.person_id')
+            ->where('company_user.user_id', $this->id)
             ->whereRaw('DATE(mp.created_at) = CURRENT_DATE()')
             ->first()->total;
     }

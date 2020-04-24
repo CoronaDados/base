@@ -153,23 +153,23 @@
                         <li><strong>name</strong>: Nome completo do colaborador/pessoa. <code>(Obrigatório)</code></li>
                         <li><strong>email</strong>: E-mail do colaborador/pessoa. <code>(Obrigatório)</code></li>
                         <li><strong>phone</strong>: Telefone celular do colaborador/pessoa, este campo é fundamental
-                            para o monitoramento da pessoa, pois é através deste número que será enviado o
+                            para o monitoramento da pessoa via whatsapp, pois é através dele que será enviado o
                             questionamento diário. <code>(Obrigatório)</code></li>
                         <li><strong>cpf</strong>: CPF do colaborador/pessoa. <code>(Obrigatório)</code></li>
                         <li><strong>sector</strong>: Setor que o colaborador/pessoa trabalha. Atualmente esta coluna
                             aceita apenas os valores Administrativo, Financeiro, Operacional, Comercial, Médico ou
                             Diretoria.</li>
                         <li><strong>birthday</strong>: Data de nascimento do colaborador/pessoa, não é obrigatório, mas
-                            é importante para identificar se a pessoa é considerado como idoso e entra no grupo de
+                            é importante para identificar se a pessoa possui Acima de 60 anos e entra no grupo de
                             risco.</li>
-                        <li><strong>gender</strong>: Sexo colaborador/pessoa.</li>
+                        <li><strong>gender</strong>: Sexo do colaborador/pessoa.</li>
                         <li><strong>risk_group</strong>: Campo para identificar se a pessoa está dentro do grupo de
-                            risco.</li>
+                            risco de pessoas Acima de 60 anos. Caso NÃO coloque 0.</li>
                         <li><strong>status</strong>: Por padrão coloque 1.</li>
                         <li><strong>cep</strong>: CEP do endereço onde o colaborador/pessoa reside. Importante para
                             mostrar no mapa caso o colaborador/pessoa esteja com suspeita ou confirmação do COVID-19.
                         </li>
-                        <li><strong>ibge</strong>: Código do município no IBGE onde o colaborador/pessoa reside.</li>
+                        <li><strong>ibge</strong>: Código numérico dos municípios do Brasil fornecidos pelo IBGE.</li>
                         <li><strong>state</strong>: Estado de onde o colaborador/pessoa reside.</li>
                         <li><strong>city</strong>: Cidade de onde o colaborador/pessoa reside.</li>
                         <li><strong>neighbordhood</strong>: Bairro de onde o colaborador/pessoa reside.</li>
@@ -177,7 +177,7 @@
                         <li><strong>complement</strong>: Complemento de onde o colaborador/pessoa reside.</li>
                         <li><strong>number</strong>: Número de onde o colaborador/pessoa reside.</li>
                         <li><strong>cpf_lider</strong>: CPF do líder que irá liderar/supervisionar este
-                            colaborador/pessoa.</li>
+                            colaborador/pessoa (o mesmo já deve estar cadastrado no CoronaDados).</li>
                     </ul>
                 </div>
             </div>
