@@ -31,6 +31,7 @@ class Person extends Model
         'complement',
         'number',
         'more',
+        'bot_optin'
     ];
 
     protected $casts = [

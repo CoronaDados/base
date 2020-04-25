@@ -34,30 +34,6 @@ class CoreConversation extends Conversation
         //
     }
 
-    public function finishConversation()
-    {
-        // $log = 'Informações respondidas pelo usuário|';
-        // $log .= 'userID='.$this->userId.'|';
-        // $log .= $this->protocol ? 'protocolo='.$this->protocol.'|' : '';
-        // $log .= $this->firstFeelings ? 'como_esta_sentindo='.$this->firstFeelings.'|' : '';
-        // $log .= $this->confirmFeelings ? 'confirma_sentindo_mal='.$this->confirmFeelings.'|' : '';
-        // $log .= $this->symptoms ? 'sintomas='.$this->symptoms->implode(',').'|' : '';
-        // $log .= $this->confirmSymptoms ? 'confirma_sintomas='.$this->confirmSymptoms.'|' : '';
-        // $log .= $this->levelFever ? 'nivel_febre='.$this->levelFever.'|' : '';
-        // $log .= $this->confirmStillHaveSymptoms ? 'confirma_ainda_tem_simtomas='.$this->confirmStillHaveSymptoms.'|' : '';
-        // $log .= $this->haveHearOrLungProblem ? 'tem_problema_cardiaco_ou_pulmonar='.$this->haveHearOrLungProblem.'|' : '';
-        // $log .= $this->haveDiabetes ? 'tem_diabetes='.$this->haveDiabetes.'|' : '';
-        // $log .= $this->isPregnant ? 'gestante='.$this->isPregnant.'|' : '';
-        // $log .= $this->name ? 'nome='.$this->name.'|' : '';
-        // $log .= $this->age ? 'idade='.$this->age.'|' : '';
-        // $log .= $this->cep ? 'cep='.$this->cep.'|' : '';
-        // $log .= $this->cpf ? 'cpf='.$this->cpf.'|' : '';
-        // $log .= $this->cellNumber ? 'celular='.$this->cellNumber.'|' : '';
-        // $log .= $this->acceptedTerms ? 'aceite_termos='.$this->acceptedTerms.'|' : '';
-
-        // Log::info($log);
-    }
-
     private function getPersonByPhone()
     {
         $phone = $this->getFormattedPhone();
@@ -124,6 +100,12 @@ class CoreConversation extends Conversation
 
         $this->sayAllGood();
     }
+    
+    public function saveFirstConversation(Person $person)
+    {
+        $person->bot_optin = true;
+        $person->save();
+    }
 
     public function checkPersonExists()
     {
@@ -132,6 +114,8 @@ class CoreConversation extends Conversation
         if (!$person) {
             return $this->sayPersonNotFound();
         }
+
+        $this->saveFirstConversation($person);
 
         if ($person->monitoringPersonToday()) {
             return $this->sayPersonHasMonitoredToday();
@@ -147,7 +131,7 @@ class CoreConversation extends Conversation
 
     public function sayPersonHasMonitoredToday()
     {
-        $this->say("Olá *{$this->personName}*! Verifiquei que você já foi monitorado hoje. Por favor, entre em contato com o seu superior imediado para verificar a sua situação.");
+        $this->say("Olá *{$this->personName}*! Verifiquei que você já foi monitorado(a) hoje. Por favor, entre em contato com o seu superior imediado para verificar a sua situação.");
     }
 
     public function sayPersonNotFound()
