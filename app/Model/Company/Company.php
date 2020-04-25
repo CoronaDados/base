@@ -48,21 +48,23 @@ class Company extends Model
 
     public function getPersonsBotWhatsApp() 
     {
-
         $latestWhatsappMonitorings = DB::table('monitoring_person')
                    ->select('person_id', DB::raw('MAX(created_at) as last_date'))
-                   ->where('application', ApplicationType::WHATSAPP)
                    ->groupBy('person_id');
 
         return DB::table('persons', 'p')
-            ->select(DB::raw('p.name, p.phone, lm.last_date'))
+            ->select(DB::raw('p.name, p.phone'))
             ->join('company_users AS cu', 'p.id', '=', 'cu.person_id')
-            ->joinSub($latestWhatsappMonitorings, 'lm', function($join) {
+            ->leftJoinSub($latestWhatsappMonitorings, 'lm', function($join) {
                 $join->on('p.id', '=', 'lm.person_id');
             })
             ->where('cu.company_id', $this->id)
-            ->whereDate('lm.last_date', '<', Carbon::now()->format('Y-m-d'))
             ->whereNotNull('p.phone')
+            ->where('p.bot_optin', true)
+            ->where(function($query) {
+                $query->whereNull('lm.last_date')
+                      ->orWhereDate('lm.last_date', '<', Carbon::now()->format('Y-m-d'));
+            })
             ->get();
     }
 }

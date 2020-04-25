@@ -107,7 +107,7 @@ class CompaniesController extends Controller
                     $title = $nameFormatted . ' já iniciou a conversa no Whatsapp!';
                     $color = 'text-success';
 
-                    if(!$person->existWhatsapp) {
+                    if(!$person->bot_optin) {
                         $title = $nameFormatted . ' não iniciou a conversa no Whatsapp!';
                         $color = 'text-danger';
                     }
