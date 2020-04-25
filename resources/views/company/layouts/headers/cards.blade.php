@@ -115,6 +115,8 @@
                 </div>
             </div>
 
+
+
             <div class="row mt-4">
                 <div class="col-md-6 ">
                     <div class="card shadow">
@@ -146,7 +148,7 @@
                                     @endforeach
                                     @else
                                     <tr>
-                                        <td colspan="3" class="p-4 d-flex w-100">Nenhuma informação cadastrada.</td>
+                                        <td colspan="3" class="d-flex w-100">Nenhuma informação cadastrada.</td>
                                     </tr>
                                     @endif
                                 </tbody>
@@ -191,7 +193,7 @@
                                     @endforeach
                                     @else
                                     <tr>
-                                        <td colspan="3" class="p-4">Nenhuma informação cadastrada.</td>
+                                        <td colspan="3">Nenhuma informação cadastrada.</td>
                                     </tr>
                                     @endif
                                 </tbody>

@@ -105,177 +105,154 @@
 
 @push('js')
 <script>
-    var ShowForm1 = (function () {
-            let numpersons = $('#person_in_residence').val()
-            if (numpersons > 0) {
-                let template =
-                    '<div class="row m-2">\n' +
-                    '                            <div class="col-md-6">\n' +
-                    '                                <div class="form-group">\n' +
-                    '                                    <input type="text" placeholder="Nome" class="form-control"/>\n' +
-                    '                                </div>\n' +
-                    '                            </div>\n' +
-                    '                            <div class="col-md-6">\n' +
-                    '                                <div class="form-group">\n' +
-                    '                                    <input type="tel" placeholder="Telefone" class="form-control"/>\n' +
-                    '                                </div>\n' +
-                    '                            </div>\n' +
-                    '                        </div>'
-                for (var i = 0; i < numpersons; i++) {
-                    $('#show1').append(template)
+    var table = $('.data-table').DataTable({
+        language: {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sInfoThousands": ".",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar",
+            "oPaginate": {
+                "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
+                "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
+                "sFirst": "Primeiro",
+                "sLast": "Último"
+            },
+            "oAria": {
+                "sSortAscending": ": Ordenar colunas de forma ascendente",
+                "sSortDescending": ": Ordenar colunas de forma descendente"
+            },
+            "select": {
+                "rows": {
+                    "_": "Selecionado %d linhas",
+                    "0": "Nenhuma linha selecionada",
+                    "1": "Selecionado 1 linha"
                 }
-
-                $('#show1').show()
-            } else {
-                $('#show1').hide()
             }
-        })
-
-        $(function () {
-            // ShowForm1();
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route($route) }}",
+        columnDefs: [
+            {
+                targets: 0,
+                checkboxes: {
+                    selectRow: true
                 }
-            });
+            }
+        ],
+        select: {
+            style: 'multi',
+        },
+        order: [[2, 'asc']],
+        columns: [
+            {data: 'person_id', name: 'person_id'},
+            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'phone', name: 'phone'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+    });
 
-            var table = $('.data-table').DataTable({
-                language: {
-                    "sEmptyTable": "Nenhum registro encontrado",
-                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-                    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sInfoThousands": ".",
-                    "sLengthMenu": "_MENU_ resultados por página",
-                    "sLoadingRecords": "Carregando...",
-                    "sProcessing": "Processando...",
-                    "sZeroRecords": "Nenhum registro encontrado",
-                    "sSearch": "Pesquisar",
-                    "oPaginate": {
-                        "sNext": "<i class=\"fas fa-angle-right\"class=\"fas fa-angle-right\">",
-                        "sPrevious": "<i class=\"fas fa-angle-left\"class=\"fas fa-angle-left\">",
-                        "sFirst": "Primeiro",
-                        "sLast": "Último"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Ordenar colunas de forma ascendente",
-                        "sSortDescending": ": Ordenar colunas de forma descendente"
-                    },
-                    "select": {
-                        "rows": {
-                            "_": "Selecionado %d linhas",
-                            "0": "Nenhuma linha selecionada",
-                            "1": "Selecionado 1 linha"
-                        }
-                    }
-                },
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route($route) }}",
-                columnDefs: [{
-                    targets: 0,
-                    checkboxes: {
-                        selectRow: true
-                    }
-                }],
-                select: {
-                    style: 'multi',
-                },
-                order: [[2, 'asc']],
-                columns: [
-                    {data: 'person_id', name: 'person_id'},
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phone', name: 'phone'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
-                ]
-            });
+    $(function () {
 
-            $('body').on('click', '.editMonitoring', function () {
-                $('#modelHeading').html("Monitorar " + $(this).data('name'));
-                $('#saveBtn').val("edit-user");
-                $('#ajaxModel').modal('show');
-                $('#person_id').val($(this).data('id'));
-            });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-            $('#saveBtn').click(function (e) {
-                e.preventDefault();
+        $('.whatsapp').tooltip();
 
-                let person_id = $('#person_id').val(),
-                    form = $('#monitoringForm'),
-                    checkSymptoms = $('.check-symptoms');
+        $('body').on('click', '.editMonitoring', function () {
+            $('#modelHeading').html("Monitorar " + $(this).data('name'));
+            $('#saveBtn').val("edit-user");
+            $('#ajaxModel').modal('show');
+            $('#person_id').val($(this).data('id'));
+        });
 
-                if($('.check-symptoms:checked').length > 0) {
-                    $(this).html('Gravando..');
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
 
-                    $.ajax({
-                        data: form.serialize(),
-                        url: "monitoring/" + person_id,
-                        type: "POST",
-                        dataType: 'json',
-                        success: function (data) {
-                            $('#saveBtn').html('Salvar');
+            let person_id = $('#person_id').val(),
+                form = $('#monitoringForm'),
+                checkSymptoms = $('.check-symptoms');
 
-                            form.trigger("reset");
-                            $('#ajaxModel').modal('hide');
-
-                            table.row($(this)).invalidate().draw();
-                        },
-                        error: function (data) {
-                            $('#saveBtn').html('Gravar');
-                        }
-                    });
-                } else {
-                    checkSymptoms.toggleClass('is-invalid');
-
-                    Swal.fire({
-                        title: 'Ops!',
-                        text: 'Parece que você esqueceu de selecionar o(s) sintoma(s).',
-                        icon: 'warning',
-                        confirmButtonText: 'Fechar',
-                        onClose: () => {
-                            checkSymptoms.toggleClass('is-invalid');
-                        }
-                    });
-                }
-
-            });
-
-            $('#multiMoni').on('click', function(e) {
-                e.preventDefault();
-
-                let form = $('#multi-monitoring'),
-                    rows_selected = table.column(0).checkboxes.selected();
-
-                // Iterate over all selected checkboxes
-                $.each(rows_selected, function(index, rowId){
-
-                    // Create a hidden element
-                    form.append(
-                        $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', 'id[]')
-                            .attr('class','temp-input')
-                            .val(rowId)
-                    );
-                });
+            if($('.check-symptoms:checked').length > 0) {
+                $(this).html('Gravando..');
 
                 $.ajax({
                     data: form.serialize(),
-                    url: '{{ route('company.multi.monitoring') }}',
+                    url: "monitoring/" + person_id,
                     type: "POST",
                     dataType: 'json',
                     success: function (data) {
-                        $('.temp-input').remove();
-                        table.column(0).checkboxes.deselect();
-                        table.ajax.reload();
+                        $('#saveBtn').html('Salvar');
+
+                        form.trigger("reset");
+                        $('#ajaxModel').modal('hide');
+
+                        table.row($(this)).invalidate().draw();
+                    },
+                    error: function (data) {
+                        $('#saveBtn').html('Gravar');
                     }
                 });
+            } else {
+                checkSymptoms.toggleClass('is-invalid');
 
-            });
+                Swal.fire({
+                    title: 'Ops!',
+                    text: 'Parece que você esqueceu de selecionar o(s) sintoma(s).',
+                    icon: 'warning',
+                    confirmButtonText: 'Fechar',
+                    onClose: () => {
+                        checkSymptoms.toggleClass('is-invalid');
+                    }
+                });
+            }
+
         });
+
+        $('#multiMoni').on('click', function(e) {
+            e.preventDefault();
+
+            let form = $('#multi-monitoring'),
+                rows_selected = table.column(0).checkboxes.selected();
+
+            // Iterate over all selected checkboxes
+            $.each(rows_selected, function(index, rowId){
+
+                // Create a hidden element
+                form.append(
+                    $('<input>')
+                        .attr('type', 'hidden')
+                        .attr('name', 'id[]')
+                        .attr('class','temp-input')
+                        .val(rowId)
+                );
+            });
+
+            $.ajax({
+                data: form.serialize(),
+                url: '{{ route('company.multi.monitoring') }}',
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    $('.temp-input').remove();
+                    table.column(0).checkboxes.deselect();
+                    table.ajax.reload();
+                }
+            });
+
+        });
+    });
 </script>
 @endpush
