@@ -94,7 +94,9 @@ class CompaniesController extends Controller
             return DataTables::of($datas)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br/>Peça para enviar um <strong>Oi</strong> pelo Whatsapp ao número (48) 99802-3637" data-id="' . $row->person_id . '" data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-name="' . $row->name . ' <br/>
+                                Peça para enviar um <strong>Oi</strong> pelo Whatsapp ao número (48) 99802-3637" data-id="' . $row->person_id . '"
+                                data-original-title="Monitorar" class="edit btn btn-primary btn-sm editMonitoring">Monitorar</a>';
 
                     return $btn;
                 })
@@ -102,10 +104,24 @@ class CompaniesController extends Controller
 
                     $nameFormatted = Helper::getFirstAndLastName($person->name);
 
-                    $existWhatsapp = '';
-                    if(!$person->existWhatsapp) $existWhatsapp = '<span data-toggle="tooltip" data-placement="top" title="Não respondeu o Whatsapp!" data-original-title="Não respondeu o Whatsapp!"><img class="ml-2 w-25" src="/img/whatsapp-blocked.png"></span>';
+                    $title = $nameFormatted . ' já iniciou a conversa no Whatsapp!';
+                    $color = 'text-success';
 
-                    return $nameFormatted . $existWhatsapp;
+                    if(!$person->existWhatsapp) {
+                        $title = $nameFormatted . ' não iniciou a conversa no Whatsapp!';
+                        $color = 'text-danger';
+                    }
+
+                    $whatsapp = '<span class="h2 font-weight-normal m-0">
+                                    <i class="' . $color . ' fab fa-whatsapp"></i>
+                                </span>';
+
+                    $div = '<div class="d-flex justify-content-between align-items-center whatsapp" rel="tooltip" data-toggle="tooltip"
+                                data-placement="top" title="' . $title . '">' .
+                                $nameFormatted . $whatsapp .
+                            '</div>';
+
+                    return $div;
                 })
                 ->editColumn('phone', function ($person) {
                     return Helper::formatPhone($person->phone);
