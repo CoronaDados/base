@@ -5,10 +5,7 @@
             aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Brand -->
-        <a class="img-fluid pt-0" href="{{ route('company.home') }}">
-            <img src="/img/logo.png" class="img-fluid" alt="CoronaDados" title="CoronaDados">
-        </a>
+
         <!-- User -->
         <ul class="nav align-items-center d-md-none">
             <li class="nav-item dropdown">
@@ -25,6 +22,10 @@
                 </div>
             </li>
         </ul>
+        <!-- Brand -->
+        <a class="img-fluid pt-0" href="{{ route('company.home') }}">
+            <img src="/img/logo.png" class="img-fluid" alt="CoronaDados" title="CoronaDados">
+        </a>
         <!-- Collapse -->
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
             <!-- Collapse header -->
@@ -32,7 +33,7 @@
                 <div class="row">
                     <div class="col-6 collapse-brand">
                         <a href="{{ route('company.home') }}">
-                            <img src="/argon/img/brand/blue.png">
+                            <img src="/img/logo.png" class="img-fluid" alt="CoronaDados" title="CoronaDados">
                         </a>
                     </div>
                     <div class="col-6 collapse-close">
