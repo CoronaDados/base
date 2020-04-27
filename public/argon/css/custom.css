@@ -75,60 +75,62 @@
 }
 
 /* Table Grupo de Risco Dashboard */
-.table-fixed {
-    table-layout: fixed;
-}
-
-.table-fixed th,
-.table-fixed td
+@media (min-width: 1200px)
 {
-    white-space: normal;
-    word-wrap: break-word;
+    .table-fixed {
+        table-layout: fixed;
+    }
+
+    .table-fixed th,
+    .table-fixed td
+    {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .table-risk-group th:first-child {
+        width: 200px;
+    }
+
+
+    .table-risk-group th:nth-child(2) {
+        width: 95px;
+    }
+
+    .table-persons th:nth-child(3) {
+        width: 120px;
+    }
+
+    .table-suspicious,
+    .table-suspicious tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .table-suspicious tbody tr {
+        display: flex;
+    }
+
+    .table-suspicious td,
+    .table-suspicious th {
+        width: 33.33%;
+    }
+
+    .table-suspicious thead {
+        display: table;
+        width: 100%;
+    }
+
+    .table-suspicious tbody {
+        max-height: 350px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .table-suspicious tbody tr:first-child td {
+        border-top: 0;
+    }
 }
-
-.table-risk-group th:first-child {
-    width: 200px;
-}
-
-
-.table-risk-group th:nth-child(2) {
-    width: 95px;
-}
-
-.table-persons th:nth-child(3) {
-    width: 120px;
-}
-
-.table-suspicious,
-.table-suspicious tbody {
-    display: block;
-    width: 100%;
-}
-
-.table-suspicious tbody tr {
-    display: flex;
-}
-
-.table-suspicious td,
-.table-suspicious th {
-    width: 33.33%;
-}
-
-.table-suspicious thead {
-    display: table;
-    width: 100%;
-}
-
-.table-suspicious tbody {
-    max-height: 350px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.table-suspicious tbody tr:first-child td {
-    border-top: 0;
-}
-
 
 /* Let's get this party started */
 .table-suspicious tbody::-webkit-scrollbar {

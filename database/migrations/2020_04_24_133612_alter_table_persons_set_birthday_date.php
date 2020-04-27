@@ -28,8 +28,8 @@ class AlterTablePersonsSetBirthdayDate extends Migration
      */
     public function down()
     {
-        Schema::table('persons', function (Blueprint $table) {
-            $table->string('birthday')->nullable()->change();
-        });
+//        Schema::table('persons', function (Blueprint $table) {
+//            $table->string('birthday')->nullable()->change();
+//        });
     }
 }
