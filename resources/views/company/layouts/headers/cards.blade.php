@@ -117,8 +117,8 @@
 
 
 
-            <div class="row mt-4">
-                <div class="col-md-6 ">
+            <div class="row mt-md-4">
+                <div class="col-md-6">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -157,7 +157,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 ">
+                <div class="col-md-6 mt-3 mt-sm-0">
                     <div class="card shadow">
                         <div class="card-header border-0">
                             <div class="row align-items-center">
@@ -203,7 +203,7 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-3">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header border-0">
