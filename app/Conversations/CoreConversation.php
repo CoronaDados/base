@@ -56,13 +56,13 @@ class CoreConversation extends Conversation
         // TODO: está removendo os 2 primeiros numeros (codigo internacional)
         // tem que salvar na base esse codigo, dai pode ser removido essa parte abaixo
         $phone = substr($phone, 2);
-        
+
         return $phone;
     }
 
     public function saveConfirmedSymptoms()
     {
-        $person = $this->getPersonByPhone();        
+        $person = $this->getPersonByPhone();
 
         if (!$person) {
             return $this->sayPersonNotFound();
@@ -83,7 +83,7 @@ class CoreConversation extends Conversation
 
     public function saveWithoutSymptoms()
     {
-        $person = $this->getPersonByPhone();        
+        $person = $this->getPersonByPhone();
 
         if (!$person) {
             return $this->sayPersonNotFound();
@@ -100,7 +100,7 @@ class CoreConversation extends Conversation
 
         $this->sayAllGood();
     }
-    
+
     public function saveFirstConversation(Person $person)
     {
         $person->bot_optin = true;
@@ -171,7 +171,7 @@ class CoreConversation extends Conversation
                 $this->sayWrongAnswer();
                 return $this->askAge();
             }
-            
+
             $this->age = $match[0];
 
             $this->askCEP();
@@ -231,7 +231,7 @@ class CoreConversation extends Conversation
 
     public function askAcceptTerms()
     {
-        $question = 'A decisão de buscar ou não a ajuda médica, independente das informações obtidas aqui na ferramenta, é de conta e risco do usuário. 
+        $question = 'A decisão de buscar ou não a ajuda médica, independente das informações obtidas aqui na ferramenta, é de conta e risco do usuário.
 Favor ler os Termos e Condições de Uso acessando esse link: http://www.coronadados.com.br/termo
 Você aceita? Responda *Sim* ou *Não*.';
 
@@ -262,7 +262,7 @@ Você aceita? Responda *Sim* ou *Não*.';
     public function askFeelings()
     {
         $question = "Olá *{$this->personName}*! Eu sou o assistente virtual que monitora sua saúde diariamente para combatermos o Coronavírus.
-Como você está se sentindo hoje? 
+Como você está se sentindo hoje?
 Responda somente *Bem* ou *Mal*.";
 
         $this->ask($question, [
@@ -292,7 +292,7 @@ Responda somente *Bem* ou *Mal*.";
 
     public function askConfirmGoodFeelings()
     {
-        $question = 'Você está sem nenhum desses sintomas: 
+        $question = 'Você está sem nenhum desses sintomas:
 febre, tosse seca, dor no corpo, dificuldade para respirar, dor de garganta, cansaço, falta de paladar, congestão nasal, coriza, diarreia, ou mal estar geral.
 
 -Se *está se sentindo BEM* e sem esses sintomas, responda com *SIM*. Se você estiver sentindo algum desses sintomas e então NÃO está BEM responda com *NÃO*.';
@@ -336,15 +336,15 @@ febre, tosse seca, dor no corpo, dificuldade para respirar, dor de garganta, can
 *9*  Sem paladar
 *10* Falta de ar/Dificuldade para respirar
 
-Responda os números correspondentes ao seus sintomas. 
+Responda os números correspondentes ao seus sintomas.
 (Por exemplo: 1, 3 e 7.)';
 
         $this->ask($question, function (Answer $answer) {
 
             preg_match_all('!\d+!', $answer->getText(), $match);
-            
+
             $this->symptoms = collect($match[0])->unique()->map(function($id) {
-                return SymptomsType::getValueById($id); 
+                return SymptomsType::getValueById($id);
             });
 
             // se não foi informado nenhum sintoma
@@ -352,7 +352,7 @@ Responda os números correspondentes ao seus sintomas.
 
             // se foi informado um número inválido
             $invalidSymptoms = $this->symptoms->diff(SymptomsType::getValues());
-            
+
             if ($emptySymptoms || !$invalidSymptoms->isEmpty()) {
                 $this->sayWrongAnswer();
                 return $this->askConfirmBadFeelings(true);
@@ -365,7 +365,7 @@ Responda os números correspondentes ao seus sintomas.
     public function askConfirmSymptoms()
     {
         $question = 'Atenção, a falsa declaração de sintomas é crime e compromete a sua saúde e a da população.
-Você confirma o envio dessa informação? 
+Você confirma o envio dessa informação?
 Responda *Sim* ou *Não*';
 
         $this->ask($question, [
@@ -373,7 +373,7 @@ Responda *Sim* ou *Não*';
                 'pattern' => 'sim',
                 'callback' => function () {
                     $this->confirmSymptoms = 'sim';
-                    $this->saveConfirmedSymptoms();                    
+                    $this->saveConfirmedSymptoms();
                 }
             ],
             [
@@ -397,7 +397,7 @@ Responda *Sim* ou *Não*';
     {
         $hasDifficultyBreathing = $this->symptoms->contains(SymptomsType::DIFICULDADE_RESPIRAR);
         if ($hasDifficultyBreathing) {
-            return $this->sayToLookForEmergyCare();
+            return $this->sayToLookForEmergyCareAndYourLeader();
         }
 
         $hasFever = $this->symptoms->contains(SymptomsType::FEBRE);
@@ -415,10 +415,10 @@ Responda *Sim* ou *Não*';
             SymptomsType::DIARREIA,
             SymptomsType::SEM_PALADAR,
         ];
-        
+
         $countConfirmedMildSymptoms = $this->symptoms->intersect($mildSymptoms);
         if ($countConfirmedMildSymptoms) {
-            return $this->checkMildSymptomRecommendation($countConfirmedMildSymptoms);
+            return $this->sayToLookForEmergyCareAndYourLeader();
         }
     }
 
@@ -435,14 +435,14 @@ Responda com o número 1 ou 2 referente a sua febre.';
                 'pattern' => '1',
                 'callback' => function () {
                     $this->levelFever = '1';
-                    $this->sayToStayHomeOrLookForEmergyCare();
+                    $this->sayToLookForEmergyCareAndYourLeader();
                 }
             ],
             [
                 'pattern' => '2',
                 'callback' => function () {
                     $this->levelFever = '2';
-                    $this->sayToLookForEmergyCare();
+                    $this->sayToLookForEmergyCareAndYourLeader();
                 }
             ],
             [
@@ -457,16 +457,12 @@ Responda com o número 1 ou 2 referente a sua febre.';
 
     public function checkMildSymptomRecommendation($countSymptoms)
     {
-        if ($countSymptoms->count() >= 2) {
-            return $this->sayToStayHomeOrLookForEmergyCare();
-        }
-
-        return $this->sayStayHomeOrHealthUnit();
+        return $this->sayToLookForEmergyCareAndYourLeader();
     }
 
     public function sayStayHomeOrHealthUnit()
     {
-        $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a recomendação é de ficar em casa. 
+        $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a recomendação é de ficar em casa.
 Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, procure uma unidade de saúde próximo da sua casa.');
     }
 
@@ -479,6 +475,11 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
     public function sayToLookForEmergyCare()
     {
         $this->say('Baseado em suas respostas e nos sinais de sintomas da COVID-19, a orientação é que você procure uma unidade de pronto atendimento para avaliação.');
+    }
+
+    public function  sayToLookForEmergyCareAndYourLeader()
+    {
+        $this->say('Monitoramento realizado. Em caso de agravamento ou de surgimento de novos sintomas, procure assistência médica e entre em contato com seu superior imediato. Até amanhã!');
     }
 
     public function sayAllGood()
@@ -517,7 +518,7 @@ Em caso de surgimento de novos sintomas ou de agravamento dos sintomas atuais, p
 
     public function askComplementRiskGroup()
     {
-        $this->askHeartOrLungProblems();        
+        $this->askHeartOrLungProblems();
     }
 
     public function askHeartOrLungProblems()
