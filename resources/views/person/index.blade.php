@@ -2,7 +2,8 @@
 
 @section('content')
     <div class="container-fluid pb-8 pt-3 pt-md-7">
-        <a href="#!" class="d-flex mb-3" target="_blank" title="Formulário Google" alt="Formulário Google">
+        <a href="https://docs.google.com/forms/d/1SGuc4Ktnryty9_4we6DfULjwcbp1fmoyL3BqXmj1IMw/viewform?ts=5ea70ea7&edit_requested=true"
+           class="d-flex mb-3" target="_blank" title="Formulário Google" alt="Formulário Google">
             <img width="100%" src="{{asset('img').'/informativo-colaboradores.jpg'}}" />
         </a>
 
