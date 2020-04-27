@@ -67,7 +67,11 @@
                 <div class="card card-frame">
                     <div class="card-body">
                         <span class="alert-icon"><i class="ni ni-cloud-download-95"></i></span>
-                        <span class="alert-text"><a href="{{route('company.files', 'modelo_person.xlsx')}}">Clique aqui</a> para baixar o modelo de importação dos dados (XLS).</span>
+                        <span class="alert-text">
+                            <a href="{{route('company.files', 'modelo_person.xlsx')}}">Clique aqui</a> para baixar o modelo de importação dos dados (XLS).
+                            <span class="d-flex">O arquivo de importação deve ser salvo como CSV ou XLS (excel 97/2003)</span>
+                        </span>
+
                     </div>
                 </div>
 
