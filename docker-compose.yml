@@ -51,7 +51,7 @@ services:
 
   redis:
     image: redis:4.0
-    container_name: corona-redis
+    container_name: coronadados-redis
     env_file:
       - .env
     command: redis-server --requirepass ${REDIS_PASSWORD}
